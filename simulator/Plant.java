@@ -4,29 +4,19 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-class Plant implements Serializable {
-//	/*
-//	 * More info about serialVersionUID:
-//	 * http://stackoverflow.com/questions/285793/what-is-a-serialversionuid-and-why-should-i-use-it
-//	 */
-//	private static final long serialVersionUID = 1L;
-//	/*
-//	 * All fields are declared as Objects (i.e. Integer) instead of primitives (i.e. int)
-//	 * This approach is more future-proof regarding serialisation
-//	 * Keep in mind that there is a performance trade-off for using Objects instead of primitives
-//	 */
+class Plant {
 //	private String operatorName;
-//	private Integer timeStepsUsed;
-//	private Integer score;
+//	private int timeStepsUsed;
+//	private int score;
 //	private List<Repair> beingRepaired;
-//	private Boolean isPaused;
+//	private bool isPaused;
 //	private List<Integer> highScores;
 //	private List<plantComponent> plantComponents;
 //	private List<plantComponent> failedComponents;
 //	
 //	/**
 //	 * This is the default constructor that is used 
-//	 * when there is no save game file present (i.e. new installation)
+//	 * when there is no saved game (i.e. new installation)
 //	 */
 //	public Plant(String operatorName) {
 //		this.operatorName = operatorName;
