@@ -6,24 +6,30 @@ class Valve extends PlantComponent {
 	private PlantComponentPair connectedTo; 
 	private boolean open;
 	
-	Valve (PlantComponent a, PlantComponent b) {
+	Valve (PlantComponent first, PlantComponent second) {
 		super(VALVE_FAILURE_RATE, VALVE_REPAIR_RATE);
-		this.connectedTo = new PlantComponentPair(a, b);
+		this.connectedTo = new PlantComponentPair(first, second);
 		this.open = true;
 	}
 	
-	Valve (PlantComponent a, PlantComponent b, boolean open) {
+	Valve (PlantComponent first, PlantComponent second, boolean open) {
 		super(VALVE_FAILURE_RATE, VALVE_REPAIR_RATE);
-		this.connectedTo = new PlantComponentPair(a, b);
+		this.connectedTo = new PlantComponentPair(first, second);
 		this.open = open;
 	}
 	
-	PlantComponent getA() {
-		return connectedTo.getA();
+	/**
+	 * @return the first plant component that the valve is connected to
+	 */
+	PlantComponent getFirstComponent() {
+		return connectedTo.getFirstComponent();
 	}
-	
-	PlantComponent getB() {
-		return connectedTo.getB();
+
+	/**
+	 * @return the second plant component that the valve is connected to
+	 */	
+	PlantComponent getSecondComponent() {
+		return connectedTo.getSecondComponent();
 	}
 	
 	boolean isOpen() {
@@ -49,21 +55,24 @@ class Valve extends PlantComponent {
 	 * provides methods to access the fields but not to change them.
 	 */
 	private final class PlantComponentPair {
-		//I assume a Valve doesn't change it's connections once it is created.
-		//If you latter need to make the pair a, b changeable, just create a setter.
-		private PlantComponent a, b;
+		/*
+		 * I assume a Valve doesn't change it's connections once it is created.
+		 * If you latter need to make the pair first, second changeable
+		 * create a setter.
+		 */
+		private PlantComponent first, second;
 		
-		PlantComponentPair(PlantComponent a, PlantComponent b) {
-			this.a = a;
-			this.b = b;
+		PlantComponentPair(PlantComponent first, PlantComponent second) {
+			this.first = first;
+			this.second = second;
 		}
 		
-		PlantComponent getA() {
-			return a;
+		PlantComponent getFirstComponent() {
+			return first;
 		}
 		
-		PlantComponent getB() {
-			return b;
+		PlantComponent getSecondComponent() {
+			return second;
 		}
 	}
 }

@@ -9,9 +9,8 @@ abstract class PlantComponent {
 	private boolean operational;
 	
 	/**
-	 * Creates a new PlantComponent object
-	 * with default failure rate and repair time.
-	 * It is initially operational.
+	 * Creates a new operational PlantComponent object
+	 * with the default chance to fail and turns to repair.
 	 */
 	protected PlantComponent() {
 		setFailureRate(DEFAULT_FAILURE_RATE);
@@ -20,11 +19,11 @@ abstract class PlantComponent {
 	}
 	
 	/**
-	 * Creates a new PlantComponent with the particular failureRate and repairTime
+	 * Creates a new operational PlantComponent with
+	 * the specified chance to fail and turns to repair.
 	 * 
-	 * @param failureRate the chance of a component to fail randomly. If it is
-	 * 					  0.0 then the component never fails randomly.
-	 * @param repairTime the number of steps needed to repair the component.
+	 * @param failureRate the chance of a component to fail randomly
+	 * @param repairTime the number of steps needed to repair the component
 	 */
 	protected PlantComponent(double failureRate, int repairTime) {
 		setFailureRate(failureRate);
@@ -33,13 +32,13 @@ abstract class PlantComponent {
 	}
 	
 	/**
-	 * Creates a new PlantComponent with the particular failureRate and repairTime
+	 * Creates a new PlantComponent with
+	 * the specified chance to fail, turns to repair and working condition.
 	 * 
-	 * @param failureRate the chance of a component to fail randomly. If it is
-	 * 					  0.0 then the component never fails randomly.
-	 * @param repairTime the number of steps needed to repair the component.
+	 * @param failureRate the chance of the component to fail randomly
+	 * @param repairTime the number of steps needed to repair the component
 	 * @param operational determines whether the component is initially
-	 * 					  operational or not.
+	 * 					  operational or not
 	 */
 	protected PlantComponent(double failureRate, int repairTime, boolean operational) {
 		setFailureRate(failureRate);
@@ -47,27 +46,51 @@ abstract class PlantComponent {
 		setOperational(operational);
 	}
 
-	
+	/**
+	 * Returns the current chance of the component to fail randomly.
+	 * @return the current chance of the component to fail randomly
+	 */
 	protected double getFailureRate() {
-		return this.failureRate;
+		return failureRate;
 	}
 	
+	/**
+	 * Sets a new value for failureRate.
+	 * @param failureRate the new value for failureRate
+	 */
 	protected void setFailureRate(double failureRate) {
 		this.failureRate = failureRate;
 	}
 	
+	/**
+	 * Returns the number of turns that it takes for a component to repair.
+	 * @return the number of turns that it takes for a component to repair
+	 */	
 	protected int getRepairTime() {
-		return this.repairTime;
+		return repairTime;
 	}
 	
+	/**
+	 * Changes the number of turns it take for a component to get repaired.
+	 * @param repairTime the number of turns
+	 */
 	protected void setRepairTime(int repairTime) {
 		this.repairTime = repairTime;
 	}
 	
+	/**
+	 * Returns true if the component is operational (working correctly).
+	 * @return true if the component is operational (working correctly)
+	 */
 	protected boolean isOperational() {
-		return this.operational;
+		return operational;
 	}
 	
+	/**
+	 * Sets the condition of the component - true if it is
+	 * working correctly, false if it has failed.
+	 * @param operational the new state of the component
+	 */
 	protected void setOperational(boolean operational) {
 		this.operational = operational;
 	}
