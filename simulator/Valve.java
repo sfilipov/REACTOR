@@ -56,23 +56,20 @@ class Valve extends PlantComponent {
 	}
 	
 	/**
-	 * Opens the valve regardless of the current position.
+	 * Sets the position of the valve.
+	 * @param open true if the valve is open
 	 */
-	void open() {
-		open = true;
-	}
-	
-	/**
-	 * Closes the valve regardless of the current position.
-	 */
-	void close() {
-		open = false;
+	void setOpen(boolean open) {
+		this.open = open;
 	}
 	
 	void updateState() {
 		//Insert implementation
 	}
 	
+	void checkFailure() {
+		//Insert implementation 
+	}	
 	
 	/*
 	 * This class is used internally to represent the pair of components
@@ -82,7 +79,7 @@ class Valve extends PlantComponent {
 	private final class PlantComponentPair {
 		/*
 		 * I assume a Valve doesn't change it's connections once it is created.
-		 * If you latter need to make the pair first, second changeable
+		 * If you latter need to make the pair changeable then
 		 * create a setter.
 		 */
 		private PlantComponent first, second;

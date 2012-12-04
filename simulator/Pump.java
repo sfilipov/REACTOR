@@ -10,16 +10,16 @@ class Pump extends PlantComponent {
 	Pump(PlantComponent source, PlantComponent destination) {
 		super();
 		setRpm(DEFAULT_RPM);
-		setSource(source);
-		setDestination(destination);
+		this.source = source;
+		this.destination = destination;
 	}
 	
 	Pump(double failureRate, int repairTime,
 			int rpm, PlantComponent source, PlantComponent destination) {
 		super(failureRate, repairTime);
 		setRpm(rpm);
-		setSource(source);
-		setDestination(destination);
+		this.source = source;
+		this.destination = destination;
 	}
 	
 	/**
@@ -42,19 +42,46 @@ class Pump extends PlantComponent {
 		return source;
 	}
 	
-	void setSource(PlantComponent source) {
-		this.source = source;
-	}
+	/*
+	 * Uncomment if you need setter for source.
+	 * 
+	 *	void setSource(PlantComponent source) {
+	 *		this.source = source;
+	 *	}
+	 */
 	
 	PlantComponent getDestination() {
 		return destination;
 	}
 	
-	void setDestination(PlantComponent destination) {
-		this.destination = destination;
+	/*
+	 * Uncomment if you need setter for destination.
+	 * 
+	 *	void setDestination(PlantComponent destination) {
+	 *		this.destination = destination;
+	 *	}
+	 */
+	
+	/**
+	 * Changes the direction in which the water is being pumped.
+	 * Internally swaps the source and destination fields.
+	 */
+	void changeDirection() {
+		/*
+		 * NEEDS TESTING !!!
+		 * I think it will work because I think I am modifying the original references.
+		 * It will either always work or never work.
+		 */
+		PlantComponent swap = source;
+		source = destination;
+		destination = swap;
 	}
 	
 	void updateState() {
 		//Insert implementation
+	}
+	
+	void checkFailure() {
+		//Insert implementation 
 	}
 }

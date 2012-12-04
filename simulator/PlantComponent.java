@@ -95,11 +95,13 @@ abstract class PlantComponent {
 		this.operational = operational;
 	}
 	
-	/*
-	 * I assume updateState and hasFailed need different implementations
-	 * depending on the particular component Class.
-	 * I changed the name of checkFailures to hasFailed-
+	/**
+	 * Updates the information about the component.
 	 */
 	abstract void updateState();
-	//abstract boolean hasFailed();
+	
+	/**
+	 * Runs all checks for the component and changes it's operational state if needed. 
+	 */
+	abstract void checkFailure();
 }
