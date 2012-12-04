@@ -22,10 +22,18 @@ class Pump extends PlantComponent {
 		setDestination(destination);
 	}
 	
+	/**
+	 * Returns the current RPM value of the pump.
+	 * @return the current RPM value of the pump
+	 */
 	int getRpm() {
 		return rpm;
 	}
 	
+	/**
+	 * Sets a new value for the RPM of the pump.
+	 * @param rpm the new value
+	 */
 	void setRpm(int rpm) {
 		this.rpm = rpm;
 	}
