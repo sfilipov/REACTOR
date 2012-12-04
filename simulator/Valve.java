@@ -6,12 +6,25 @@ class Valve extends PlantComponent {
 	private PlantComponentPair connectedTo; 
 	private boolean open;
 	
+	/**
+	 * Creates a new valve that is connected to the specified
+	 * two plant components.
+	 * @param first the first plant component
+	 * @param second the second plant component
+	 */
 	Valve (PlantComponent first, PlantComponent second) {
 		super(VALVE_FAILURE_RATE, VALVE_REPAIR_RATE);
 		this.connectedTo = new PlantComponentPair(first, second);
 		this.open = true;
 	}
 	
+	/**
+	 * Creates a new valve that is connected to the specified
+	 * two plant components and sets it's position (open/closed).
+	 * @param first the first plant component
+	 * @param second the second plant component
+	 * @param open true if the valve is open
+	 */
 	Valve (PlantComponent first, PlantComponent second, boolean open) {
 		super(VALVE_FAILURE_RATE, VALVE_REPAIR_RATE);
 		this.connectedTo = new PlantComponentPair(first, second);
@@ -19,6 +32,7 @@ class Valve extends PlantComponent {
 	}
 	
 	/**
+	 * Returns the first plant component that the valve is connected to.
 	 * @return the first plant component that the valve is connected to
 	 */
 	PlantComponent getFirstComponent() {
@@ -26,20 +40,31 @@ class Valve extends PlantComponent {
 	}
 
 	/**
+	 * Returns the second plant component that the valve is connected to.
 	 * @return the second plant component that the valve is connected to
 	 */	
 	PlantComponent getSecondComponent() {
 		return connectedTo.getSecondComponent();
 	}
 	
+	/**
+	 * Returns true if the valve is open.
+	 * @return true if the valve is open
+	 */
 	boolean isOpen() {
 		return open;
 	}
 	
+	/**
+	 * Opens the valve regardless of the current position.
+	 */
 	void open() {
 		open = true;
 	}
 	
+	/**
+	 * Closes the valve regardless of the current position.
+	 */
 	void close() {
 		open = false;
 	}

@@ -1,22 +1,23 @@
 package simulator;
 
 class Pump extends PlantComponent {
+	//DEFAULT_RPM is used when a rpm argument is not passed to the constructor
 	private final static int DEFAULT_RPM = 0;
 	private int rpm;
 	private PlantComponent source;
 	private PlantComponent destination;
 	
-	Pump(double failureRate, int repairTime,
-			int rpm, PlantComponent source, PlantComponent destination) {
-		super(failureRate, repairTime);
-		setRpm(rpm);
+	Pump(PlantComponent source, PlantComponent destination) {
+		super();
+		setRpm(DEFAULT_RPM);
 		setSource(source);
 		setDestination(destination);
 	}
 	
-	Pump(PlantComponent source, PlantComponent destination) {
-		super();
-		setRpm(DEFAULT_RPM);
+	Pump(double failureRate, int repairTime,
+			int rpm, PlantComponent source, PlantComponent destination) {
+		super(failureRate, repairTime);
+		setRpm(rpm);
 		setSource(source);
 		setDestination(destination);
 	}
