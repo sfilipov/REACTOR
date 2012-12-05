@@ -17,11 +17,11 @@ class Reactor extends PlantComponent {
 	
 	Reactor() {
 		super();
+		this.controlRod = new ControlRod();
+		this.health = MAX_HEALTH;
 		this.temperature = DEFAULT_TEMPERATURE;
 		this.pressure = DEFAULT_PRESSURE;
 		this.waterLevel = DEFAULT_WATER_LEVEL;
-		this.health = MAX_HEALTH;
-		this.controlRod = new ControlRod();
 		this.steamOutput = DEFAULT_STEAM_OUTPUT;
 	}
 	

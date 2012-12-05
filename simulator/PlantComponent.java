@@ -13,9 +13,9 @@ abstract class PlantComponent {
 	 * with the default chance to fail and turns to repair.
 	 */
 	protected PlantComponent() {
-		setFailureRate(DEFAULT_FAILURE_RATE);
-		setRepairTime(DEFAULT_REPAIR_TIME);
-		setOperational(true);
+		this.failureRate = DEFAULT_FAILURE_RATE;
+		this.repairTime = DEFAULT_REPAIR_TIME;
+		this.operational = true;
 	}
 	
 	/**
@@ -26,9 +26,9 @@ abstract class PlantComponent {
 	 * @param repairTime the number of steps needed to repair the component
 	 */
 	protected PlantComponent(double failureRate, int repairTime) {
-		setFailureRate(failureRate);
-		setRepairTime(repairTime);
-		setOperational(true);
+		this.failureRate = failureRate;
+		this.repairTime = repairTime;
+		this.operational = true;
 	}
 	
 	/**
@@ -41,9 +41,9 @@ abstract class PlantComponent {
 	 * 					  operational or not
 	 */
 	protected PlantComponent(double failureRate, int repairTime, boolean operational) {
-		setFailureRate(failureRate);
-		setRepairTime(repairTime);
-		setOperational(operational);
+		this.failureRate = failureRate;
+		this.repairTime = repairTime;
+		this.operational = operational;
 	}
 
 	/**
