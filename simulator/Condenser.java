@@ -21,6 +21,14 @@ class Condenser extends PlantComponent {
 		this.waterLevel = DEFAULT_WATER_LEVEL;
 		this.steamInput = DEFAULT_STEAM_INPUT;
 	}
+
+	@Override
+	void updateState() {
+	}
+
+	@Override
+	void checkFailure() {
+	}
 	
 	
 }
