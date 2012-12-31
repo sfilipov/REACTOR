@@ -1,87 +1,60 @@
 package simulator;
 
-class Pump extends PlantComponent {
+public class Pump extends PlantComponent {
 	//DEFAULT_RPM is used when a rpm argument is not passed to the constructor
 	private final static int DEFAULT_RPM = 0;
-	private int rpm;
-	private PlantComponent source;
-	private PlantComponent destination;
+	private final static boolean DEFAULT_ON_STATE = true;
 	
-	Pump(PlantComponent source, PlantComponent destination) {
+	private int rpm;
+	private boolean on;
+	
+	public Pump() {
 		super();
 		setRpm(DEFAULT_RPM);
-		this.source = source;
-		this.destination = destination;
+		this.on = DEFAULT_ON_STATE;
 	}
 	
-	Pump(double failureRate, int repairTime,
-			int rpm, PlantComponent source, PlantComponent destination) {
+	public Pump(double failureRate, int repairTime, int rpm) {
 		super(failureRate, repairTime);
 		setRpm(rpm);
-		this.source = source;
-		this.destination = destination;
+		this.on = DEFAULT_ON_STATE;
 	}
 	
 	/**
 	 * Returns the current RPM value of the pump.
+	 * Note: If the pump is off, the RPM returned will be zero.
 	 * @return the current RPM value of the pump
 	 */
-	int getRpm() {
-		return rpm;
+	public int getRpm() {
+		return on ? rpm : 0;
 	}
 	
 	/**
 	 * Sets a new value for the RPM of the pump.
 	 * @param rpm the new value
 	 */
-	void setRpm(int rpm) {
+	public void setRpm(int rpm) {
 		this.rpm = rpm;
-	}
-	
-	PlantComponent getSource() {
-		return source;
-	}
-	
-	/*
-	 * Uncomment if you need setter for source.
-	 * 
-	 *	void setSource(PlantComponent source) {
-	 *		this.source = source;
-	 *	}
-	 */
-	
-	PlantComponent getDestination() {
-		return destination;
-	}
-	
-	/*
-	 * Uncomment if you need setter for destination.
-	 * 
-	 *	void setDestination(PlantComponent destination) {
-	 *		this.destination = destination;
-	 *	}
-	 */
-	
-	/**
-	 * Changes the direction in which the water is being pumped.
-	 * Internally swaps the source and destination fields.
-	 */
-	void changeDirection() {
-		/*
-		 * NEEDS TESTING !!!
-		 * I think it will work because I think I am modifying the original references.
-		 * It will either always work or never work.
+		/* Uncomment this if we decide that setting an rpm
+		 * when the pump is off should turn it on. 
+		 *
+		 * if (rpm != 0 && !on) on = true;
 		 */
-		PlantComponent swap = source;
-		source = destination;
-		destination = swap;
 	}
 	
-	void updateState() {
-		//Insert implementation
+	public boolean isOn() {
+		return on;
 	}
 	
-	void checkFailure() {
+	public void toggleState() {
+		on = !on;
+	}
+	
+	public void updateState() {
+		// Chill out with the valves, sippin' on Gin & Juice.
+	}
+	
+	public void checkFailure() {
 		//Insert implementation 
 	}
 }
