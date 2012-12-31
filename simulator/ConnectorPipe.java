@@ -3,14 +3,19 @@ package simulator;
 import java.util.ArrayList;
 
 public class ConnectorPipe extends PlantComponent {
-
+	/* Since these objects will effectively be invisible to the user,
+	 * they should never fail!
+	 */
+	private final static double FAILURE_RATE = 0.0d;
+	private final static int REPAIR_TIME = 0;
+	
 	private ArrayList<PlantComponent> additionalInputs;
 	private ArrayList<PlantComponent> additionalOutputs;
 	private int numBlockedOutputs;
 	private int numBlockedInputs;
 	
 	public ConnectorPipe() {
-		super();
+		super(FAILURE_RATE, REPAIR_TIME);
 		this.additionalInputs = new ArrayList<PlantComponent>();
 		this.additionalOutputs = new ArrayList<PlantComponent>();
 		this.numBlockedOutputs = 0;
