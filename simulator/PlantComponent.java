@@ -1,11 +1,12 @@
 package simulator;
 
 abstract class PlantComponent {
+
 	//The values of the constants below are for illustration.
-	private final static double DEFAULT_FAILURE_RATE = 5.0;
-	private final static int DEFAULT_REPAIR_TIME = 10;
-	private final static boolean DEFAULT_OPERATIONAL = true;
-	private final static boolean DEFAULT_PRESSURISED = false;
+	public final static double DEFAULT_FAILURE_RATE = 5.0;
+	public final static int DEFAULT_REPAIR_TIME = 10;
+	public final static boolean DEFAULT_OPERATIONAL = true;
+	public final static boolean DEFAULT_PRESSURISED = false;
 	
 	private double failureRate;
 	private int repairTime;
@@ -196,10 +197,10 @@ abstract class PlantComponent {
 	/**
 	 * Updates the information about the component.
 	 */
-	abstract void updateState();
+	abstract public void updateState();
 	
 	/**
 	 * Runs all checks for the component and changes it's operational state if needed. 
 	 */
-	abstract void checkFailure();
+	abstract public void checkFailure();
 }
