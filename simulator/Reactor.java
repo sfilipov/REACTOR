@@ -1,6 +1,6 @@
 package simulator;
 
-class Reactor extends PlantComponent {
+public class Reactor extends PlantComponent {
 	private final static int MAX_TEMPERATURE = 2000;
 	private final static int MAX_PRESSURE = 500;
 	private final static int MAX_HEALTH = 100;
@@ -15,7 +15,7 @@ class Reactor extends PlantComponent {
 	private ControlRod controlRod;
 	private int steamOutput;
 	
-	Reactor() {
+	public Reactor() {
 		super();
 		this.controlRod = new ControlRod();
 		this.health = MAX_HEALTH;
@@ -25,39 +25,39 @@ class Reactor extends PlantComponent {
 		this.steamOutput = DEFAULT_STEAM_OUTPUT;
 	}
 	
-	int getTemperature() {
+	public int getTemperature() {
 		return temperature;
 	}
 	
-	int getPressure() {
+	public int getPressure() {
 		return pressure;
 	}
 	
-	int getWaterLevel() {
+	public int getWaterLevel() {
 		return waterLevel;
 	}
 	
-	int getHealth() {
+	public int getHealth() {
 		return health;
 	}
 	
-	int getPercentageLowered() {
+	public int getPercentageLowered() {
 		return controlRod.getPercentageLowered();
 	}
 	
-	void setPercentageLowered(int percentageLowered) {
+	public void setPercentageLowered(int percentageLowered) {
 		controlRod.setPercentageLowered(percentageLowered);
 	}
 	
-	int getSteamOutput() {
+	public int getSteamOutput() {
 		return steamOutput;
 	}
 	
-	void updateState() {
+	public void updateState() {
 		//Insert implementation
 	}
 	
-	void checkFailure() {
+	public void checkFailure() {
 		//Insert implementation 
 	}
 	
@@ -75,7 +75,8 @@ class Reactor extends PlantComponent {
 		
 		void setPercentageLowered(int percentageLowered) {
 			if (percentageLowered < 0 || percentageLowered > 100) {
-				throw new IllegalArgumentException("percentageLowered not in range [0..100].");
+				throw new IllegalArgumentException("Reactor: ControlRod: " +
+								"percentageLowered not in range [0..100].");
 			}
 			this.percentageLowered = percentageLowered;
 		}
