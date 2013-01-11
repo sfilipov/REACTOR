@@ -1,4 +1,4 @@
-import java.awt.*;
+mport java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.JScrollPane;
@@ -22,9 +22,14 @@ public class Interface extends JFrame implements KeyListener
         outputText.setBackground(Color.BLACK);
         outputText.setForeground(Color.WHITE); 
         outputText.setFont(new Font("Impact",Font.PLAIN, 12));
+        outputText.setLineWrap(true);  
+        outputText.setWrapStyleWord(true);
         inputText.setBorder(BorderFactory.createMatteBorder(0,0,0,1,Color.GRAY));
         inputText.setBackground(Color.BLACK);
         inputText.setForeground(Color.WHITE); 
+        inputText.setText("> ");
+        inputText.setLineWrap(true);  
+        inputText.setWrapStyleWord(true);
         inputText.setFont(new Font("Impact",Font.PLAIN, 12));
         input.addKeyListener(this);   
         JScrollPane Scroll = new JScrollPane(outputText);
@@ -67,7 +72,6 @@ public class Interface extends JFrame implements KeyListener
         gridbag.setConstraints(input, constraints);
         pane.add(input);
         JPanel rpane = new JPanel();
-        systemText.setText(" >");        
         systemText.setBackground(Color.BLACK);
         systemText.setForeground(Color.WHITE);
         systemText.setFont(new Font("Impact",Font.PLAIN, 12));
@@ -79,9 +83,19 @@ public class Interface extends JFrame implements KeyListener
         add(pane);
         add(rpane);
         setVisible(true);
-     
+        
+        
+        startUp();     
     }
-      public void keyReleased(KeyEvent k)
+    public void startUp()
+    {
+        outputText.setText("To Start a name game type           : newgame\n"
+                          +"To load a saved game type           : loadgame\n"
+                          +"To view highscore type                   : highscores\n"
+                          +"To view credits type" + "                          " + ": credits\n");
+                          
+    }
+    public void keyReleased(KeyEvent k)
     { 
     }
     public void keyTyped(KeyEvent k)
@@ -92,8 +106,8 @@ public class Interface extends JFrame implements KeyListener
         int keyCode = k.getKeyCode();
          switch (keyCode) {
              case KeyEvent.VK_ENTER:
-             String words = input.getText();
-             inputText.setText(inputText.getText() + words + "\n"); 
+             String words = input.getText().toLowerCase();
+             inputText.setText(inputText.getText() + words + "\n" + "> "); 
              input.setText("");
              try{
                  int Temp = inputText.getLineCount();            
