@@ -96,6 +96,21 @@ public class Plant {
 			this.failedComponents.add(failedComponent);
 		}
 	}
+	public void checkFailures() {
+		List<PlantComponent> temp;
+		temp = new ArrayList<PlantComponent>();
+		for (plantComponents p : PlantComponent)
+		{
+			if(p.checkFailures() = true)
+				temp.add(p);
+		}
+		int NUMBER_FAILED = temp.size();
+		Random random = new Random();
+		int selection = random.nextInt(NUMBER_FAILED);
+		String failed = temp.get(selection).getName();
+		// code to specify element of <plantComponents>, toggle its operational state, remove it from <plantComponents> and add it to <failedComponents>
+	}
+
 	
 	
 }
