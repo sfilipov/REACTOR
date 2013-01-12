@@ -23,13 +23,13 @@ class Condenser extends PlantComponent {
 	}
 
 	@Override
-	void updateState() {
+	public void updateState() {
 	}
 
 	@Override
-	boolean checkFailure() {
-		if(pressure>MAX_Pressure) {
-			return true; 			// Run method to damamge Condenser
+	public boolean checkFailure() {
+		if(pressure > MAX_PRESSURE) {
+			return true; 			// Run method to damage Condenser
 		}
 		else {
 			return super.checkFailure();
