@@ -18,17 +18,29 @@ public class PlantPresenter {
 	}
 	
 	public void updatePlant() {
+		for (int i = 0; i<model.plantComponents.size(); i++) {
+			model.plantComponents.get(i).updateState();
+		}
+		for (int z = 0; z<model.beingRepaired.size(); z++) {
+			model.beingRepaired.get(i).decTimeStepsRemaning();
+			int temp = model.beingRepaired.get(i).getTimeStepsRemaining();
+			if(temp == 0) {
+				//remove from beingRepaired and add to plantComponents
+				
+			}
+		}
+			
 		// Go through all components and call updateState()
 		// This will do things in Reactor and Condenser objects etc.
 	}
 	
 	public void repairComponent(String name) { // name of component to be repaired
 		List<PlantComponents> temp = model.getFailedComponents(); 
-		for(int i = 0; i<temp.temp.size(); i++) {
+		for(int i = 0; i<temp.size(); i++) {
 			if(temp.getName().equals(name))
 			{
-				model.beingRepaired.add(temp(i));
-				model.failedComponents.remove(i);
+				model.beingRepaired.add(temp.get(i));
+				model.failedComponents.remove(model.failedComponents.get(i)); 
 				break;
 			}
 		}
@@ -40,8 +52,8 @@ public class PlantPresenter {
 		
 		for (int i = 0; i<model.plantComponents.size(); i++)
 		{
-			if(model.plantComponents(i).checkFailures() = true)
-				temp.add(plantComponents(i));
+			if(model.plantComponents.get(i).checkFailures() = true)
+				temp.add(plantComponents.get(i));
 		}
 		int NUMBER_FAILED = temp.size();
 		if(NUMBER_FAILED > 0 ) {
@@ -50,10 +62,10 @@ public class PlantPresenter {
 			String failed = temp.get(selection).getName();
 			for (int x = 0; x<model.plantComponents.size(); x++)
 			{
-				if(model.plantComponents(x).getName.equals(failed)) { // code to specify element of <plantComponents>, toggle its operational state, remove it from <plantComponents> and add it to <failedComponents>
-					model.plantComponents(x).setOperational(false);
-					model.failedComponents.add(plantComponents(x));
-					plantComponents.remove(x);
+				if(model.plantComponents.get(x).getName.equals(failed)) { // code to specify element of <plantComponents>, toggle its operational state, remove it from <plantComponents> and add it to <failedComponents>
+					model.plantComponents.get(x).setOperational(false);
+					model.failedComponents.add(plantComponents.get(x));
+					plantComponents.remove(plantComponents.get(x));
 					break;			
 				}
 			}
