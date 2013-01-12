@@ -55,7 +55,7 @@ public class Pump extends PlantComponent {
 	}
 	
 	public boolean checkFailure() {
-		super.checkFailure();
+		return super.checkFailure();
 		//Insert implementation 
 	}
 }

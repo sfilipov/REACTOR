@@ -1,12 +1,15 @@
 package simulator;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 public class PlantPresenter {
 
-	private Plant model;
+	public Plant model;
 	
 	public PlantPresenter(Plant model)
 	{
-		this.model = model;
+		this.model = model;		
 	}
 	
 	public void saveState(String filename){
@@ -22,8 +25,8 @@ public class PlantPresenter {
 			model.plantComponents.get(i).updateState();
 		}
 		for (int z = 0; z<model.beingRepaired.size(); z++) {
-			model.beingRepaired.get(i).decTimeStepsRemaning();
-			int temp = model.beingRepaired.get(i).getTimeStepsRemaining();
+			model.beingRepaired.get(z).decTimeStepsRemaining();
+			int temp = model.beingRepaired.get(z).getTimeStepsRemaining();
 			if(temp == 0) {
 				//remove from beingRepaired and add to plantComponents
 				
@@ -35,11 +38,12 @@ public class PlantPresenter {
 	}
 	
 	public void repairComponent(String name) { // name of component to be repaired
-		List<PlantComponents> temp = model.getFailedComponents(); 
+		List<PlantComponent> temp = model.getFailedComponents(); 
 		for(int i = 0; i<temp.size(); i++) {
-			if(temp.getName().equals(name))
+			if(temp.get(i).toString().equals(name))
 			{
-				model.beingRepaired.add(temp.get(i));
+			    Repair x = new Repair(temp.get(i), temp.get(i).getRepairTime());
+				model.beingRepaired.add(x);
 				model.failedComponents.remove(model.failedComponents.get(i)); 
 				break;
 			}
@@ -52,19 +56,19 @@ public class PlantPresenter {
 		
 		for (int i = 0; i<model.plantComponents.size(); i++)
 		{
-			if(model.plantComponents.get(i).checkFailures() = true)
-				temp.add(plantComponents.get(i));
+			if(model.plantComponents.get(i).checkFailure() == true)
+				temp.add(model.plantComponents.get(i));
 		}
 		int NUMBER_FAILED = temp.size();
 		if(NUMBER_FAILED > 0 ) {
 			Random random = new Random();
 			int selection = random.nextInt(NUMBER_FAILED);
-			String failed = temp.get(selection).getName();
+			String failed = temp.get(selection).toString();
 			for (int x = 0; x<model.plantComponents.size(); x++)
 			{
-				if(model.plantComponents.get(x).getName.equals(failed)) { // code to specify element of <plantComponents>, toggle its operational state, remove it from <plantComponents> and add it to <failedComponents>
+				if(model.plantComponents.get(x).toString().equals(failed.toString())) { // code to specify element of <plantComponents>, toggle its operational state, remove it from <plantComponents> and add it to <failedComponents>
 					model.plantComponents.get(x).setOperational(false);
-					model.failedComponents.add(plantComponents.get(x));
+					model.failedComponents.add(model.plantComponents.get(x));
 					model.plantComponents.remove(model.plantComponents.get(x));
 					break;			
 				}
