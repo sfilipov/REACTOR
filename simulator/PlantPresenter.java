@@ -65,7 +65,7 @@ public class PlantPresenter {
 				if(model.plantComponents.get(x).getName.equals(failed)) { // code to specify element of <plantComponents>, toggle its operational state, remove it from <plantComponents> and add it to <failedComponents>
 					model.plantComponents.get(x).setOperational(false);
 					model.failedComponents.add(plantComponents.get(x));
-					plantComponents.remove(plantComponents.get(x));
+					model.plantComponents.remove(model.plantComponents.get(x));
 					break;			
 				}
 			}
