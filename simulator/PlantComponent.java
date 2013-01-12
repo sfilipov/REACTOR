@@ -202,5 +202,15 @@ abstract class PlantComponent {
 	/**
 	 * Runs all checks for the component and changes it's operational state if needed. 
 	 */
-	abstract public void checkFailure();
+	public boolean checkFailure() {
+		Random random = new Random();    
+		double checkFailure = random.nextDouble();
+		if(failureRate >= checkFailure) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
 }

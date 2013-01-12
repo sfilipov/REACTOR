@@ -45,7 +45,8 @@ public class Valve extends PlantComponent {
 		// (Valves do nothing themselves)
 	}
 	
-	public void checkFailure() {
+	public boolean checkFailure() {
+		super.checkFailre();
 		//Insert implementation 
 	}	
 	

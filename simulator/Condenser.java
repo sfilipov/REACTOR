@@ -27,7 +27,13 @@ class Condenser extends PlantComponent {
 	}
 
 	@Override
-	void checkFailure() {
+	boolean checkFailure() {
+		if(pressure>MAX_Pressure) {
+			return true; 			// Run method to damamge Condenser
+		}
+		else {
+			return super.checkFailure();
+		}
 	}
 	
 	

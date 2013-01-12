@@ -54,7 +54,8 @@ public class Pump extends PlantComponent {
 		// Chill out with the valves, sippin' on Gin & Juice.
 	}
 	
-	public void checkFailure() {
+	public boolean checkFailure() {
+		super.checkFailure();
 		//Insert implementation 
 	}
 }
