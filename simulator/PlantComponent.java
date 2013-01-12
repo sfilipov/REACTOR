@@ -1,5 +1,7 @@
 package simulator;
 
+import java.util.Random;
+
 abstract class PlantComponent {
 
 	//The values of the constants below are for illustration.
