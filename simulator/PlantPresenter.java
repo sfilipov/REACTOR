@@ -35,7 +35,29 @@ public class PlantPresenter {
 	}
 	
 	public void checkFailures() {
+		List<PlantComponent> temp;		
+		temp = new ArrayList<PlantComponent>();
 		
+		for (int i = 0; i<model.plantComponents.size(); i++)
+		{
+			if(model.plantComponents(i).checkFailures() = true)
+				temp.add(plantComponents(i));
+		}
+		int NUMBER_FAILED = temp.size();
+		if(NUMBER_FAILED > 0 ) {
+			Random random = new Random();
+			int selection = random.nextInt(NUMBER_FAILED);
+			String failed = temp.get(selection).getName();
+			for (int x = 0; x<model.plantComponents.size(); x++)
+			{
+				if(model.plantComponents(x).getName.equals(failed)) { // code to specify element of <plantComponents>, toggle its operational state, remove it from <plantComponents> and add it to <failedComponents>
+					model.plantComponents(x).setOperational(false);
+					model.failedComponents.add(plantComponents(x));
+					plantComponents.remove(x);
+					break;			
+				}
+			}
+		}		
 	}
 	
 	public void togglePaused() {
