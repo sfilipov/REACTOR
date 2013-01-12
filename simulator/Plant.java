@@ -95,32 +95,7 @@ public class Plant {
 		if (!this.failedComponents.contains(failedComponent)) {
 			this.failedComponents.add(failedComponent);
 		}
-	}
-	public void checkFailures() {
-		List<PlantComponent> temp;
-		temp = new ArrayList<PlantComponent>();
-		for (plantComponents p : PlantComponent)
-		{
-			if(p.checkFailures() = true)
-				temp.add(p);
-		}
-		int NUMBER_FAILED = temp.size();
-		if(NUMBER_FAILED > 0 ) {
-			Random random = new Random();
-			int selection = random.nextInt(NUMBER_FAILED);
-			String failed = temp.get(selection).getName();
-			for (plantComponents p : PlantComponent)
-			{
-				if(p.getName.equals(failed)) { // code to specify element of <plantComponents>, toggle its operational state, remove it from <plantComponents> and add it to <failedComponents>
-					p.setOperation(false);
-					failedComponents.add(p);
-					int index_of_component = PlantComponent.indexOf(p);				
-					plantComponents.remove(index_of_component);
-					break;			
-				}
-			}
-		}		
-	}
+	}	
 	
 	public void repairs() {
 		
