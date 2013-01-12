@@ -1,3 +1,5 @@
+package simulator; 
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -14,7 +16,7 @@ public class Interface extends JFrame implements KeyListener
    
     public Interface()
     {
-        super("Interface");
+        super("REACTOR");
         setSize(900,500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JPanel pane = new JPanel();           
