@@ -152,8 +152,8 @@ public class ConnectorPipe extends PlantComponent {
 	}
 
 	@Override
-	public boolean checkFailure() {
-		return false; // a ConnectorPipe will never fail.
+	public void checkFailure() {
+		// Do nothing.
 	}
 
 }
