@@ -57,8 +57,21 @@ public class Reactor extends PlantComponent {
 		//Insert implementation
 	}
 	
-	public void checkFailure() {
-		//Insert implementation 
+	public boolean checkFailure() {
+		if(temperature>MAX_TEMPERATURE) {
+			damageReactor();		// code to damage the reactor			
+		}
+		if (pressure>MAX_PRESSURE) {
+			damageReactor();		// code to damage the reactor			
+			}
+		return super.checkFailure();	
+	}
+	
+	public void damageReactor() {
+		health = health - 10;	// 10 is a variable, and should be changed to adjust how much damage the reactor takes
+		if (health<= 0) {
+			// code to end game
+		}
 	}
 	
 	private final class ControlRod {
