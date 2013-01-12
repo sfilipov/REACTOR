@@ -22,8 +22,16 @@ public class PlantPresenter {
 		// This will do things in Reactor and Condenser objects etc.
 	}
 	
-	public void repairComponent() {
-		// 
+	public void repairComponent(String name) { // name of component to be repaired
+		List<PlantComponents> temp = model.getFailedComponents(); 
+		for(int i = 0; i<temp.temp.size(); i++) {
+			if(temp.getName().equals(name))
+			{
+				model.beingRepaired.add(temp(i));
+				model.failedComponents.remove(i);
+				break;
+			}
+		}
 	}
 	
 	public void checkFailures() {
