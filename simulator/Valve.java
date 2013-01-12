@@ -34,10 +34,10 @@ public class Valve extends PlantComponent {
 	}
 	
 	/**
-	 * Toggles the state of the valve.
+	 * Set the state of the valve.
 	 */
-	public void toggleState() {
-		open = !open;
+	public void setOpen(boolean open) {
+		this.open = open;
 	}
 	
 	public void updateState() {
@@ -46,7 +46,7 @@ public class Valve extends PlantComponent {
 	}
 	
 	public boolean checkFailure() {
-		super.checkFailre();
+		return super.checkFailure();
 		//Insert implementation 
 	}	
 	
