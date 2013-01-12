@@ -26,15 +26,24 @@ class Condenser extends PlantComponent {
 	public void updateState() {
 	}
 
+
 	@Override
 	public boolean checkFailure() {
-		if(pressure > MAX_PRESSURE) {
-			return true; 			// Run method to damage Condenser
-		}
-		else {
-			return super.checkFailure();
-		}
+		if(pressure>MAX_Pressure) {
+			damageCondenser();			// Method to damage Condenser
+		}			
+		return super.checkFailure();		
+
 	}
+	
+	public void damageCondenser() {
+		health = health - 10;			//10 is a variable and can be changed to adjust how much the condenser is damamged each time
+		if (health <= 0) {
+			//code to end game
+		}	
+	}	
+	
+}
 	
 	
 }
