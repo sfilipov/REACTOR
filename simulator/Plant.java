@@ -16,18 +16,86 @@ public class Plant {
 	
 	/**
 	 * This is the default constructor that is used 
-	 * when there is no saved game (i.e. new installation)
+	 * when there is no saved game (i.e. new game)
 	 */
-	public Plant(String operatorName) {
-		this.operatorName = operatorName;
+	public Plant() {
+		this.operatorName = "";
 		this.timeStepsUsed = 0;
 		this.score = 0;
 		this.beingRepaired = new ArrayList<Repair>();
 		this.isPaused = false;
 		this.highScores = new ArrayList<Integer>(20);
 		this.plantComponents = new ArrayList<PlantComponent>();
-		//Insert all plant components into plantComponents
 		this.failedComponents = new ArrayList<PlantComponent>();
 	}
+
+	public String getOperatorName() {
+		return operatorName;
+	}
+
+	public void setOperatorName(String operatorName) {
+		this.operatorName = operatorName;
+	}
+
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
+	}
+
+	public boolean isPaused() {
+		return isPaused;
+	}
+
+	public void setPaused(boolean isPaused) {
+		this.isPaused = isPaused;
+	}
+
+	public List<Integer> getHighScores() {
+		return highScores;
+	}
+
+	public void setHighScores(List<Integer> highScores) {
+		this.highScores = highScores;
+	}
+
+	public int getTimeStepsUsed() {
+		return timeStepsUsed;
+	}
+	
+	public void updateTimeStepsUsed(int n) {
+		if (n > 0) timeStepsUsed += n;
+	}
+
+	public List<Repair> getBeingRepaired() {
+		return beingRepaired;
+	}
+
+	public List<PlantComponent> getPlantComponents() {
+		return plantComponents;
+	}
+	
+	public void setPlantComponents(List<PlantComponent> plantComponents) {
+		this.plantComponents = plantComponents;
+	}
+	
+	public List<PlantComponent> getFailedComponents() {
+		return failedComponents;
+	}
+	
+	/**
+	 * Adds failedComponent to failedComponents List, as long as it is
+	 * not already in the list.
+	 * 
+	 * @param failedComponent
+	 */
+	public void addFailedComponent(PlantComponent failedComponent) {
+		if (!this.failedComponents.contains(failedComponent)) {
+			this.failedComponents.add(failedComponent);
+		}
+	}
+	
 	
 }
