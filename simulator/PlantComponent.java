@@ -9,7 +9,7 @@ abstract class PlantComponent {
 	public final static int DEFAULT_REPAIR_TIME = 10;
 	public final static boolean DEFAULT_OPERATIONAL = true;
 	public final static boolean DEFAULT_PRESSURISED = false;
-	
+
 	private double failureRate;
 	private int repairTime;
 	private boolean operational;
@@ -17,6 +17,7 @@ abstract class PlantComponent {
 	private PlantComponent input;
 	private PlantComponent output;
 	private Flow flowOut;
+	private Random random;
 	
 	/**
 	 * Creates a new operational PlantComponent object
@@ -28,6 +29,7 @@ abstract class PlantComponent {
 		this.operational = DEFAULT_OPERATIONAL;
 		this.pressurised = DEFAULT_PRESSURISED;
 		this.flowOut = new Flow();
+		random = new Random();
 	}
 	
 	/**
@@ -42,7 +44,8 @@ abstract class PlantComponent {
 		this.repairTime = repairTime;
 		this.operational = DEFAULT_OPERATIONAL;
 		this.pressurised = DEFAULT_PRESSURISED;
-		this.flowOut = new Flow(); 
+		this.flowOut = new Flow();
+		random = new Random();
 	}
 	
 	/**
@@ -60,6 +63,7 @@ abstract class PlantComponent {
 		this.operational = operational;
 		this.pressurised = DEFAULT_PRESSURISED;
 		this.flowOut = new Flow();
+		random = new Random();
 	}
 	
 	/**
@@ -78,6 +82,7 @@ abstract class PlantComponent {
 		this.operational = operational;
 		this.pressurised = pressurised;
 		this.flowOut = new Flow();
+		random = new Random();
 	}
 	
 	/**
@@ -96,6 +101,7 @@ abstract class PlantComponent {
 		this.operational = operational;
 		this.pressurised = pressurised;
 		this.flowOut = flow;
+		random = new Random();
 	}
 
 	/**
@@ -205,7 +211,6 @@ abstract class PlantComponent {
 	 * Runs all checks for the component and changes it's operational state if needed. 
 	 */
 	public boolean checkFailure() {
-		Random random = new Random();    
 		double checkFailure = random.nextDouble();
 		if(failureRate >= checkFailure) {
 			return true;
@@ -214,5 +219,4 @@ abstract class PlantComponent {
 			return false;
 		}
 	}
-	
 }
