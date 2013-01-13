@@ -5,9 +5,9 @@ public class Repair {
 	private PlantComponent plantComponent;
 	private int timeStepsRemaining;
 	
-	Repair (PlantComponent componentToRepair, int repairTime) {
+	Repair (PlantComponent componentToRepair) {
 		this.plantComponent = componentToRepair;
-		this.timeStepsRemaining = repairTime;
+		this.timeStepsRemaining = componentToRepair.getRepairTime();
 	}
 	
 	/**
