@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-public class Interface extends JFrame implements KeyListener 
+public class TextUI extends JFrame implements KeyListener 
 {
 	
 	private final static String REACTOR_ASCII =  
@@ -28,7 +28,7 @@ public class Interface extends JFrame implements KeyListener
     private final static String prompt = "> ";
     
     
-    public Interface(PlantPresenter presenter)
+    public TextUI(PlantPresenter presenter)
     {
     	super("REACTOR");
     	this.presenter = presenter;
