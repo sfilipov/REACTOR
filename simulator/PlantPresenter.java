@@ -21,18 +21,19 @@ public class PlantPresenter {
 	}
 	
 	public void updatePlant() {
-		for (int i = 0; i<model.plantComponents.size(); i++) {
-			model.plantComponents.get(i).updateState();
+		List<PlantComponent> plantComponents = model.getPlantComponents();
+		for (PlantComponent plantComponent : plantComponents) {
+			plantComponent.updateState();
 		}
-		for (int z = 0; z<model.beingRepaired.size(); z++) {
-			model.beingRepaired.get(z).decTimeStepsRemaining();
-			int temp = model.beingRepaired.get(z).getTimeStepsRemaining();
-			if(temp == 0) {
+
+		List<Repair> beingRepaired = model.getBeingRepaired();
+		for (Repair repair : beingRepaired) {
+			repair.decTimeStepsRemaining();
+			int timeStepsRemaining = repair.getTimeStepsRemaining();
+			if(timeStepsRemaining <= 0) {
 				//remove from beingRepaired and add to plantComponents
-				
 			}
 		}
-			
 		// Go through all components and call updateState()
 		// This will do things in Reactor and Condenser objects etc.
 	}

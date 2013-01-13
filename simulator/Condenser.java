@@ -8,12 +8,13 @@ class Condenser extends PlantComponent {
 	private final static int DEFAULT_PRESSURE = 0;
 	private final static int DEFAULT_WATER_LEVEL = 1000;
 	private final static int DEFAULT_STEAM_INPUT = 0;
+	private final static int DAMAGE_PER_TURN = 10;
 	private int temperature;
 	private int pressure;
 	private int waterLevel;
 	private int health;
 	private int steamInput;
-	
+
 	Condenser() {
 		this.health = MAX_HEALTH;
 		this.temperature = DEFAULT_TEMPERATURE;
@@ -29,21 +30,17 @@ class Condenser extends PlantComponent {
 
 	@Override
 	public boolean checkFailure() {
-		if(pressure>MAX_PRESSURE) {
+		if(pressure >= MAX_PRESSURE) {
 			damageCondenser();			// Method to damage Condenser
-		}			
-		return super.checkFailure();		
+		}
+		return super.checkFailure();
 
 	}
 	
 	public void damageCondenser() {
-		health = health - 10;			//10 is a variable and can be changed to adjust how much the condenser is damamged each time
+		health = health - DAMAGE_PER_TURN;
 		if (health <= 0) {
 			//code to end game
-		}	
-	}	
-	
-}
-	
-	
+		}
+	}
 }
