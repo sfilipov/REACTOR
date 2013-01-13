@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.Random;
 public class PlantPresenter {
 
-	public Plant model;
+	public Plant plant;
 	
-	public PlantPresenter(Plant model)
+	public PlantPresenter(Plant plant)
 	{
-		this.model = model;		
+		this.plant = plant;		
 	}
 	
 	public void saveState(String filename){
@@ -21,57 +21,57 @@ public class PlantPresenter {
 	}
 	
 	public void updatePlant() {
-		List<PlantComponent> plantComponents = model.getPlantComponents();
+		List<PlantComponent> plantComponents = plant.getPlantComponents();
 		for (PlantComponent plantComponent : plantComponents) {
 			plantComponent.updateState();
 		}
 
-		List<Repair> beingRepaired = model.getBeingRepaired();
-		for (Repair repair : beingRepaired) {
-			repair.decTimeStepsRemaining();
-			int timeStepsRemaining = repair.getTimeStepsRemaining();
-			if(timeStepsRemaining <= 0) {
-				//remove from beingRepaired and add to plantComponents
-			}
-		}
+
 		// Go through all components and call updateState()
 		// This will do things in Reactor and Condenser objects etc.
 	}
 	
-	public void repairComponent(PlantComponent toBeRepairedComponent) { // name of component to be repaired
-		List<PlantComponent> failedComponents = model.getFailedComponents(); 
-		List<Repair> beingRepairedComponents = model.getBeingRepaired();
+	public void startRepairingComponent(PlantComponent toBeRepairedComponent) { // name of component to be repaired
+		List<PlantComponent> failedComponents = plant.getFailedComponents(); 
+		List<Repair> beingRepairedComponents = plant.getBeingRepaired();
 		if (failedComponents.contains(toBeRepairedComponent)) {
-			Repair repair = new Repair(toBeRepairedComponent, toBeRepairedComponent.getRepairTime());
+			Repair repair = new Repair(toBeRepairedComponent);
 			beingRepairedComponents.add(repair);
-			failedComponents.remove(toBeRepairedComponent);
+		}
+	}
+	
+	public void checkForRepairedComponents() {
+		List<Repair> beingRepaired = plant.getBeingRepaired();
+		List<PlantComponent> failedComponents = plant.getFailedComponents();
+		for (Repair repair : beingRepaired) {
+			repair.decTimeStepsRemaining();
+			int timeStepsRemaining = repair.getTimeStepsRemaining();
+			if(timeStepsRemaining <= 0) {
+				failedComponents.remove(repair.getPlantComponent());
+				beingRepaired.remove(repair);
+			}
 		}
 	}
 	
 	public void checkFailures() {
-		List<PlantComponent> temp;		
-		temp = new ArrayList<PlantComponent>();
+		List<PlantComponent> plantComponents  = plant.getPlantComponents();
+		List<PlantComponent> failingComponents = new ArrayList<PlantComponent>();
+		int faults = 0;
 		
-		for (int i = 0; i<model.plantComponents.size(); i++)
-		{
-			if(model.plantComponents.get(i).checkFailure() == true)
-				temp.add(model.plantComponents.get(i));
-		}
-		int NUMBER_FAILED = temp.size();
-		if(NUMBER_FAILED > 0 ) {
-			Random random = new Random();
-			int selection = random.nextInt(NUMBER_FAILED);
-			String failed = temp.get(selection).toString();
-			for (int x = 0; x<model.plantComponents.size(); x++)
-			{
-				if(model.plantComponents.get(x).toString().equals(failed.toString())) { // code to specify element of <plantComponents>, toggle its operational state, remove it from <plantComponents> and add it to <failedComponents>
-					model.plantComponents.get(x).setOperational(false);
-					model.failedComponents.add(model.plantComponents.get(x));
-					model.plantComponents.remove(model.plantComponents.get(x));
-					break;			
-				}
+		//Checks all components if they randomly fail
+		for (PlantComponent component : plantComponents) {
+			if (component.checkFailure()) {
+				failingComponents.add(component);
+				faults++;
 			}
-		}		
+		}
+		
+		//Picks only one of all randomly failing components.
+		if(faults > 0) {
+			Random random = new Random();
+			int selection = random.nextInt(faults);
+			plant.addFailedComponent(failingComponents.get(selection));	
+		}
 	}
 	
 	public void togglePaused() {
