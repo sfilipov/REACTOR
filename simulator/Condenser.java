@@ -108,6 +108,7 @@ class Condenser extends PlantComponent {
 	 */
 	private int heating(int steamTemperature, int steamVolumeIn) {
 		int tempDiff = this.temperature - steamTemperature;
+		if (this.steamVolume < 1) return 0; // stops a potential divide by 0 on the next line.
 		return tempDiff * (1 - ((this.steamVolume - steamVolumeIn)/this.steamVolume));
 	}
 	

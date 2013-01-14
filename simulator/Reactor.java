@@ -127,6 +127,7 @@ public class Reactor extends PlantComponent {
 	 */
 	private int cooldown(int waterTemperature, int pumpedIn) {
 		int tempDiff = this.temperature - waterTemperature; 
+		if (this.waterVolume < 1) return 0; // stops a potential divide by 0 on the next line.
 		return tempDiff * (1 - ((this.waterVolume - pumpedIn)/this.waterVolume));
 	}
 	
