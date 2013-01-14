@@ -86,8 +86,13 @@ public class PlantPresenter {
 		//Checks all components if they randomly fail
 		for (PlantComponent component : plantComponents) {
 			if (component.checkFailure()) {
-				failingComponents.add(component);
-				faults++;
+				if (component instanceof Reactor || component instanceof Condenser) {
+					//GAME OVER
+				}
+				else {
+					failingComponents.add(component);
+					faults++;
+				}
 			}
 		}
 		

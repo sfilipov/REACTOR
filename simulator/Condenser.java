@@ -88,6 +88,14 @@ class Condenser extends PlantComponent {
 		//updatePressure();
 		checkIfDamaging();
 	}
+	
+	@Override
+	public boolean checkFailure() {
+		if (health <= 0)
+			return true;
+		else
+			return false;
+	}
 
 	private void updateTemperature() {
 		int changeInTemp;
@@ -147,8 +155,5 @@ class Condenser extends PlantComponent {
 		
 	private void damageCondenser() {
 		health -= HEALTH_CHANGE_WHEN_DAMAGING;
-		if (health <= 0) {
-			this.setOperational(false); // condenser dead!
-		}
 	}
 }

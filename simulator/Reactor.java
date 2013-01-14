@@ -179,6 +179,7 @@ public class Reactor extends PlantComponent {
 		}
 	}
 	
+	//Needs improving to take into account the difference between current and max value
 	private void checkIfDamaging() {
 		if(this.temperature > MAX_TEMPERATURE) {
 			damageReactor();					
@@ -189,10 +190,15 @@ public class Reactor extends PlantComponent {
 	}
 	
 	private void damageReactor() {
-		health -= HEALTH_CHANGE_WHEN_DAMAGING;	
-		if (health<= 0) {
-			this.setOperational(false); // Dead!
-		}
+		health -= HEALTH_CHANGE_WHEN_DAMAGING;
+	}
+	
+	@Override
+	public boolean checkFailure() {
+		if (health <= 0)
+			return true;
+		else
+			return false;
 	}
 	
 	private final class ControlRod {
