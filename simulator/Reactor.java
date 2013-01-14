@@ -32,6 +32,7 @@ public class Reactor extends PlantComponent {
 		this.pressure = DEFAULT_PRESSURE;
 		this.waterVolume = DEFAULT_WATER_VOLUME;
 		this.steamVolume = DEFAULT_STEAM_VOLUME;
+		this.getFlowOut().setType(FlowType.Steam);
 	}
 	
 	// ----------- Getters & Setters ---------------
