@@ -6,13 +6,16 @@ public class Valve extends PlantComponent {
 	private final static boolean DEFAULT_OPEN_STATE = true; 
 	
 	private boolean open;
+	private int ID;
 	
 	/**
 	 * Creates a new valve that is connected to the specified
 	 * two plant components.
 	 */
-	public Valve () {
+	public Valve (int ID, FlowType type) {
 		super(VALVE_FAILURE_RATE, VALVE_REPAIR_RATE);
+		this.getFlowOut().setType(type);
+		this.ID = ID;
 		this.open = DEFAULT_OPEN_STATE;
 	}
 	
@@ -20,11 +23,22 @@ public class Valve extends PlantComponent {
 	 * Creates a new valve and sets it's position (open/closed)
 	 * @param open true if the valve is open
 	 */
-	public Valve (boolean open) {
+	public Valve (int ID, FlowType type, boolean open) {
 		super(VALVE_FAILURE_RATE, VALVE_REPAIR_RATE);
+		this.getFlowOut().setType(type);
+		this.ID = ID;
 		this.open = open;
 	}
 	
+	/**
+	 * Gets the ID of this valve.
+	 * @return ID of this valve.
+	 */
+	public int getID()
+	{
+		return ID;
+	}
+
 	/**
 	 * Returns true if the valve is open.
 	 * @return true if the valve is open
