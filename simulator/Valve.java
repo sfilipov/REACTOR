@@ -40,11 +40,13 @@ public class Valve extends PlantComponent {
 		this.open = open;
 	}
 	
+	@Override
 	public void updateState() {
 		// Just chill like a valve.
 		// (Valves do nothing themselves)
 	}
 	
+	@Override
 	public boolean checkFailure() {
 		return super.checkFailure();
 		//Insert implementation 

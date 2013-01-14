@@ -37,20 +37,26 @@ public class PlantPresenter {
 		return plant.getHighScores();
 	}
 	
+	public void step() {
+		checkFailures();
+		updateBeingRepaired();
+		updatePlant();
+		updateFlow();
+	}
+	
 	// ----------------		Internal methods	----------------
 	
+
+	// Go through all components and call updateState()
+	// This will do things in Reactor and Condenser objects etc.
 	private void updatePlant() {
 		List<PlantComponent> plantComponents = plant.getPlantComponents();
 		for (PlantComponent plantComponent : plantComponents) {
 			plantComponent.updateState();
 		}
-
-
-		// Go through all components and call updateState()
-		// This will do things in Reactor and Condenser objects etc.
 	}
 	
-	private void startRepairingComponent(PlantComponent toBeRepairedComponent) { // name of component to be repaired
+	private void startRepairing(PlantComponent toBeRepairedComponent) { // name of component to be repaired
 		List<PlantComponent> failedComponents = plant.getFailedComponents(); 
 		List<Repair> beingRepairedComponents = plant.getBeingRepaired();
 		if (failedComponents.contains(toBeRepairedComponent)) {
@@ -59,7 +65,7 @@ public class PlantPresenter {
 		}
 	}
 	
-	private void checkForRepairedComponents() {
+	private void updateBeingRepaired() {
 		List<Repair> beingRepaired = plant.getBeingRepaired();
 		List<PlantComponent> failedComponents = plant.getFailedComponents();
 		for (Repair repair : beingRepaired) {
@@ -80,8 +86,13 @@ public class PlantPresenter {
 		//Checks all components if they randomly fail
 		for (PlantComponent component : plantComponents) {
 			if (component.checkFailure()) {
-				failingComponents.add(component);
-				faults++;
+				if (component instanceof Reactor || component instanceof Condenser) {
+					//GAME OVER
+				}
+				else {
+					failingComponents.add(component);
+					faults++;
+				}
 			}
 		}
 		
@@ -93,7 +104,7 @@ public class PlantPresenter {
 		}
 	}
 	
-	private void calcSystemFlow() {
+	private void updateFlow() {
 		// Complex shit!
 	}
 	
