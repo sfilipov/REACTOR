@@ -14,8 +14,7 @@ public class Reactor extends PlantComponent {
 	private final static int UNSAFE_HEATING_MULTIPLIER = 2; // amount to increase 
 	private final static int WATER_STEAM_RATIO = 2; // 1:2 water to steam
 	private final static int HEALTH_CHANGE_WHEN_DAMAGING = 10;
-	private final static double EVAP_MULTIPLIER = 0.5; // conversion from temperature to amount evaporated.
-	private final static double COOL_MULTIPLIER = 0.1; // conversion from water volume pumped in to temperature decrease. 
+	private final static double EVAP_MULTIPLIER = 0.5; // conversion from temperature to amount evaporated. 
 	
 	private int temperature;
 	private int pressure;
@@ -103,25 +102,32 @@ public class Reactor extends PlantComponent {
 	
 	public void updateState() {
 		updateTemperature();
-		checkIfDamaging();
+		//updatePressure();
 		evaporateWater();
+		checkIfDamaging();
 	}
 	
 	private void updateTemperature() {
 		int changeInTemp;
-		changeInTemp = heating(controlRod.getPercentageLowered()) - cooldown(this.waterPumpedIn);
+		Flow flowIn = this.getInput().getFlowOut();
+		int waterTemperature = flowIn.getTemperature();
+		
+		changeInTemp = heating(controlRod.getPercentageLowered()) - cooldown(waterTemperature, this.waterPumpedIn);
 		this.temperature += changeInTemp;
 	}
 	
 	/**
 	 * Calculates the amount of cooldown in the reactor for this
-	 * time step. Depends upon how much cool water has been pumped in.
+	 * time step. Dependent upon the temperature and volume of water being
+	 * pumped into the reactor.
 	 * 
+	 * @param waterTemperature temperature of the water being pumped into the reactor.
 	 * @param pumpedIn amount of water pumped in since the last timeStep.
 	 * @return how much to reduce the temperature by. 
 	 */
-	private int cooldown(int pumpedIn) {
-		return (int) Math.round(pumpedIn * COOL_MULTIPLIER);
+	private int cooldown(int waterTemperature, int pumpedIn) {
+		int tempDiff = this.temperature - waterTemperature; 
+		return tempDiff * (1 - ((this.waterVolume - pumpedIn)/this.waterVolume));
 	}
 	
 	/**
