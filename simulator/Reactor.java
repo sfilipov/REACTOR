@@ -183,7 +183,7 @@ public class Reactor extends PlantComponent {
 	}
 	
 	private void damageReactor() {
-		health = health - HEALTH_CHANGE_WHEN_DAMAGING;	
+		health -= HEALTH_CHANGE_WHEN_DAMAGING;	
 		if (health<= 0) {
 			this.setOperational(false); // Dead!
 		}
