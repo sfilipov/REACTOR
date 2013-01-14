@@ -3,19 +3,28 @@ package simulator;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.text.NavigationFilter;
+import javax.swing.text.Position;
+
 
 public class TextUI extends JFrame implements KeyListener 
 {
-	
+	private final static String START_TEXT = 
+			"To start a name game type\t\t: newgame\n"
+            +"To load a saved game type\t\t: loadgame\n"
+            +"To view highscore type\t\t\t: highscores\n"
+            +"To view credits type\t\t\t: credits\n";
+	// This looks weird because the backslashes need escaping!
 	private final static String REACTOR_ASCII =  
-    " _______  _______  _______  _______ _________ _______  _______\n" +
-    "(  ____ )(  ____ \\(  ___  )(  ____ \\\\__   __/(  ___  )(  ____ )\n" +
-    "| (    )|| (    \\/| (   ) || (    \\/   ) (   | (   ) || (    )|\n" +
-    "| (____)|| (__    | (___) || |         | |   | |   | || (____)|\n" +
-    "|     __)|  __)   |  ___  || |         | |   | |   | ||     __)\n" +
-    "| (\\ (   | (      | (   ) || |         | |   | |   | || (\\ (\n" +
-    "| ) \\ \\__| (____/\\| )   ( || (____/\\   | |   | (___) || ) \\ \\__\n" +
-    "|/   \\__/(_______/|/     \\|(_______/   )_(   (_______)|/   \\__/\n";
+    " _______  _______  _______  _______ _________ _______  _______\n"
+    +"(  ____ )(  ____ \\(  ___  )(  ____ \\\\__   __/(  ___  )(  ____ )\n"
+    +"| (    )|| (    \\/| (   ) || (    \\/   ) (   | (   ) || (    )|\n"
+    +"| (____)|| (__    | (___) || |         | |   | |   | || (____)|\n"
+    +"|     __)|  __)   |  ___  || |         | |   | |   | ||     __)\n"
+    +"| (\\ (   | (      | (   ) || |         | |   | |   | || (\\ (\n" 
+    +"| ) \\ \\__| (____/\\| )   ( || (____/\\   | |   | (___) || ) \\ \\__\n"
+    +"|/   \\__/(_______/|/     \\|(_______/   )_(   (_______)|/   \\__/\n"
+    +"==============================================================\n";
 
 	private PlantPresenter presenter;
 	
@@ -83,11 +92,12 @@ public class TextUI extends JFrame implements KeyListener
         inputTextConstraints.anchor = GridBagConstraints.SOUTH;
         layout.setConstraints(Scrolled, inputTextConstraints);        
         parentPanel.add(Scrolled); 
-        
+                
         
         inputBox.setBackground(Color.BLACK);
         inputBox.setForeground(Color.WHITE);
         inputBox.setFont(default_font);
+        inputBox.setCaretColor(inputBox.getForeground());
         
         GridBagConstraints inputBoxConstraints = new GridBagConstraints();
         inputBoxConstraints.gridx = 0;
@@ -141,18 +151,14 @@ public class TextUI extends JFrame implements KeyListener
     
     private void startUp()
     {
-        outputText.setText("To start a name game type\t\t: newgame\n"
-                          +"To load a saved game type\t\t: loadgame\n"
-                          +"To view highscore type\t\t\t: highscores\n"
-                          +"To view credits type\t\t\t: credits\n"
-                          + REACTOR_ASCII);
-                          
+        outputText.setText(START_TEXT + REACTOR_ASCII);
         inputText.setText(prompt);
         inputBox.setText(prompt);
     }
     
     public void keyReleased(KeyEvent k)
-    { 
+    {
+    	
     }
     
     public void keyTyped(KeyEvent k)
@@ -160,56 +166,20 @@ public class TextUI extends JFrame implements KeyListener
     }
     
     public void keyPressed(KeyEvent k) 
-    {
+    {    	
         int keyCode = k.getKeyCode();
-        	switch (keyCode) {
-				case KeyEvent.VK_ENTER:
-					String words = inputBox.getText().toLowerCase().substring(prompt.length());
-					// parse(words);
-					inputText.setText(inputText.getText() + words + "\n" + prompt); 
-					inputBox.setText(prompt);
-					break;
-				case KeyEvent.VK_BACK_SPACE:
-					if (inputBox.getText().length() <= prompt.length()) inputBox.setText(prompt);
-					break;
-					
-        	}
-        
-        /**int keyCode = k.getKeyCode();
-         switch (keyCode) {
-             case KeyEvent.VK_ENTER:
-                try{
-            int Temp = inputText.getLineCount();
-            
-            int Start = (inputText.getLineStartOffset(Temp-2));
-            
-            int End = (inputText.getLineEndOffset(Temp-2))-1;
-            inputText.select(Start, End);
-            String Stuff = inputText.getSelectedText();
-            
-            if(Stuff.equals("Running"))
-            {
-                 outputText.setText(outputText.getText() + "Correct \n"); 
-                 inputText.setText(inputText.getText() + Stuff + "\n");
-                 Temp = inputText.getLineCount();                           
-                 End = (inputText.getLineEndOffset(Temp));
-                 llowe.select(End, End+1);
-                 
-            } 
-            else
-            {
-                llowerText.setText(llowerText.getText()+ "\n");
-                Temp = llowerText.getLineCount();                       
-                End = (llowerText.getLineEndOffset(Temp));
-                llowerText.select(End, End+1);
-            }
-           }
-           catch(Exception e)
-           {
-           }           
-             break;             
+        switch (keyCode) {
+			case KeyEvent.VK_ENTER:
+				actUponInput();
+				break;	
         }
-        **/
+    }
+    
+    private void actUponInput() {
+    	String command = inputBox.getText().toLowerCase().substring(prompt.length());
+		// parse(command);
+		inputText.setText(inputText.getText() + command + "\n" + prompt); 
+		inputBox.setText(prompt);
     }
  
     
