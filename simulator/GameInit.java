@@ -21,7 +21,7 @@ public class GameInit {
 	public GameInit() {
 		model = new Plant();
 		presenter = new PlantPresenter(model);
-		view = new TextUI(null);
+		view = new TextUI(presenter);
 	}
 	
 	public static void main(String[] args) {
