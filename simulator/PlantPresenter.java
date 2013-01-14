@@ -12,15 +12,34 @@ public class PlantPresenter {
 		this.plant = plant;		
 	}
 	
-	public void saveState(String filename){
+	/* ----------------		Methods	for UI to call	----------------
+	 * There is a method for each command that can be given by the
+	 * user. 
+	 */
+	
+	public void newGame() {
+		
+	}
+	
+	public void saveGame(String filename){
 		// write serialised Plant to file?
 	}
 	
-	public void loadState(String filename) {
+	public void loadGame(String filename) {
 		// read plant object from file
 	}
 	
-	public void updatePlant() {
+	public void togglePaused() {
+		
+	}
+	
+	public List<Integer> getHighScores() {
+		return plant.getHighScores();
+	}
+	
+	// ----------------		Internal methods	----------------
+	
+	private void updatePlant() {
 		List<PlantComponent> plantComponents = plant.getPlantComponents();
 		for (PlantComponent plantComponent : plantComponents) {
 			plantComponent.updateState();
@@ -31,7 +50,7 @@ public class PlantPresenter {
 		// This will do things in Reactor and Condenser objects etc.
 	}
 	
-	public void startRepairingComponent(PlantComponent toBeRepairedComponent) { // name of component to be repaired
+	private void startRepairingComponent(PlantComponent toBeRepairedComponent) { // name of component to be repaired
 		List<PlantComponent> failedComponents = plant.getFailedComponents(); 
 		List<Repair> beingRepairedComponents = plant.getBeingRepaired();
 		if (failedComponents.contains(toBeRepairedComponent)) {
@@ -40,7 +59,7 @@ public class PlantPresenter {
 		}
 	}
 	
-	public void checkForRepairedComponents() {
+	private void checkForRepairedComponents() {
 		List<Repair> beingRepaired = plant.getBeingRepaired();
 		List<PlantComponent> failedComponents = plant.getFailedComponents();
 		for (Repair repair : beingRepaired) {
@@ -53,7 +72,7 @@ public class PlantPresenter {
 		}
 	}
 	
-	public void checkFailures() {
+	private void checkFailures() {
 		List<PlantComponent> plantComponents  = plant.getPlantComponents();
 		List<PlantComponent> failingComponents = new ArrayList<PlantComponent>();
 		int faults = 0;
@@ -74,11 +93,7 @@ public class PlantPresenter {
 		}
 	}
 	
-	public void togglePaused() {
-		
-	}
-	
-	public void calcSystemFlow() {
+	private void calcSystemFlow() {
 		// Complex shit!
 	}
 	
