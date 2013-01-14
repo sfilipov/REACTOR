@@ -5,21 +5,33 @@ public class Pump extends PlantComponent {
 	private final static int DEFAULT_RPM = 0;
 	private final static boolean DEFAULT_ON_STATE = true;
 	
+	private int ID;
 	private int rpm;
 	private boolean on;
 	
-	public Pump() {
+	public Pump(int ID) {
 		super();
+		this.ID = ID;
 		setRpm(DEFAULT_RPM);
 		this.on = DEFAULT_ON_STATE;
 	}
 	
-	public Pump(double failureRate, int repairTime, int rpm) {
+	public Pump(int ID, double failureRate, int repairTime, int rpm) {
 		super(failureRate, repairTime);
+		this.ID = ID;
 		setRpm(rpm);
 		this.on = DEFAULT_ON_STATE;
 	}
 	
+	/**
+	 * Returns the ID of this pump.
+	 * @return the ID of this pump.
+	 */
+	public int getID()
+	{
+		return ID;
+	}
+
 	/**
 	 * Returns the current RPM value of the pump.
 	 * Note: If the pump is off, the RPM returned will be zero.
@@ -56,6 +68,5 @@ public class Pump extends PlantComponent {
 	
 	public boolean checkFailure() {
 		return super.checkFailure();
-		//Insert implementation 
 	}
 }
