@@ -11,26 +11,22 @@ import java.util.List;
  */
 public abstract class ReactorUtils
 {
-	private static Plant newPlant;
-	private static Reactor reactor;
-	private static Condenser condenser;
-	//private static Turbine turbine; 
-	private static Valve steamValve1;
-	private static Valve steamValve2;
-	private static Valve waterValve1;
-	private static Valve waterValve2;
-	private static Pump pump1;
-	private static Pump pump2;
-	private static ConnectorPipe connectorPipe1;
-	private static ConnectorPipe connectorPipe2;
-	private static ConnectorPipe connectorPipe3;
-	private static ConnectorPipe connectorPipe4;
+	private Plant newPlant;
+	private Reactor reactor;
+	private Condenser condenser;
+	//private Turbine turbine; 
+	private Valve steamValve1;
+	private Valve steamValve2;
+	private Valve waterValve1;
+	private Valve waterValve2;
+	private Pump pump1;
+	private Pump pump2;
+	private ConnectorPipe connectorPipe1;
+	private ConnectorPipe connectorPipe2;
+	private ConnectorPipe connectorPipe3;
+	private ConnectorPipe connectorPipe4;
 	
-	/**
-	 * Instantiates and returns a new Plant object.
-	 * @return new Plant object.
-	 */
-	public static Plant createNewPlant() {
+	public Plant createNewPlant() {
 		newPlant = new Plant();
 		instantiateComponents();
 		setupComponentReferences();
@@ -38,7 +34,7 @@ public abstract class ReactorUtils
 		return newPlant;
 	}
 
-	private static void instantiateComponents() {
+	private void instantiateComponents() {
 		reactor = new Reactor();
 		condenser = new Condenser();
 		//turbine = new Turbine(); 
@@ -54,7 +50,7 @@ public abstract class ReactorUtils
 		connectorPipe4 = new ConnectorPipe();
 	}
 	
-	private static void setupComponentReferences() {
+	private void setupComponentReferences() {
 		setupInputOutputReferences(reactor, connectorPipe1);
 		setupInputOutputReferences(connectorPipe1, steamValve1);
 		setupInputOutputReferences(connectorPipe1, steamValve2);
@@ -79,7 +75,7 @@ public abstract class ReactorUtils
 		setupInputOutputReferences(connectorPipe4, reactor);
 	}
 	
-	private static List<PlantComponent> makeComponentList()
+	private List<PlantComponent> makeComponentList()
 	{
 		List<PlantComponent> plantComponents = new ArrayList<PlantComponent>();
 		plantComponents.add(reactor);
@@ -104,7 +100,7 @@ public abstract class ReactorUtils
 	 * @param from PlantComponent that flow is coming out of.
 	 * @param to PlantComponent that flow is moving into.
 	 */
-	private static void setupInputOutputReferences(PlantComponent from, PlantComponent to) {
+	private void setupInputOutputReferences(PlantComponent from, PlantComponent to) {
 		if (from instanceof ConnectorPipe) {
 			((ConnectorPipe) from).addOutput(to);
 		} else {
