@@ -3,7 +3,9 @@ package simulator;
 public class Valve extends PlantComponent {
 	private final static double VALVE_FAILURE_RATE = 0.0;
 	private final static int VALVE_REPAIR_RATE = 0;
-	private final static boolean DEFAULT_OPEN_STATE = true; 
+	private final static boolean DEFAULT_OPEN_STATE = true;
+	
+	private final static int MAX_STEAM_FLOW = 500; // Maximum steam flow through allowed. 
 	
 	private boolean open;
 	private int ID;
@@ -52,6 +54,10 @@ public class Valve extends PlantComponent {
 	 */
 	public void setOpen(boolean open) {
 		this.open = open;
+	}
+	
+	public int getMaxSteamFlow() {
+		return MAX_STEAM_FLOW;
 	}
 	
 	@Override
