@@ -1,19 +1,24 @@
 package simulator;
 
-public class Highscore {
+public class HighScore implements Comparable<HighScore> {
 	private String name;
-	private int highscore;
+	private int highScore;
 	
-	Highscore(String name, int highscore) {
+	HighScore(String name, int highScore) {
 		this.name = name;
-		this.highscore = highscore;
+		this.highScore = highScore;
 	}
 	
 	public String getName() {
 		return name;
 	}
 	
-	public int getHighscore() {
-		return highscore;
+	public int getHighScore() {
+		return highScore;
+	}
+	
+	@Override
+	public int compareTo(HighScore h) {
+		return this.highScore - h.highScore;
 	}
 }

@@ -39,7 +39,7 @@ public class PlantPresenter {
 	 * Returns the highscores list.
 	 * @return list of highscores.
 	 */
-	public List<Integer> getHighScores() {
+	public List<HighScore> getHighScores() {
 		return plant.getHighScores();
 	}
 	
