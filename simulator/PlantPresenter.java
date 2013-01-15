@@ -48,8 +48,8 @@ public class PlantPresenter {
 	}
 	
 	/**
-	 * Returns true if command was successful.
-	 * @return true if command was successful
+	 * Returns true if command was successful, false if a valve with that ID was not found
+	 * @return true if command was successful, false if a valve with that ID was not found
 	 */
 	public boolean setValve (int valveID, boolean open) {
 		List<Valve> valves = plant.getValves();
