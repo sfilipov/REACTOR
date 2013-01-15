@@ -10,7 +10,7 @@ public class Plant {
 	private int score;
 	private List<Repair> beingRepaired;
 	private boolean isPaused;
-	private List<Integer> highScores;
+	private List<HighScore> highScores;
 	private List<PlantComponent> plantComponents;
 	private List<PlantComponent> failedComponents;
 	private Reactor reactor;
@@ -20,13 +20,13 @@ public class Plant {
 	 * This is the default constructor that is used 
 	 * when there is no saved game (i.e. new game)
 	 */
-	public Plant() {
-		this.operatorName = "";
+	public Plant(String operatorName) {
+		this.operatorName = operatorName;
 		this.timeStepsUsed = 0;
 		this.score = 0;
 		this.beingRepaired = new ArrayList<Repair>();
 		this.isPaused = false;
-		this.highScores = new ArrayList<Integer>(20);
+		this.highScores = new ArrayList<HighScore>(20);
 		this.plantComponents = new ArrayList<PlantComponent>();
 		this.failedComponents = new ArrayList<PlantComponent>();
 	}
@@ -81,11 +81,12 @@ public class Plant {
 		}
 	}
 
-	public List<Integer> getHighScores() {
+	public List<HighScore> getHighScores() {
 		return highScores;
 	}
-
-	public void setHighScores(List<Integer> highScores) {
+	
+	//Possibly remove
+	public void setHighScores(List<HighScore> highScores) {
 		this.highScores = highScores;
 	}
 

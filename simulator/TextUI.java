@@ -5,6 +5,9 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.text.NavigationFilter;
 import javax.swing.text.Position;
+import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class TextUI extends JFrame implements KeyListener 
@@ -34,18 +37,19 @@ public class TextUI extends JFrame implements KeyListener
     private JTextField inputBox = new JTextField(30);
     private final static Font default_font = new Font("Monospaced",Font.PLAIN, 12);
     private final static String prompt = "> ";
-    
+    private State state;    
     
     public TextUI(PlantPresenter presenter)
     {
     	super("REACTOR");
     	this.presenter = presenter;
+    	this.state= State.Uninitialised;
         initWindow();
         startUp();     
     }
 
     private void initWindow() {
-    	setSize(900,500);
+    	setSize(1200,800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JPanel leftPanel = new JPanel();           
         GridBagLayout leftPanelGridBagLayout = new GridBagLayout();
@@ -151,7 +155,6 @@ public class TextUI extends JFrame implements KeyListener
     private void startUp()
     {
         outputText.setText(START_TEXT + REACTOR_ASCII);
-        inputText.setText(prompt);
         inputBox.setText(prompt);
     }
     
@@ -175,11 +178,178 @@ public class TextUI extends JFrame implements KeyListener
     }
     
     private void actUponInput() {
-    	String command = inputBox.getText().toLowerCase().substring(prompt.length());
-		// parse(command);
-		inputText.setText(inputText.getText() + command + "\n" + prompt); 
+    	String command = inputBox.getText().substring(prompt.length());
+    	print(prompt + command);
+    	parse(command.toLowerCase());
 		inputBox.setText(prompt);
     }
- 
     
+    private void print(String output) {
+    	outputText.append(output + "\n");
+    }
+    
+    //--------------- Parsing ----------------
+    
+	private void parse(String input) {
+		if (state == State.Normal)
+			parseNormal(input);
+		else if (state == State.Uninitialised)
+			parseUninitialised(input);
+		else if (state == State.NewGame)
+			parseNewGame(input);
+	}
+	
+	private void parseNormal(String input) {
+		Scanner scanner = new Scanner(input);
+		if (!scanner.hasNext()) {
+			print("");
+		}
+		else {
+			String command = scanner.next();
+			if (command.equals("newgame") && !scanner.hasNext()) {
+				doNewGame();
+			}
+	    	else if (command.equals("loadgame") && !scanner.hasNext()) {
+	    		doLoadGame();
+	    	}
+	    	else if (command.equals("highscores") && !scanner.hasNext()) {
+	    		printHighScores();
+	    	}
+	    	else if (command.equals("credits") && !scanner.hasNext()) {
+	    		printCredits();
+	    	}
+	    	else if (command.equals("set") && scanner.hasNext()) {
+	    		String component = scanner.next();
+	    		if (component.equals("valve") && scanner.hasNextInt()) {
+	    			String valveIDString = scanner.next();
+	    			int valveID = Integer.parseInt(valveIDString);
+	    			if (scanner.hasNext()) {
+	    				String valveCommand = scanner.next();
+		    			if (valveCommand.equals("open") || valveCommand.equals("close")) {
+		    				boolean success;
+		    				if (valveCommand.equals("open")) {
+		    					success = presenter.setValve(valveID, true);
+		    				}
+		    				else { //close
+		    					success = presenter.setValve(valveID, false);
+		    				}
+		    				if (success)
+		    					print("Valve successfully set");
+		    				else
+		    					print("Valve was not successfully set. Try another (smaller) valve ID.");
+		    			}
+	    				else {
+	    					printNotValidValve();
+	    				}
+	    			}
+		    		else {
+		    			printNotValidValve();
+		    		}
+	    		}
+	    		else if (component.equals("valve") && !scanner.hasNextInt()) {
+	    			printNotValidValve();
+	    		}
+	    		else {
+	    			print("Incorrect usage of set command - set valve, set controlrods, set pump");
+	    		}
+	    	}
+	    	else if (command.equals("set") && !scanner.hasNext()) {
+	    		print("Incorrect usage of set command - set valve, set controlrods, set pump");
+	    	}
+			else {
+				print("Not a valid command.");
+			}
+		}
+		scanner.close();
+	}
+
+    private void parseUninitialised(String input) {
+    	Scanner scanner = new Scanner(input);
+		if (!scanner.hasNext()) {
+			//Nothing
+		}
+		else {
+	    	String next = scanner.next();
+	    	if (next.equals("newgame") && !scanner.hasNext()) {
+	    		doNewGame();
+	    	}
+	    	else if (next.equals("loadgame") && !scanner.hasNext()) {
+	    		doLoadGame();
+	    	}
+	    	else if (next.equals("highscores") && !scanner.hasNext()) {
+	    		print("Ask for high scores after the game is initialised.");
+	    	}
+	    	else if (next.equals("credits") && !scanner.hasNext()) {
+	    		printCredits();
+	    	}
+	    	else {
+	    		print("The game is uninitialised. Please use one of the following commands: newgame, loadgame, highscores, credits.");
+	    	}
+		}
+		scanner.close();
+    }
+	
+	private void parseNewGame(String input) {
+		if (input.length() > 30) {
+			print("Your name is too long - please use a name shorter than 30 characters.");
+		}
+		else {
+			presenter.newGame(input);
+			state = State.Normal;
+			print("New game started.");
+		}
+	}
+	
+	//-------------- Methods used inside parsing -------------------
+	
+	private void doNewGame() {
+		state = State.NewGame;
+		print("Please enter your name.");
+	}
+	
+	private void doLoadGame() {
+		if (presenter.loadGame()) {
+			state = State.Normal;
+			print("Game loaded from file.");
+		}
+		else {
+			print("Loading a game was not successful: check if a savegame file exists or start a new game.");
+		}
+	}
+	
+	private void printHighScores() {
+		List<HighScore> highScores = presenter.getHighScores();
+		if (!highScores.isEmpty()) {
+    		for (HighScore highScore : highScores) {
+    			print(highScore.getName() + ": " + highScore.getHighScore());
+    		}
+		}
+		else {
+			print("No high scores yet.");
+		}
+	}
+	
+	private void printCredits() {
+		print("Created by:");
+		print("Ali, Brad, John, James, Simeon and Will");
+	}
+	
+	private void printNotValidValve() {
+		print("Not a valid command. Format for setting a valve: set valve id newState");
+		print("where \"id\" is the ID of the valve and \"newState\" is either \"open\" or \"close\"");
+		print("i.e. \"set valve 2 open\" or \"set valve 4 close\"");
+	}
+	
+//	private boolean isAlphanumeric(String string) {
+//		for (Character ch : string.toCharArray()) {
+//			if (!Character.isLetterOrDigit(ch)) {
+//				return false;
+//			}
+//		}
+//		return true;
+//	}
+	
+	private enum State {
+		Normal, NewGame, YesNo, Uninitialised;
+	}
 }

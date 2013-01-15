@@ -14,15 +14,13 @@ package simulator;
  */
 public class GameInit {
 	
-	private Plant model;
 	private TextUI view;
 	private PlantPresenter presenter; 
 	private ReactorUtils utils;
 	
 	public GameInit() {
 		utils = new ReactorUtils();
-		model = utils.createNewPlant();
-		presenter = new PlantPresenter(model);
+		presenter = new PlantPresenter();
 		view = new TextUI(presenter);
 	}
 	

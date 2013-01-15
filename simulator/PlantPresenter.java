@@ -7,9 +7,9 @@ public class PlantPresenter {
 
 	public Plant plant; 
 	
-	public PlantPresenter(Plant plant)
+	public PlantPresenter()
 	{
-		this.plant = plant;
+		//Nothing
 	}
 	
 	/* ----------------		Methods	for UI to call	----------------
@@ -17,17 +17,21 @@ public class PlantPresenter {
 	 * user. 
 	 */
 	
-	public void newGame() {
+	public void newGame(String operatorName) {
 		ReactorUtils utils = new ReactorUtils();
-		this.plant = utils.createNewPlant();
+		this.plant = utils.createNewPlant(operatorName);
 	}
 	
-	public void saveGame(String filename){
+	//Returns true if saving a game was successful.
+	public boolean saveGame(){
 		// write serialised Plant to file?
+		return false;
 	}
 	
-	public void loadGame(String filename) {
+	//Returns true if loading a game was successful.
+	public boolean loadGame() {
 		// read plant object from file
+		return false;
 	}
 	
 	public void togglePaused() {
@@ -38,8 +42,23 @@ public class PlantPresenter {
 	 * Returns the highscores list.
 	 * @return list of highscores.
 	 */
-	public List<Integer> getHighScores() {
+	public List<HighScore> getHighScores() {
 		return plant.getHighScores();
+	}
+	
+	/**
+	 * Returns true if command was successful, false if a valve with that ID was not found
+	 * @return true if command was successful, false if a valve with that ID was not found
+	 */
+	public boolean setValve (int valveID, boolean open) {
+		List<Valve> valves = plant.getValves();
+		for (Valve valve : valves) {
+			if (valveID == valve.getID()) {
+				valve.setOpen(open);
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/**
@@ -55,6 +74,8 @@ public class PlantPresenter {
 			updatePlant();
 		}
 	}
+	
+	
 	
 	// ----------------		Internal methods	----------------
 	
