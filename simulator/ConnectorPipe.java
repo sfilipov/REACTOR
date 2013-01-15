@@ -146,6 +146,15 @@ public class ConnectorPipe extends PlantComponent {
 		}
 	}
 	
+	/**
+	 * Reset's the number of blocked outputs & inputs back to zero.
+	 * Should be called before 
+	 */
+	public void resetState() {
+		this.numBlockedOutputs = 0;
+		this.numBlockedInputs = 0;
+	}
+	
 	@Override
 	public void updateState() {
 		// Do nothing.
