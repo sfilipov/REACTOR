@@ -1,7 +1,20 @@
 package simulator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.List;
+import java.util.Map.Entry;
 
+/**
+ * ConnectorPipe class only really extends PlantComponent for consistency
+ * in the model.
+ * It is effectively completely invisible to the user and is used to connect
+ * up multiple paths between components in the system.
+ * 
+ * @author WillFrew
+ *
+ */
 public class ConnectorPipe extends PlantComponent {
 	/* Since these objects will effectively be invisible to the user,
 	 * they should never fail!
@@ -9,17 +22,13 @@ public class ConnectorPipe extends PlantComponent {
 	private final static double FAILURE_RATE = 0.0d;
 	private final static int REPAIR_TIME = 0;
 	
-	private ArrayList<PlantComponent> additionalInputs;
-	private ArrayList<PlantComponent> additionalOutputs;
-	private int numBlockedOutputs;
-	private int numBlockedInputs;
+	private List<PlantComponent> inputs;
+	private Map<PlantComponent, Boolean> outputs; // Boolean is true if that path is blocked.
 	
 	public ConnectorPipe() {
 		super(FAILURE_RATE, REPAIR_TIME);
-		this.additionalInputs = new ArrayList<PlantComponent>();
-		this.additionalOutputs = new ArrayList<PlantComponent>();
-		this.numBlockedOutputs = 0;
-		this.numBlockedInputs = 0;
+		this.inputs = new ArrayList<PlantComponent>();
+		this.outputs = new HashMap<PlantComponent, Boolean>();
 	}
 	
 	/**
@@ -32,7 +41,7 @@ public class ConnectorPipe extends PlantComponent {
 		if (this.getInput() != null) {
 			this.setInput(input);
 		} else {
-			this.additionalInputs.add(input);
+			this.inputs.add(input);
 		}
 	}
 	
@@ -43,11 +52,7 @@ public class ConnectorPipe extends PlantComponent {
 	 * 				 ConnectorPipe.
 	 */
 	public void addOutput(PlantComponent output) {
-		if (this.getOutput() != null) {
-			this.setOutput(output);
-		} else {
-			this.additionalOutputs.add(output);
-		}
+		this.outputs.put(output, false);
 	}
 	
 	/**
@@ -58,7 +63,7 @@ public class ConnectorPipe extends PlantComponent {
 	 * 		   to this ConnectorPipe.
 	 */
 	public ArrayList<PlantComponent> getInputs() {
-		ArrayList<PlantComponent> inputs = new ArrayList<PlantComponent>(additionalInputs);
+		ArrayList<PlantComponent> inputs = new ArrayList<PlantComponent>(this.inputs);
 		inputs.add(this.getInput());
 		return inputs;
 	}
@@ -71,88 +76,34 @@ public class ConnectorPipe extends PlantComponent {
 	 * 		   of this ConnectorPipe.
 	 */
 	public ArrayList<PlantComponent> getOutputs() {
-		ArrayList<PlantComponent> outputs = new ArrayList<PlantComponent>(additionalOutputs);
-		outputs.add(this.getOutput());
-		return outputs;
-	}
-
-	/**
-	 * @return the number of paths out of this ConnectorPipe that are not 
-	 * 		   blocked by closed valves.
-	 */
-	public int numOutputs() {
-		return numActualOutputs() - numBlockedOutputs;
+		return new ArrayList<PlantComponent>(this.outputs.keySet());
 	}
 	
 	/**
-	 * @return number of actual components connected to the outputs of this
-	 * 		   ConnectorPipe.
+	 * Returns the outputs map of component & blocked boolean.
+	 * @return the outputs map of component & blocked boolean.
 	 */
-	private int numActualOutputs() {
-		int numOuts = 0;
-		if (this.getOutput() != null) numOuts = 1;
-		for (PlantComponent pc : this.additionalOutputs) {
-			if (pc != null) numOuts += 1;
-		}
-		return numOuts;
+	public Map<PlantComponent, Boolean> getOutputsMap() {
+		return this.outputs;
 	}
 	
-	/**
-	 * @return the number of paths into this ConnectorPipe that are not  
-	 * 		   blocked by closed valves.
-	 */
-	public int numInputs() {
-		return numActualInputs() - numBlockedInputs;
-	}
-
-	/**
-	 * @return number of actual components connected to the inputs of this
-	 * 		   ConnectorPipe.
-	 */
-	private int numActualInputs() {
-		int numIns = 0;
-		if (this.getInput() != null) numIns = 1;
-		for (PlantComponent pc : this.additionalInputs) {
-			if (pc != null) numIns += 1;
-		}
-		return numIns;
-	} 
-	
-	/**
-	 * Increments the number of blocked inputs to this ConnectorPipe.
-	 * @throws IllegalStateException if the number of blocked inputs
-	 * 								 exceeds the number of actual inputs. 
-	 */
-	public void incBlockedInputs() throws IllegalStateException {
-		if (++numBlockedInputs > numActualInputs()) {
-			throw new IllegalStateException("ConnectorPipe: Number of " + 
-											"blocked inputs should " +
-											"never exceed the number " +
-											"of actual inputs!");
+	public void setComponentBlocked(PlantComponent blockedComponent) {
+		if (this.outputs.containsKey(blockedComponent)) {
+			this.outputs.put(blockedComponent, true);
+		} else {
+			throw new IllegalArgumentException("Attempt to block an output with a reference to a "
+											  +"component that is not an output to this connector "
+											  +"pipe.");
 		}
 	}
 	
 	/**
-	 * Increments the number of blocked outputs from this ConnectorPipe.
-	 * @throws IllegalStateException if the number of blocked outputs
-	 * 								 exceeds the number of actual outputs. 
-	 */
-	public void incBlockedOutputs() throws IllegalStateException {
-		if (++numBlockedOutputs > numActualOutputs()) {
-			throw new IllegalStateException("ConnectorPipe: Number of " + 
-											"blocked outputs should " +
-											"never exceed the number " +
-											"of actual outputs!");
-		}
-	}
-	
-	/**
-	 * Reset's the number of blocked outputs & inputs back to zero.
-	 * Should be called before 
+	 * Reset's all the outputs to not-blocked.
 	 */
 	public void resetState() {
-		this.numBlockedOutputs = 0;
-		this.numBlockedInputs = 0;
+		for (Entry<PlantComponent, Boolean> entry : outputs.entrySet()) {
+			entry.setValue(false);
+		}
 	}
 	
 	@Override
