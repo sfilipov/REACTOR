@@ -87,6 +87,16 @@ public class ConnectorPipe extends PlantComponent {
 		return this.outputs;
 	}
 	
+	public void setComponentBlocked(PlantComponent blockedComponent) {
+		if (this.outputs.containsKey(blockedComponent)) {
+			this.outputs.put(blockedComponent, true);
+		} else {
+			throw new IllegalArgumentException("Attempt to block an output with a reference to a "
+											  +"component that is not an output to this connector "
+											  +"pipe.");
+		}
+	}
+	
 	/**
 	 * Reset's all the outputs to not-blocked.
 	 */
