@@ -9,7 +9,7 @@ import java.util.List;
  * @author WillFrew
  *
  */
-public abstract class ReactorUtils
+public class ReactorUtils
 {
 	private Plant newPlant;
 	private Reactor reactor;
