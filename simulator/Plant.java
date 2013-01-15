@@ -13,6 +13,7 @@ public class Plant {
 	private List<Integer> highScores;
 	private List<PlantComponent> plantComponents;
 	private List<PlantComponent> failedComponents;
+	private Reactor reactor;
 	
 	/**
 	 * This is the default constructor that is used 
@@ -51,6 +52,20 @@ public class Plant {
 
 	public void setPaused(boolean isPaused) {
 		this.isPaused = isPaused;
+	}
+	
+	public Reactor getReactor() {
+		if (this.reactor != null) {
+			return reactor;
+		} else {
+			for (PlantComponent pc : this.plantComponents) {
+				if (pc instanceof Reactor) {
+					this.reactor = (Reactor) pc;
+					return this.reactor;
+				}
+			}
+			return null; // No reactor found?!
+		}
 	}
 
 	public List<Integer> getHighScores() {
@@ -96,11 +111,5 @@ public class Plant {
 			this.failedComponents.add(failedComponent);
 		}
 	}	
-	
-	public void repairs() {
-		
-	}
-
-	
 	
 }
