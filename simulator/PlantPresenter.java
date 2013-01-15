@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.Random;
 public class PlantPresenter {
 
-	public Plant plant;
+	public Plant plant; 
 	
 	public PlantPresenter(Plant plant)
 	{
-		this.plant = plant;		
+		this.plant = plant;
 	}
 	
 	/* ----------------		Methods	for UI to call	----------------
@@ -18,7 +18,8 @@ public class PlantPresenter {
 	 */
 	
 	public void newGame() {
-		
+		ReactorUtils utils = new ReactorUtils();
+		this.plant = utils.createNewPlant();
 	}
 	
 	public void saveGame(String filename){
@@ -30,18 +31,30 @@ public class PlantPresenter {
 	}
 	
 	public void togglePaused() {
-		
+		this.plant.setPaused(!this.plant.isPaused());
 	}
 	
+	
+	/**
+	 * Returns the highscores list.
+	 * @return list of highscores.
+	 */
 	public List<Integer> getHighScores() {
 		return plant.getHighScores();
 	}
 	
-	public void step() {
-		checkFailures();
-		updateBeingRepaired();
-		updatePlant();
-		updateFlow();
+	/**
+	 * Advance the game by a number of time steps.
+	 * 
+	 * @param numSteps number of timesteps to advance the game by.
+	 */
+	public void step(int numSteps) {
+		for (int i = 0; i < numSteps; i++) {
+			checkFailures();
+			updateBeingRepaired();
+			updateFlow();
+			updatePlant();
+		}
 	}
 	
 	// ----------------		Internal methods	----------------
@@ -56,7 +69,7 @@ public class PlantPresenter {
 		}
 	}
 	
-	private void startRepairing(PlantComponent toBeRepairedComponent) { // name of component to be repaired
+	private void startRepairing(PlantComponent toBeRepairedComponent) {
 		List<PlantComponent> failedComponents = plant.getFailedComponents(); 
 		List<Repair> beingRepairedComponents = plant.getBeingRepaired();
 		if (failedComponents.contains(toBeRepairedComponent)) {
@@ -105,7 +118,20 @@ public class PlantPresenter {
 	}
 	
 	private void updateFlow() {
-		// Complex shit!
+		// Calc total flow from steam vol diff.
+		// For all closed valves, inc blocked input & output for adjoining connectorpipes.
+		// 
+	}
+	
+	private void calcConnectorFlowOut(ConnectorPipe connector) {
+		ArrayList<PlantComponent> inputs = connector.getInputs();
+		int totalFlow = 0;
+		int numOutputs = connector.numOutputs();
+		for (PlantComponent input : inputs) {
+			totalFlow += input.getFlowOut().getRate();
+		}
+		totalFlow = (numOutputs != 0) ? totalFlow / numOutputs : 0; // average the flow across all active outputs.
+		connector.getFlowOut().setRate(totalFlow);
 	}
 	
 }
