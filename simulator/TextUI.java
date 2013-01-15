@@ -221,13 +221,28 @@ public class TextUI extends JFrame implements KeyListener
 	    	else if (command.equals("set") && scanner.hasNext()) {
 	    		String component = scanner.next();
 	    		if (component.equals("valve") && scanner.hasNextInt()) {
-	    			String valveNumber = scanner.next();
+	    			String valveIDString = scanner.next();
+	    			int valveID = Integer.parseInt(valveIDString);
 	    			if (scanner.hasNext()) {
 	    				String valveCommand = scanner.next();
-	    				if (valveCommand.equals("open"))
-	    					print("Valve opened"); //Open valve
-	    				else if (valveCommand.equals("close"))
-	    					print("Valve closed"); //Close valve
+		    			if (valveCommand.equals("open") || valveCommand.equals("close")) {
+		    				boolean success;
+		    				if (valveCommand.equals("open")) {
+		    					success = presenter.setValve(valveID, true);
+		    				}
+		    				else { //close
+		    					success = presenter.setValve(valveID, false);
+		    				}
+		    				if (success)
+		    					print("Valve successfully set");
+		    				else
+		    					print("Valve was not successfully set. Try another (smaller) valve ID.");
+		    			}
+	    				else {
+	    					print("Not a valid command. Format for setting a valve: set valve id newState");
+	    					print("where \"id\" is the ID of the valve and \"newState\" is either \"open\" or \"close\"");
+	    					print("i.e. \"set valve 2 open\" or \"set valve 4 close\"");
+	    				}
 	    			}
 	    		}
 	    	}

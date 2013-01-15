@@ -48,6 +48,21 @@ public class PlantPresenter {
 	}
 	
 	/**
+	 * Returns true if command was successful.
+	 * @return true if command was successful
+	 */
+	public boolean setValve (int valveID, boolean open) {
+		List<Valve> valves = plant.getValves();
+		for (Valve valve : valves) {
+			if (valveID == valve.getID()) {
+				valve.setOpen(open);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
 	 * Advance the game by a number of time steps.
 	 * 
 	 * @param numSteps number of timesteps to advance the game by.
