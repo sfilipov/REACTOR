@@ -12,7 +12,7 @@ abstract class PlantComponent {
 
 	private double failureRate;
 	private int repairTime;
-	private boolean operational;
+	private boolean operational; //Possibly unnecessary
 	private boolean pressurised;
 	private PlantComponent input;
 	private PlantComponent output;

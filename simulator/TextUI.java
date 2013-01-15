@@ -5,6 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.text.NavigationFilter;
 import javax.swing.text.Position;
+import java.util.Scanner;
 
 
 public class TextUI extends JFrame implements KeyListener 
@@ -34,6 +35,7 @@ public class TextUI extends JFrame implements KeyListener
     private JTextField inputBox = new JTextField(30);
     private final static Font default_font = new Font("Monospaced",Font.PLAIN, 12);
     private final static String prompt = "> ";
+    private State state = State.Normal;
     
     
     public TextUI(PlantPresenter presenter)
@@ -150,8 +152,8 @@ public class TextUI extends JFrame implements KeyListener
     
     private void startUp()
     {
-        outputText.setText(START_TEXT + REACTOR_ASCII);
-        inputText.setText(prompt);
+        outputText.setText(START_TEXT + REACTOR_ASCII + prompt);
+        //inputText.setText(prompt);
         inputBox.setText(prompt);
     }
     
@@ -175,11 +177,69 @@ public class TextUI extends JFrame implements KeyListener
     }
     
     private void actUponInput() {
-    	String command = inputBox.getText().toLowerCase().substring(prompt.length());
-		// parse(command);
-		inputText.setText(inputText.getText() + command + "\n" + prompt); 
+    	String command = inputBox.getText().substring(prompt.length());
+    	print(command);
+    	String output = parse(command.toLowerCase());
+    	outputText.append(output + "\n" + prompt);
 		inputBox.setText(prompt);
     }
- 
     
+    private void print(String output) {
+    	if (!output.equals(""))
+    		outputText.append(output + "\n");
+    }
+    
+	private String parse(String input) {
+		if (state == State.Normal)
+			return parseNormal(input);
+		else if (state == State.NewGame)
+			return parseNewGame(input);
+		else
+			return "NOT POSSIBLE STRING";
+	}
+	
+	private String parseNormal(String input) {
+		Scanner scanner = new Scanner(input);
+		if (!scanner.hasNext()){
+			scanner.close();
+			return "";
+		}
+		else {
+			String next = scanner.next();
+			if (next.equals("newgame")) {
+				state = State.NewGame;
+				scanner.close();
+				return "Please enter your name.";
+			}
+			else
+				scanner.close();
+				return "ELSE";
+		}
+	}
+
+    
+	
+	private String parseNewGame(String input) {
+		if (input.length() > 30) {
+			return "Your name is too long - please use a name shorter than 30 characters.";
+		}
+		else {
+			presenter.newGame(input);
+			state = State.Normal;
+			return "New game started.";
+		}
+	}
+	
+//	private boolean isAlphanumeric(String string) {
+//		for (Character ch : string.toCharArray()) {
+//			if (!Character.isLetterOrDigit(ch)) {
+//				return false;
+//			}
+//		}
+//		return true;
+//	}
+	
+	private enum State {
+		Normal, NewGame, YesNo;
+	}
 }

@@ -26,8 +26,8 @@ public class ReactorUtils
 	private ConnectorPipe connectorPipe3;
 	private ConnectorPipe connectorPipe4;
 	
-	public Plant createNewPlant() {
-		newPlant = new Plant();
+	public Plant createNewPlant(String operatorName) {
+		newPlant = new Plant(operatorName);
 		instantiateComponents();
 		setupComponentReferences();
 		newPlant.setPlantComponents(makeComponentList());

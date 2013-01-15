@@ -7,9 +7,9 @@ public class PlantPresenter {
 
 	public Plant plant; 
 	
-	public PlantPresenter(Plant plant)
+	public PlantPresenter()
 	{
-		this.plant = plant;
+		//Nothing
 	}
 	
 	/* ----------------		Methods	for UI to call	----------------
@@ -17,9 +17,9 @@ public class PlantPresenter {
 	 * user. 
 	 */
 	
-	public void newGame() {
+	public void newGame(String operatorName) {
 		ReactorUtils utils = new ReactorUtils();
-		this.plant = utils.createNewPlant();
+		this.plant = utils.createNewPlant(operatorName);
 	}
 	
 	public void saveGame(String filename){
@@ -56,6 +56,8 @@ public class PlantPresenter {
 			updatePlant();
 		}
 	}
+	
+	
 	
 	// ----------------		Internal methods	----------------
 	
