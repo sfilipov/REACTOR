@@ -148,7 +148,7 @@ public class ConnectorPipe extends PlantComponent {
 	
 	@Override
 	public void updateState() {
-		// TODO sum active inputs & distribute to outputs.
+		// Do nothing.
 	}
 
 	@Override
