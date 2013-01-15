@@ -17,13 +17,16 @@ public class GameInit {
 	private Plant model;
 	private TextUI view;
 	private PlantPresenter presenter; 
+	private ReactorUtils utils;
 	
 	public GameInit() {
-		model = new Plant();
+		utils = new ReactorUtils();
+		model = utils.createNewPlant();
 		presenter = new PlantPresenter(model);
 		view = new TextUI(presenter);
 	}
 	
+	@SuppressWarnings("unused")
 	public static void main(String[] args) {
 		GameInit game = new GameInit();
 	}
