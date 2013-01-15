@@ -221,8 +221,7 @@ public class TextUI extends JFrame implements KeyListener
 	    	else if (command.equals("set") && scanner.hasNext()) {
 	    		String component = scanner.next();
 	    		if (component.equals("valve") && scanner.hasNextInt()) {
-	    			String valveIDString = scanner.next();
-	    			int valveID = Integer.parseInt(valveIDString);
+	    			int valveID = scanner.nextInt();
 	    			if (scanner.hasNext()) {
 	    				String valveCommand = scanner.next();
 		    			if (valveCommand.equals("open") || valveCommand.equals("close")) {
@@ -234,7 +233,7 @@ public class TextUI extends JFrame implements KeyListener
 		    					success = presenter.setValve(valveID, false);
 		    				}
 		    				if (success)
-		    					print("Valve successfully set");
+		    					print("Valve was successfully set");
 		    				else
 		    					print("Valve was not successfully set. Try another (smaller) valve ID.");
 		    			}
@@ -248,6 +247,47 @@ public class TextUI extends JFrame implements KeyListener
 	    		}
 	    		else if (component.equals("valve") && !scanner.hasNextInt()) {
 	    			printNotValidValve();
+	    		}
+	    		else if (component.equals("pump") && scanner.hasNextInt()) {
+	    			int pumpID = scanner.nextInt();
+	    			if (scanner.hasNext()) {
+	    				String pumpCommand = scanner.next();
+		    			if (pumpCommand.equals("on") || pumpCommand.equals("off")) {
+		    				boolean success;
+		    				if (pumpCommand.equals("on")) {
+		    					success = presenter.setPump(pumpID, true);
+		    				}
+		    				else { //close
+		    					success = presenter.setPump(pumpID, false);
+		    				}
+		    				if (success)
+		    					print("Pump was successfully set");
+		    				else
+		    					print("Pump was not successfully set. Try another (smaller) pump ID.");
+		    			}
+	    				else {
+	    					printNotValidPump();
+	    				}
+	    			}
+		    		else {
+		    			printNotValidPump();
+		    		}
+	    		}
+	    		else if (component.equals("pump") && !scanner.hasNextInt()) {
+	    			printNotValidPump();
+	    		}
+	    		else if (component.equals("controlrods") && scanner.hasNextInt()) {
+	    			int percentageLowered = scanner.nextInt();
+	    			if (percentageLowered >= 0 && percentageLowered <= 100 && !scanner.hasNext()) {
+	    				presenter.setControlRods(percentageLowered);
+	    				print("Control rods were successfully set.");
+	    			}
+	    			else {
+	    				print("Control rods have to be set to a value between 0 and 100 (i.e. \"set control rods 50\")");
+	    			}
+	    		}
+	    		else if (component.equals("controlrods") && !scanner.hasNextInt()) {
+	    			print("Please select a value for the control rods: set controlrods n (n is a number between 0 and 100)");
 	    		}
 	    		else {
 	    			print("Incorrect usage of set command - set valve, set controlrods, set pump");
@@ -338,6 +378,12 @@ public class TextUI extends JFrame implements KeyListener
 		print("Not a valid command. Format for setting a valve: set valve id newState");
 		print("where \"id\" is the ID of the valve and \"newState\" is either \"open\" or \"close\"");
 		print("i.e. \"set valve 2 open\" or \"set valve 4 close\"");
+	}
+	
+	private void printNotValidPump() {
+		print("Not a valid command. Format for setting a pump: set pump id newState");
+		print("where \"id\" is the ID of the pump and \"newState\" is either \"on\" or \"off\"");
+		print("i.e. \"set pump 2 on\" or \"set pump 1 off\"");
 	}
 	
 //	private boolean isAlphanumeric(String string) {

@@ -80,6 +80,14 @@ public class Plant {
 			return valvesList;
 		}
 	}
+	
+	public List<Pump> getPumps() {
+		ArrayList<Pump> pumpsList = new ArrayList<Pump>();
+		for (PlantComponent pc : this.plantComponents) {
+			if (pc instanceof Pump) pumpsList.add((Pump) pc);
+		}
+		return pumpsList;
+	}
 
 	public List<HighScore> getHighScores() {
 		return highScores;
