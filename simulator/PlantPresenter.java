@@ -118,9 +118,22 @@ public class PlantPresenter {
 	}
 	
 	private void updateFlow() {
-		// Calc total flow from steam vol diff.
-		// For all closed valves, inc blocked input & output for adjoining connectorpipes.
-		// 
+		List<Valve> valves = this.plant.getValves();
+		for (Valve v : valves) {
+			calcFlowAtValve(v);
+		}
+		// calc flow @ each valve.
+		// reset and update blocked paths at connectors
+		// divide flows by numOutput splits
+		// calc ConnectorFlowOuts 
+		// calc flow of water & steam out & into reactor/condenser. 
+	}
+	
+	private void calcFlowAtValve(Valve valve) {
+		if (!valve.isOpen()) {
+			valve.getFlowOut().setRate(0);
+			// block!
+		}
 	}
 	
 	private void calcConnectorFlowOut(ConnectorPipe connector) {
