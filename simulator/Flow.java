@@ -2,11 +2,11 @@ package simulator;
 
 public class Flow {
 	
-	private final static double DEFAULT_RATE = 0d;
+	private final static int DEFAULT_RATE = 0;
 	private final static FlowType DEFAULT_TYPE = FlowType.Water;
 	private final static int DEFAULT_TEMPERATURE = 0;
 	
-	private double rate;
+	private int rate;
 	private FlowType type;
 	private int temperature;
 
@@ -22,13 +22,13 @@ public class Flow {
 		this.type = type;
 	}
 	
-	public Flow(FlowType type, double rate) {
+	public Flow(FlowType type, int rate) {
 		this.rate = rate;
 		this.temperature = DEFAULT_TEMPERATURE;
 		this.type = type;
 	}
 	
-	public Flow(FlowType type, double rate, int temperature) {
+	public Flow(FlowType type, int rate, int temperature) {
 		this.rate = rate;
 		this.temperature = temperature;
 		this.type = type;
@@ -38,7 +38,7 @@ public class Flow {
 		return rate;
 	}
 
-	public void setRate(double rate) {
+	public void setRate(int rate) {
 		this.rate = rate;
 	}
 
