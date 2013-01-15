@@ -22,12 +22,16 @@ public class PlantPresenter {
 		this.plant = utils.createNewPlant(operatorName);
 	}
 	
-	public void saveGame(String filename){
+	//Returns true if saving a game was successful.
+	public boolean saveGame(){
 		// write serialised Plant to file?
+		return false;
 	}
 	
-	public void loadGame(String filename) {
+	//Returns true if loading a game was successful.
+	public boolean loadGame() {
 		// read plant object from file
+		return false;
 	}
 	
 	public void togglePaused() {

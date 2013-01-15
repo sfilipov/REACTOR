@@ -188,6 +188,8 @@ public class TextUI extends JFrame implements KeyListener
     	outputText.append(output + "\n");
     }
     
+    //--------------- Parsing ----------------
+    
 	private void parse(String input) {
 		if (state == State.Normal)
 			parseNormal(input);
@@ -199,23 +201,38 @@ public class TextUI extends JFrame implements KeyListener
 	
 	private void parseNormal(String input) {
 		Scanner scanner = new Scanner(input);
-		if (!scanner.hasNext()){
-			scanner.close();
+		if (!scanner.hasNext()) {
 			print("");
 		}
 		else {
-			String next = scanner.next();
-			if (next.equals("newgame") && !scanner.hasNext()) {
-				scanner.close();
-				state = State.NewGame;
-				print("Please enter your name.");
+			String command = scanner.next();
+			if (command.equals("newgame") && !scanner.hasNext()) {
+				doNewGame();
 			}
-	    	else if (next.equals("highscores") && !scanner.hasNext()) {
+	    	else if (command.equals("loadgame") && !scanner.hasNext()) {
+	    		doLoadGame();
+	    	}
+	    	else if (command.equals("highscores") && !scanner.hasNext()) {
 	    		printHighScores();
 	    	}
+	    	else if (command.equals("credits") && !scanner.hasNext()) {
+	    		printCredits();
+	    	}
+	    	else if (command.equals("set") && scanner.hasNext()) {
+	    		String component = scanner.next();
+	    		if (component.equals("valve") && scanner.hasNextInt()) {
+	    			String valveNumber = scanner.next();
+	    			if (scanner.hasNext()) {
+	    				String valveCommand = scanner.next();
+	    				if (valveCommand.equals("open"))
+	    					print("Valve opened"); //Open valve
+	    				else if (valveCommand.equals("close"))
+	    					print("Valve closed"); //Close valve
+	    			}
+	    		}
+	    	}
 			else {
-				scanner.close();
-				print("ELSE");
+				print("Not a valid command.");
 			}
 		}
 		scanner.close();
@@ -229,13 +246,10 @@ public class TextUI extends JFrame implements KeyListener
 		else {
 	    	String next = scanner.next();
 	    	if (next.equals("newgame") && !scanner.hasNext()) {
-	    		state = State.NewGame;
-				print("Please enter your name.");
+	    		doNewGame();
 	    	}
 	    	else if (next.equals("loadgame") && !scanner.hasNext()) {
-	    		state = State.Normal;
-	    		//Do some loading of the game
-	    		print("Game loaded from file.");
+	    		doLoadGame();
 	    	}
 	    	else if (next.equals("highscores") && !scanner.hasNext()) {
 	    		print("Ask for high scores after the game is initialised.");
@@ -258,6 +272,23 @@ public class TextUI extends JFrame implements KeyListener
 			presenter.newGame(input);
 			state = State.Normal;
 			print("New game started.");
+		}
+	}
+	
+	//-------------- Methods used inside parsing -------------------
+	
+	private void doNewGame() {
+		state = State.NewGame;
+		print("Please enter your name.");
+	}
+	
+	private void doLoadGame() {
+		if (presenter.loadGame()) {
+			state = State.Normal;
+			print("Game loaded from file.");
+		}
+		else {
+			print("Loading a game was not successful: check if a savegame file exists or start a new game.");
 		}
 	}
 	
