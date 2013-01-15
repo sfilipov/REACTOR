@@ -239,12 +239,22 @@ public class TextUI extends JFrame implements KeyListener
 		    					print("Valve was not successfully set. Try another (smaller) valve ID.");
 		    			}
 	    				else {
-	    					print("Not a valid command. Format for setting a valve: set valve id newState");
-	    					print("where \"id\" is the ID of the valve and \"newState\" is either \"open\" or \"close\"");
-	    					print("i.e. \"set valve 2 open\" or \"set valve 4 close\"");
+	    					printNotValidValve();
 	    				}
 	    			}
+		    		else {
+		    			printNotValidValve();
+		    		}
 	    		}
+	    		else if (component.equals("valve") && !scanner.hasNextInt()) {
+	    			printNotValidValve();
+	    		}
+	    		else {
+	    			print("Incorrect usage of set command - set valve, set controlrods, set pump");
+	    		}
+	    	}
+	    	else if (command.equals("set") && !scanner.hasNext()) {
+	    		print("Incorrect usage of set command - set valve, set controlrods, set pump");
 	    	}
 			else {
 				print("Not a valid command.");
@@ -324,6 +334,11 @@ public class TextUI extends JFrame implements KeyListener
 		print("Ali, Brad, John, James, Simeon and Will");
 	}
 	
+	private void printNotValidValve() {
+		print("Not a valid command. Format for setting a valve: set valve id newState");
+		print("where \"id\" is the ID of the valve and \"newState\" is either \"open\" or \"close\"");
+		print("i.e. \"set valve 2 open\" or \"set valve 4 close\"");
+	}
 	
 //	private boolean isAlphanumeric(String string) {
 //		for (Character ch : string.toCharArray()) {
