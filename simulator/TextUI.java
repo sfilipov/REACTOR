@@ -6,6 +6,8 @@ import javax.swing.*;
 import javax.swing.text.NavigationFilter;
 import javax.swing.text.Position;
 import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class TextUI extends JFrame implements KeyListener 
@@ -35,19 +37,19 @@ public class TextUI extends JFrame implements KeyListener
     private JTextField inputBox = new JTextField(30);
     private final static Font default_font = new Font("Monospaced",Font.PLAIN, 12);
     private final static String prompt = "> ";
-    private State state = State.Normal;
-    
+    private State state;    
     
     public TextUI(PlantPresenter presenter)
     {
     	super("REACTOR");
     	this.presenter = presenter;
+    	this.state= State.Uninitialised;
         initWindow();
         startUp();     
     }
 
     private void initWindow() {
-    	setSize(900,500);
+    	setSize(1200,800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JPanel leftPanel = new JPanel();           
         GridBagLayout leftPanelGridBagLayout = new GridBagLayout();
@@ -152,8 +154,7 @@ public class TextUI extends JFrame implements KeyListener
     
     private void startUp()
     {
-        outputText.setText(START_TEXT + REACTOR_ASCII + prompt);
-        //inputText.setText(prompt);
+        outputText.setText(START_TEXT + REACTOR_ASCII);
         inputBox.setText(prompt);
     }
     
@@ -178,57 +179,105 @@ public class TextUI extends JFrame implements KeyListener
     
     private void actUponInput() {
     	String command = inputBox.getText().substring(prompt.length());
-    	print(command);
-    	String output = parse(command.toLowerCase());
-    	outputText.append(output + "\n" + prompt);
+    	print(prompt + command);
+    	parse(command.toLowerCase());
 		inputBox.setText(prompt);
     }
     
     private void print(String output) {
-    	if (!output.equals(""))
-    		outputText.append(output + "\n");
+    	outputText.append(output + "\n");
     }
     
-	private String parse(String input) {
+	private void parse(String input) {
 		if (state == State.Normal)
-			return parseNormal(input);
+			parseNormal(input);
+		else if (state == State.Uninitialised)
+			parseUninitialised(input);
 		else if (state == State.NewGame)
-			return parseNewGame(input);
-		else
-			return "NOT POSSIBLE STRING";
+			parseNewGame(input);
 	}
 	
-	private String parseNormal(String input) {
+	private void parseNormal(String input) {
 		Scanner scanner = new Scanner(input);
 		if (!scanner.hasNext()){
 			scanner.close();
-			return "";
+			print("");
 		}
 		else {
 			String next = scanner.next();
-			if (next.equals("newgame")) {
+			if (next.equals("newgame") && !scanner.hasNext()) {
+				scanner.close();
 				state = State.NewGame;
-				scanner.close();
-				return "Please enter your name.";
+				print("Please enter your name.");
 			}
-			else
+	    	else if (next.equals("highscores") && !scanner.hasNext()) {
+	    		printHighScores();
+	    	}
+			else {
 				scanner.close();
-				return "ELSE";
+				print("ELSE");
+			}
 		}
+		scanner.close();
 	}
 
-    
+    private void parseUninitialised(String input) {
+    	Scanner scanner = new Scanner(input);
+		if (!scanner.hasNext()) {
+			//Nothing
+		}
+		else {
+	    	String next = scanner.next();
+	    	if (next.equals("newgame") && !scanner.hasNext()) {
+	    		state = State.NewGame;
+				print("Please enter your name.");
+	    	}
+	    	else if (next.equals("loadgame") && !scanner.hasNext()) {
+	    		state = State.Normal;
+	    		//Do some loading of the game
+	    		print("Game loaded from file.");
+	    	}
+	    	else if (next.equals("highscores") && !scanner.hasNext()) {
+	    		print("Ask for high scores after the game is initialised.");
+	    	}
+	    	else if (next.equals("credits") && !scanner.hasNext()) {
+	    		printCredits();
+	    	}
+	    	else {
+	    		print("The game is uninitialised. Please use one of the following commands: newgame, loadgame, highscores, credits.");
+	    	}
+		}
+		scanner.close();
+    }
 	
-	private String parseNewGame(String input) {
+	private void parseNewGame(String input) {
 		if (input.length() > 30) {
-			return "Your name is too long - please use a name shorter than 30 characters.";
+			print("Your name is too long - please use a name shorter than 30 characters.");
 		}
 		else {
 			presenter.newGame(input);
 			state = State.Normal;
-			return "New game started.";
+			print("New game started.");
 		}
 	}
+	
+	private void printHighScores() {
+		List<HighScore> highScores = presenter.getHighScores();
+		if (!highScores.isEmpty()) {
+    		for (HighScore highScore : highScores) {
+    			print(highScore.getName() + ": " + highScore.getHighScore());
+    		}
+		}
+		else {
+			print("No high scores yet.");
+		}
+	}
+	
+	private void printCredits() {
+		print("Created by:");
+		print("Ali, Brad, John, James, Simeon and Will");
+	}
+	
 	
 //	private boolean isAlphanumeric(String string) {
 //		for (Character ch : string.toCharArray()) {
@@ -240,6 +289,6 @@ public class TextUI extends JFrame implements KeyListener
 //	}
 	
 	private enum State {
-		Normal, NewGame, YesNo;
+		Normal, NewGame, YesNo, Uninitialised;
 	}
 }
