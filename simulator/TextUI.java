@@ -27,8 +27,6 @@ public class TextUI extends JFrame implements KeyListener
     +"| (\\ (   | (      | (   ) || |         | |   | |   | || (\\ (\n" 
     +"| ) \\ \\__| (____/\\| )   ( || (____/\\   | |   | (___) || ) \\ \\__\n"
     +"|/   \\__/(_______/|/     \\|(_______/   )_(   (_______)|/   \\__/\n";
-
-	private PlantPresenter presenter;
 	
 	// UI variables
 	private JTextArea systemText = new JTextArea(10,20);
@@ -37,6 +35,8 @@ public class TextUI extends JFrame implements KeyListener
     private JTextField inputBox = new JTextField(30);
     private final static Font default_font = new Font("Monospaced",Font.PLAIN, 12);
     private final static String prompt = "> ";
+    
+    private PlantPresenter presenter;
     private State state;    
     
     public TextUI(PlantPresenter presenter)
