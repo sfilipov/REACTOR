@@ -14,6 +14,7 @@ public class Plant {
 	private List<PlantComponent> plantComponents;
 	private List<PlantComponent> failedComponents;
 	private Reactor reactor;
+	private List<Valve> valves;
 	
 	/**
 	 * This is the default constructor that is used 
@@ -65,6 +66,18 @@ public class Plant {
 				}
 			}
 			return null; // No reactor found?!
+		}
+	}
+	
+	public List<Valve> getValves() {
+		ArrayList<Valve> valvesList = new ArrayList<Valve>();
+		if (this.valves != null) {
+			return valves;
+		} else {
+			for (PlantComponent pc : this.plantComponents) {
+				if (pc instanceof Valve) valvesList.add((Valve) pc);
+			}
+			return valvesList;
 		}
 	}
 
