@@ -212,6 +212,9 @@ public class TextUI extends JFrame implements KeyListener
 	    	else if (command.equals("loadgame") && !scanner.hasNext()) {
 	    		doLoadGame();
 	    	}
+	    	else if (command.equals("savegame") && !scanner.hasNext()) {
+	    		doSaveGame();
+	    	}
 	    	else if (command.equals("highscores") && !scanner.hasNext()) {
 	    		printHighScores();
 	    	}
@@ -305,7 +308,10 @@ public class TextUI extends JFrame implements KeyListener
 	    	}
 	    	else if (command.equals("set") && !scanner.hasNext()) {
 	    		print("Incorrect usage of set command - set valve, set controlrods, set pump");
-	    	} 	    		
+	    	}
+	    	else if (command.equals("repair") && scanner.hasNext()) {
+	    		//IMPLEMENT
+	    	}
 			else {
 				print("Not a valid command.");
 			}
@@ -375,6 +381,15 @@ public class TextUI extends JFrame implements KeyListener
 		}
 		else {
 			print("Loading a game was not successful: check if a savegame file exists or start a new game.");
+		}
+	}
+	
+	private void doSaveGame() {
+		if (presenter.saveGame() && state == State.Normal) {
+			print("Game saved to file.");
+		}
+		else {
+			print("Saving a game was not successful.");
 		}
 	}
 	
