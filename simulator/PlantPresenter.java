@@ -107,19 +107,21 @@ public class PlantPresenter {
 	// ----------------		Internal methods	----------------
 	
 	private void printDebugInfo() {
-		System.out.println("------------------------------");
-		System.out.println("-- Time Step No. : " + this.plant.getTimeStepsUsed() + "\t --");
-		System.out.println("-- Reactor Steam Vol:" + this.plant.getReactor().getSteamVolume() + "\t --");
-		System.out.println("-- Reactor Water Vol:" + this.plant.getReactor().getWaterVolume() + "\t --");
-		System.out.println("-- Reactor Temp:" + this.plant.getReactor().getTemperature() + "\t --");
-		System.out.println("-- Reactor Steam Flow Out:" + this.plant.getReactor().getFlowOut().getRate() + "\t --");
-		System.out.println("-- Reactor Steam Temp Out:" + this.plant.getReactor().getFlowOut().getTemperature() + "\t --");
-		System.out.println("------------------------------");
-		System.out.println("-- Condenser Steam Vol:" + this.plant.getCondenser().getSteamVolume() + "\t --");
-		System.out.println("-- Condenser Water Vol:" + this.plant.getCondenser().getWaterVolume() + "\t --");
-		System.out.println("-- Condenser Temp:" + this.plant.getCondenser().getTemperature() + "\t --");
-		System.out.println("-- Condenser Steam Flow In:" + this.plant.getCondenser().getInput().getFlowOut().getRate() + "\t --");
-		System.out.println("-- Condenser Steam Temp In:" + this.plant.getCondenser().getInput().getFlowOut().getTemperature() + "\t --");
+		System.out.println("--------------------------");
+		System.out.println("--   Time Step No.: " + this.plant.getTimeStepsUsed() + "\t--");
+		System.out.println("--        Reactor       --");
+		System.out.println("-- Steam Vol:\t" + this.plant.getReactor().getSteamVolume() + "\t--");
+		System.out.println("-- Water Vol:\t" + this.plant.getReactor().getWaterVolume() + "\t--");
+		System.out.println("-- Temp:\t" + this.plant.getReactor().getTemperature() + "\t--");
+		System.out.println("-- Steam Flow:\t" + this.plant.getReactor().getFlowOut().getRate() + "\t--");
+		System.out.println("-- Steam Temp:\t" + this.plant.getReactor().getFlowOut().getTemperature() + "\t--");
+		System.out.println("--------------------------");
+		System.out.println("--       Condenser      --");
+		System.out.println("-- Steam Vol:\t" + this.plant.getCondenser().getSteamVolume() + "\t--");
+		System.out.println("-- Water Vol:\t" + this.plant.getCondenser().getWaterVolume() + "\t--");
+		System.out.println("-- Temp:\t" + this.plant.getCondenser().getTemperature() + "\t--");
+		System.out.println("-- Steam Flow:\t" + this.plant.getCondenser().getInput().getFlowOut().getRate() + "\t--");
+		System.out.println("-- Steam Temp:\t" + this.plant.getCondenser().getInput().getFlowOut().getTemperature() + "\t--");
 	}
 	
 	
