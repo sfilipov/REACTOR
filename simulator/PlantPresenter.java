@@ -83,7 +83,47 @@ public class PlantPresenter {
 		}
 	}
 	
+	/**
+	 * Start the repair of the turbine if it has failed.
+	 * @return true only if the turbine has failed and is not already being repaired.
+	 */
+	public boolean repairTurbine() {
+		Turbine turbine = plant.getTurbine();
+		List<PlantComponent> failedComponents = plant.getFailedComponents();
+		List<Repair> beingRepaired = plant.getBeingRepaired();
+		if (failedComponents.contains(turbine)) {
+			for (Repair br : beingRepaired) {
+				if (br.getPlantComponent() == turbine)
+					return false; //Turbine already being repaired
+			}
+			beingRepaired.add(new Repair(turbine));
+			return true; //Turbine has failed and is not being repaired (success)
+		}
+		return false; //Turbine has not failed
+	}
 	
+	public boolean repairPump(int pumpID) {
+		List<Pump> pumps = plant.getPumps();
+		Pump foundPump = null;
+		boolean found = false;
+		List<PlantComponent> failedComponents = plant.getFailedComponents();
+		List<Repair> beingRepaired = plant.getBeingRepaired();
+		for (Pump pump : pumps) { //Find the pump with the selected ID
+			if (pump.getID() == pumpID) {
+				foundPump = pump;
+				found = true;
+			}
+		}
+		if (found && failedComponents.contains(foundPump)) {
+			for (Repair br : beingRepaired) {
+				if (br.getPlantComponent() == foundPump) 
+					return false; //Pump already being repaired
+			}
+			beingRepaired.add(new Repair(foundPump));
+			return true; //Pump has failed and is not being repaired (success)
+		}
+		return false; //Pump not found or has not failed
+	}
 	
 	/**
 	 * Advance the game by a number of time steps.
@@ -113,14 +153,14 @@ public class PlantPresenter {
 		}
 	}
 	
-	private void startRepairing(PlantComponent toBeRepairedComponent) {
-		List<PlantComponent> failedComponents = plant.getFailedComponents(); 
-		List<Repair> beingRepairedComponents = plant.getBeingRepaired();
-		if (failedComponents.contains(toBeRepairedComponent)) {
-			Repair repair = new Repair(toBeRepairedComponent);
-			beingRepairedComponents.add(repair);
-		}
-	}
+	//	private void startRepairing(PlantComponent toBeRepairedComponent) {
+	//		List<PlantComponent> failedComponents = plant.getFailedComponents(); 
+	//		List<Repair> beingRepairedComponents = plant.getBeingRepaired();
+	//		if (failedComponents.contains(toBeRepairedComponent)) {
+	//			Repair repair = new Repair(toBeRepairedComponent);
+	//			beingRepairedComponents.add(repair);
+	//		}
+	//	}
 	
 	private void updateBeingRepaired() {
 		List<Repair> beingRepaired = plant.getBeingRepaired();
