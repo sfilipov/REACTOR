@@ -58,7 +58,7 @@ public class ConnectorPipe extends PlantComponent {
 	/**
 	 * Returns an ArrayList of all PlantComponents connected as inputs 
 	 * to this ConnectorPipe. Use this method instead of getInput().
-	 * Note: This method will return ALL outputs, even if the object is null.
+	 * 
 	 * @return an ArrayList of all PlantComponents connected as inputs 
 	 * 		   to this ConnectorPipe.
 	 */
@@ -71,7 +71,7 @@ public class ConnectorPipe extends PlantComponent {
 	/**
 	 * Returns an ArrayList of all PlantComponents connected to the output 
 	 * of this ConnectorPipe. Use this method instead of getOutput().
-	 * Note: This method will return ALL outputs, even if the object is null.
+	 * 
 	 * @return an ArrayList of all PlantComponents connected to the output 
 	 * 		   of this ConnectorPipe.
 	 */
@@ -95,6 +95,18 @@ public class ConnectorPipe extends PlantComponent {
 											  +"component that is not an output to this connector "
 											  +"pipe.");
 		}
+	}
+	
+	/**
+	 * Returns the number of non-blocked outputs.
+	 * @return the number of non-blocked outputs.
+	 */
+	public int numOutputs() {
+		int totalOutputs = 0;
+		for (PlantComponent pc : this.outputs.keySet()) {
+			if (!this.outputs.get(pc)) totalOutputs++; 
+		}
+		return totalOutputs;
 	}
 	
 	/**
