@@ -310,7 +310,17 @@ public class TextUI extends JFrame implements KeyListener
 	    		print("Incorrect usage of set command - set valve, set controlrods, set pump");
 	    	}
 	    	else if (command.equals("repair") && scanner.hasNext()) {
-	    		//IMPLEMENT
+	    		String component = scanner.next();
+	    		if (component.equals("turbine") && !scanner.hasNext()) {
+	    			doRepairTurbine();
+	    		}
+	    		else if (component.equals("pump") && scanner.hasNextInt()) {
+	    			int pumpID = scanner.nextInt();
+	    			doRepairPump(pumpID);
+	    		}
+	    		else {
+	    			print("Not a valid command.");
+	    		}
 	    	}
 			else {
 				print("Not a valid command.");
@@ -390,6 +400,24 @@ public class TextUI extends JFrame implements KeyListener
 		}
 		else {
 			print("Saving a game was not successful.");
+		}
+	}
+	
+	private void doRepairTurbine() {
+		if (presenter.repairTurbine()) {
+			print("Repair on the turbine has began.");
+		}
+		else {
+			print("Turbine is either functional or already being repaired.");
+		}
+	}
+	
+	private void doRepairPump(int pumpID) {
+		if (presenter.repairPump(pumpID)) {
+			print("Repair on pump " + pumpID + " has began.");
+		}
+		else {
+			print("Pump " + pumpID + " is either functional or already being repaired.");
 		}
 	}
 	
