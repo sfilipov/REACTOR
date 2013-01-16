@@ -37,14 +37,13 @@ public class TextUI extends JFrame implements KeyListener
     private final static String prompt = "> ";
     
     private PlantPresenter presenter;
-    private State state;
+    private State state = State.Uninitialised;
     private AreYouSureCaller caller = AreYouSureCaller.NoAction;
     
     public TextUI(PlantPresenter presenter)
     {
     	super("REACTOR");
     	this.presenter = presenter;
-    	this.state= State.Uninitialised;
         initWindow();
         startUp();     
     }
@@ -183,10 +182,20 @@ public class TextUI extends JFrame implements KeyListener
     	print(prompt + command);
     	parse(command.toLowerCase());
 		inputBox.setText(prompt);
+		
+		if(state == State.Normal)
+			updateSystemText();
     }
     
     private void print(String output) {
     	outputText.append(output + "\n");
+    }
+    
+    private void updateSystemText() {
+    	String reactorInfo = "PLANT READINGS\n";
+    	reactorInfo += "REACTOR STATUS: FUNCTIONAL\n";  //If it ever becomes unfunctional, the game will end.
+    	reactorInfo += "Temperature: " + presenter.getReactorTemperature() + "\t\t| Max: " + presenter.getReactorMaxTemperature() + "\n";
+    	systemText.setText(reactorInfo);
     }
     
     //--------------- Parsing ----------------
@@ -488,15 +497,6 @@ public class TextUI extends JFrame implements KeyListener
 		print("where \"id\" is the ID of the pump and \"newState\" is either \"on\" or \"off\"");
 		print("i.e. \"set pump 2 on\" or \"set pump 1 off\"");
 	}
-	
-//	private boolean isAlphanumeric(String string) {
-//		for (Character ch : string.toCharArray()) {
-//			if (!Character.isLetterOrDigit(ch)) {
-//				return false;
-//			}
-//		}
-//		return true;
-//	}
 	
 	private enum State {
 		Normal, NewGame, AreYouSure, Uninitialised;

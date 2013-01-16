@@ -37,24 +37,28 @@ public class Reactor extends PlantComponent {
 	
 	// ----------- Getters & Setters ---------------
 	
-	public int getMaxTemperature() {
-		return MAX_TEMPERATURE;
-	}
-	
-	public int getMinSafeWaterVolume() {
-		return MIN_SAFE_WATER_VOLUME;
-	}
-	
 	public int getTemperature() {
 		return temperature;
+	}
+	
+	public int getMaxTemperature() {
+		return MAX_TEMPERATURE;
 	}
 	
 	public int getPressure() {
 		return pressure;
 	}
 	
+	public int getMaxPressure() {
+		return MAX_PRESSURE;
+	}
+	
 	public int getWaterVolume() {
 		return waterVolume;
+	}
+	
+	public int getMinSafeWaterVolume() {
+		return MIN_SAFE_WATER_VOLUME;
 	}
 	
 	/**

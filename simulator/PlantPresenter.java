@@ -145,6 +145,32 @@ public class PlantPresenter {
 		printFlowDebugInfo(this.plant.getReactor());
 	}
 	
+	// ----------------		Methods used in systemText (TextUI class)	----------------
+	
+	public int getReactorTemperature() {
+		return plant.getReactor().getTemperature();
+	}
+	
+	public int getReactorMaxTemperature() {
+		return plant.getReactor().getMaxTemperature();
+	}
+	
+	public int getReactorPressure() {
+		return plant.getReactor().getPressure();
+	}
+	
+	public int getReactorMaxPressure() {
+		return plant.getReactor().getMaxPressure();
+	}
+	
+	public int getReactorWaterVolume() {
+		return plant.getReactor().getWaterVolume();
+	}
+	
+	public int getReactorMinSafeWaterVolume() {
+		return plant.getReactor().getMinSafeWaterVolume();
+	}
+	
 	// ----------------		Internal methods	----------------
 	
 	private void printDebugInfo() {
