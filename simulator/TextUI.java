@@ -37,7 +37,8 @@ public class TextUI extends JFrame implements KeyListener
     private final static String prompt = "> ";
     
     private PlantPresenter presenter;
-    private State state;    
+    private State state;
+    private AreYouSureCaller caller = AreYouSureCaller.NoAction;
     
     public TextUI(PlantPresenter presenter)
     {
@@ -197,6 +198,8 @@ public class TextUI extends JFrame implements KeyListener
 			parseUninitialised(input);
 		else if (state == State.NewGame)
 			parseNewGame(input);
+		else if (state == State.AreYouSure)
+			parseAreYouSure(input);
 	}
 	
 	private void parseNormal(String input) {
@@ -207,13 +210,16 @@ public class TextUI extends JFrame implements KeyListener
 		else {
 			String command = scanner.next();
 			if (command.equals("newgame") && !scanner.hasNext()) {
-				doNewGame();
+				caller = AreYouSureCaller.Newgame;
+				doAreYouSure();
 			}
 	    	else if (command.equals("loadgame") && !scanner.hasNext()) {
-	    		doLoadGame();
+				caller = AreYouSureCaller.Loadgame;
+				doAreYouSure();
 	    	}
 	    	else if (command.equals("savegame") && !scanner.hasNext()) {
-	    		doSaveGame();
+				caller = AreYouSureCaller.Savegame;
+				doAreYouSure();
 	    	}
 	    	else if (command.equals("highscores") && !scanner.hasNext()) {
 	    		printHighScores();
@@ -322,6 +328,10 @@ public class TextUI extends JFrame implements KeyListener
 	    			print("Not a valid command.");
 	    		}
 	    	}
+	    	else if ( (command.equals("exit") || command.equals("quit")) && !scanner.hasNext()) {
+	    		caller = AreYouSureCaller.Exit;
+	    		doAreYouSure();
+	    	}
 			else {
 				print("Not a valid command.");
 			}
@@ -364,6 +374,26 @@ public class TextUI extends JFrame implements KeyListener
 			state = State.Normal;
 			print("New game started.");
 		}
+	}
+	
+	private void parseAreYouSure(String input) {
+		Scanner scanner = new Scanner(input);
+		if (scanner.hasNext()) {
+			String next = scanner.next();
+			if( (next.equals("yes") || next.equals("y")) && !scanner.hasNext()) {
+				state = State.Normal;
+				if (caller == AreYouSureCaller.Newgame)			doNewGame();
+				else if (caller == AreYouSureCaller.Savegame)	doSaveGame();
+				else if (caller == AreYouSureCaller.Loadgame)	doLoadGame();
+				else if (caller == AreYouSureCaller.Exit)		doExit();
+			}
+			else {
+				state = State.Normal;
+				print("Action not confirmed.");
+			}
+		}
+		caller = AreYouSureCaller.NoAction;
+		scanner.close();
 	}
 	
 	//-------------- Methods used inside parsing -------------------
@@ -421,6 +451,15 @@ public class TextUI extends JFrame implements KeyListener
 		}
 	}
 	
+	private void doExit() {
+		System.exit(0);
+	}
+	
+	private void doAreYouSure() {
+		state = State.AreYouSure;
+		print("Are you sure (Y/n)");
+	}
+	
 	private void printHighScores() {
 		List<HighScore> highScores = presenter.getHighScores();
 		if (!highScores.isEmpty()) {
@@ -460,6 +499,10 @@ public class TextUI extends JFrame implements KeyListener
 //	}
 	
 	private enum State {
-		Normal, NewGame, YesNo, Uninitialised;
+		Normal, NewGame, AreYouSure, Uninitialised;
+	}
+	
+	private enum AreYouSureCaller {
+		Newgame, Savegame, Loadgame, Exit, NoAction;
 	}
 }
