@@ -141,6 +141,7 @@ class Condenser extends PlantComponent {
 		int steamCondensed;
 		int waterCreated;
 		steamCondensed = (int) Math.round((MAX_TEMPERATURE - this.temperature) * COND_MULTIPLIER);
+		if (steamCondensed > this.steamVolume) steamCondensed = this.steamVolume;
 		waterCreated = (int) Math.ceil(steamCondensed * (1/WATER_STEAM_RATIO));
 			
 		this.steamVolume -= steamCondensed; // made negative as the water is removed.
