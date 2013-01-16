@@ -97,11 +97,12 @@ public class PlantPresenter {
 		for (int i = 0; i < numSteps; i++) {
 			checkFailures();
 			updateBeingRepaired();
-			updateFlow();
 			updatePlant();
+			updateFlow();
 		}
 		this.plant.updateTimeStepsUsed(numSteps);
 		printDebugInfo();
+		printFlowDebugInfo(this.plant.getReactor());
 	}
 	
 	// ----------------		Internal methods	----------------
@@ -110,6 +111,7 @@ public class PlantPresenter {
 		System.out.println("--------------------------");
 		System.out.println("--   Time Step No.: " + this.plant.getTimeStepsUsed() + "\t--");
 		System.out.println("--        Reactor       --");
+		System.out.println("-- Health:\t" + this.plant.getReactor().getHealth() + "\t--");
 		System.out.println("-- Steam Vol:\t" + this.plant.getReactor().getSteamVolume() + "\t--");
 		System.out.println("-- Water Vol:\t" + this.plant.getReactor().getWaterVolume() + "\t--");
 		System.out.println("-- Temp:\t" + this.plant.getReactor().getTemperature() + "\t--");
@@ -117,14 +119,31 @@ public class PlantPresenter {
 		System.out.println("-- Steam Temp:\t" + this.plant.getReactor().getFlowOut().getTemperature() + "\t--");
 		System.out.println("--------------------------");
 		System.out.println("--       Condenser      --");
+		System.out.println("-- Health:\t" + this.plant.getCondenser().getHealth() + "\t--");
 		System.out.println("-- Steam Vol:\t" + this.plant.getCondenser().getSteamVolume() + "\t--");
 		System.out.println("-- Water Vol:\t" + this.plant.getCondenser().getWaterVolume() + "\t--");
 		System.out.println("-- Temp:\t" + this.plant.getCondenser().getTemperature() + "\t--");
-		System.out.println("-- Steam Flow:\t" + this.plant.getCondenser().getInput().getFlowOut().getRate() + "\t--");
-		System.out.println("-- Steam Temp:\t" + this.plant.getCondenser().getInput().getFlowOut().getTemperature() + "\t--");
+		System.out.println("-- Stm Flow In:\t" + this.plant.getCondenser().getInput().getFlowOut().getRate() + "\t--");
+		System.out.println("-- Stm Temp In:\t" + this.plant.getCondenser().getInput().getFlowOut().getTemperature() + "\t--");
 	}
 	
-	
+	private void printFlowDebugInfo(PlantComponent pc) {
+		System.out.println("-----");
+		System.out.println(pc.getClass().toString());
+		System.out.println("\tFlow Out:" + pc.getFlowOut().getRate());
+		System.out.println("\tTemp Out:" + pc.getFlowOut().getTemperature());
+		if (!(pc instanceof Condenser)) {
+			if (pc instanceof ConnectorPipe) {
+				for (PlantComponent output : ((ConnectorPipe)pc).getOutputs()) {
+					printFlowDebugInfo(output);
+				}
+			} else {
+				printFlowDebugInfo(pc.getOutput());
+			}
+		}
+			
+			
+	}
 
 	// Go through all components and call updateState()
 	// This will do things in Reactor and Condenser objects etc.
@@ -211,7 +230,9 @@ public class PlantPresenter {
 	private void propagateFlowBackToReactor()
 	{
 		Reactor reactor = this.plant.getReactor();
-		reactor.getFlowOut().setRate(reactor.getOutput().getFlowOut().getRate());
+		int firstComponentFlowRate = reactor.getOutput().getFlowOut().getRate();
+		// If the rate of flow out of the first component is zero, propagate this back to the reactor.
+		if (firstComponentFlowRate == 0) reactor.getFlowOut().setRate(firstComponentFlowRate);
 	}
 
 	private void setAllConnectorPipesUnblocked() {
@@ -294,7 +315,7 @@ public class PlantPresenter {
 			if (pc instanceof ConnectorPipe) {
 				blockPreceedingFromConnectorPipe((ConnectorPipe) pc);
 			} else {
-				blockToPreceedingConnectorPipe(pc);
+				if (pc != null) blockToPreceedingConnectorPipe(pc);
 			}
 		}
 	}
@@ -310,18 +331,24 @@ public class PlantPresenter {
 	
 	private void propagateFlowFromReactor()
 	{
+		int flowRate = calcReactorFlowOut();
+		Reactor reactor = this.plant.getReactor();
+		reactor.getFlowOut().setRate(flowRate);
+		reactor.getFlowOut().setTemperature(reactor.getTemperature());
+		propagateFlowToConnectorPipe(reactor);
+	}
+	
+	private int calcReactorFlowOut() {
 		Reactor reactor = this.plant.getReactor();
 		Condenser condenser = this.plant.getCondenser();
-		int steamDiff = reactor.getSteamVolume() - condenser.getSteamVolume();
+		int steamDiff = Math.abs(reactor.getSteamVolume() - condenser.getSteamVolume());
 		int flowRate;
 		if (steamDiff > this.plant.getMaxSteamFlowRate()) {
 			flowRate = this.plant.getMaxSteamFlowRate();
 		} else {
 			flowRate = steamDiff;
 		}
-		reactor.getFlowOut().setRate(flowRate);
-		reactor.getFlowOut().setTemperature(reactor.getTemperature());
-		propagateFlowToConnectorPipe(reactor);
+		return flowRate;
 	}
 	
 	/**
@@ -349,8 +376,9 @@ public class PlantPresenter {
 	}
 	
 	private void propagateFlowToConnectorPipe(PlantComponent startComponent) {
-		PlantComponent prevComponent = startComponent;
-		PlantComponent currComponent = startComponent.getOutput();
+		PlantComponent prevComponent;
+		prevComponent = (startComponent instanceof Reactor) ? startComponent : startComponent.getInput();
+		PlantComponent currComponent = startComponent;
 		boolean donePropagating = false;
 		while (!donePropagating) {
 			if (currComponent instanceof ConnectorPipe) {
@@ -358,6 +386,7 @@ public class PlantPresenter {
 			} else if (currComponent instanceof Condenser) {
 				donePropagating = true;
 			} else {
+				
 				currComponent.getFlowOut().setRate(prevComponent.getFlowOut().getRate());
 				currComponent.getFlowOut().setTemperature(prevComponent.getFlowOut().getTemperature());
 				prevComponent = currComponent;
@@ -388,12 +417,20 @@ public class PlantPresenter {
 	private void calcConnectorFlowOut(ConnectorPipe connector) {
 		ArrayList<PlantComponent> inputs = connector.getInputs();
 		int totalFlow = 0;
+		int avgTemp = 0;
 		int numOutputs = connector.numOutputs();
+		int numInputs = 0;
 		for (PlantComponent input : inputs) {
-			if (input != null) totalFlow += input.getFlowOut().getRate();
+			if (input != null) {
+				totalFlow += input.getFlowOut().getRate();
+				avgTemp += input.getFlowOut().getTemperature();
+				numInputs++;
+			}
 		}
 		totalFlow = (numOutputs != 0) ? totalFlow / numOutputs : 0; // average the flow across all active outputs.
+		avgTemp = (numInputs != 0) ? avgTemp / numInputs : 0;
 		connector.getFlowOut().setRate(totalFlow);
+		connector.getFlowOut().setTemperature(avgTemp);
 	}
 	
 }

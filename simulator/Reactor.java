@@ -146,9 +146,9 @@ public class Reactor extends PlantComponent {
 	private int heating(int loweredPercentage) {
 		if (this.waterVolume <= MIN_SAFE_WATER_VOLUME) {
 			return (int) Math.round((MAX_HEATING_PER_STEP * UNSAFE_HEATING_MULTIPLIER) 
-									* percentageToDecimal(loweredPercentage));
+									* (1 - percentageToDecimal(loweredPercentage)));
 		} else {
-			return (int) Math.round(MAX_HEATING_PER_STEP * percentageToDecimal(loweredPercentage));
+			return (int) Math.round(MAX_HEATING_PER_STEP * (1 - percentageToDecimal(loweredPercentage)));
 		}
 	}
 	
@@ -160,7 +160,7 @@ public class Reactor extends PlantComponent {
 	 * @return percentage as a decimal.
 	 */
 	private double percentageToDecimal(int percentage) {
-		return percentage / 100;
+		return new Double(percentage) / 100;
 	}
 	
 	/**
@@ -174,7 +174,9 @@ public class Reactor extends PlantComponent {
 		if (this.temperature > 100) {
 			// I don't like this hacky cast but ah well.
 			waterEvaporated = (int) Math.round(temperature * EVAP_MULTIPLIER);
+			if (waterEvaporated > this.waterVolume) waterEvaporated = this.waterVolume;
 			steamCreated = waterEvaporated * WATER_STEAM_RATIO;
+			System.out.println(steamCreated);
 			
 			this.waterVolume -= waterEvaporated; // made negative as the water is removed.
 			this.steamVolume += steamCreated; 
@@ -197,10 +199,11 @@ public class Reactor extends PlantComponent {
 	
 	@Override
 	public boolean checkFailure() {
-		if (health <= 0)
+		if (health <= 0) {
 			return true;
-		else
+		} else {
 			return false;
+		}
 	}
 	
 	private final class ControlRod {
