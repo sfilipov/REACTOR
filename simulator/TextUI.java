@@ -49,7 +49,7 @@ public class TextUI extends JFrame implements KeyListener
     }
 
     private void initWindow() {
-    	setSize(1200,800);
+    	setSize(1000,600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JPanel leftPanel = new JPanel();           
         GridBagLayout leftPanelGridBagLayout = new GridBagLayout();
@@ -218,6 +218,17 @@ public class TextUI extends JFrame implements KeyListener
 	    	else if (command.equals("credits") && !scanner.hasNext()) {
 	    		printCredits();
 	    	}
+	    	else if (command.equals("step")) {
+	    		if (!scanner.hasNext()) {
+	    			doStep(1);
+	    		} else if (scanner.hasNextInt()) {
+	    			int n = scanner.nextInt();
+	    			// TODO max number of steps.
+	    			doStep(n);
+	    		} else {
+	    			print("Invalid usage of step command - step or step n");
+	    		}
+	    	}
 	    	else if (command.equals("set") && scanner.hasNext()) {
 	    		String component = scanner.next();
 	    		if (component.equals("valve") && scanner.hasNextInt()) {
@@ -295,7 +306,7 @@ public class TextUI extends JFrame implements KeyListener
 	    	}
 	    	else if (command.equals("set") && !scanner.hasNext()) {
 	    		print("Incorrect usage of set command - set valve, set controlrods, set pump");
-	    	}
+	    	} 	    		
 			else {
 				print("Not a valid command.");
 			}
@@ -303,7 +314,7 @@ public class TextUI extends JFrame implements KeyListener
 		scanner.close();
 	}
 
-    private void parseUninitialised(String input) {
+	private void parseUninitialised(String input) {
     	Scanner scanner = new Scanner(input);
 		if (!scanner.hasNext()) {
 			//Nothing
@@ -341,6 +352,12 @@ public class TextUI extends JFrame implements KeyListener
 	}
 	
 	//-------------- Methods used inside parsing -------------------
+	
+	private void doStep(int numSteps)
+	{
+		presenter.step(numSteps);
+		print("Game advanced " + numSteps + " steps.");
+	}
 	
 	private void doNewGame() {
 		state = State.NewGame;

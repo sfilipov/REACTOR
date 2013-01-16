@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Plant {
+	private final static int MAX_STEAM_FLOW_RATE = 800;
+	
 	private String operatorName;
 	private int timeStepsUsed;
 	private int score;
@@ -15,6 +17,8 @@ public class Plant {
 	private List<PlantComponent> failedComponents;
 	private Reactor reactor;
 	private List<Valve> valves;
+	private List<ConnectorPipe> connectorPipes;
+	private Condenser condenser;
 	private List<Pump> pumps;
 	private Turbine turbine;
 	
@@ -57,6 +61,11 @@ public class Plant {
 		this.isPaused = isPaused;
 	}
 	
+	public int getMaxSteamFlowRate()
+	{
+		return MAX_STEAM_FLOW_RATE;
+	}
+
 	public Reactor getReactor() {
 		if (this.reactor != null) {
 			return reactor;
@@ -80,7 +89,36 @@ public class Plant {
 				if (pc instanceof Valve) valvesList.add((Valve) pc);
 			}
 			this.valves = valvesList;
-			return valvesList;
+			return this.valves;
+		}
+	}
+
+	public List<ConnectorPipe> getConnectorPipes()
+	{
+		ArrayList<ConnectorPipe> connectorPipes = new ArrayList<ConnectorPipe>();
+		if (this.connectorPipes != null) {
+			return this.connectorPipes;
+		} else {
+			for (PlantComponent pc : this.plantComponents) {
+				if (pc instanceof ConnectorPipe) connectorPipes.add((ConnectorPipe) pc);
+			}
+			this.connectorPipes = connectorPipes;
+			return this.connectorPipes;
+		}
+	}
+
+	public Condenser getCondenser()
+	{
+		if (this.condenser != null) {
+			return this.condenser;
+		} else {
+			for (PlantComponent pc : this.plantComponents) {
+				if (pc instanceof Condenser) {
+					this.condenser = (Condenser) pc;
+					return this.condenser;
+				}
+			}
+			return null; // No condenser found?!
 		}
 	}
 	

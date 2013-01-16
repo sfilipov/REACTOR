@@ -34,7 +34,7 @@ public class Flow {
 		this.type = type;
 	}
 	
-	public double getRate() {
+	public int getRate() {
 		return rate;
 	}
 
