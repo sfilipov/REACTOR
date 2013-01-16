@@ -31,7 +31,7 @@ public class TextUI extends JFrame implements KeyListener
 	// UI variables
 	private JTextArea systemText = new JTextArea(10,20);
     private JTextArea outputText = new JTextArea(10,20);
-    private JTextArea inputText = new JTextArea(10,20);
+    //private JTextArea inputText = new JTextArea(10,20);
     private JTextField inputBox = new JTextField(30);
     private final static Font default_font = new Font("Monospaced",Font.PLAIN, 12);
     private final static String prompt = "> ";
@@ -74,16 +74,16 @@ public class TextUI extends JFrame implements KeyListener
     private void initInputArea(JPanel parentPanel) {
     	GridBagLayout layout = (GridBagLayout) parentPanel.getLayout(); 
   
-    	inputText.setBorder(BorderFactory.createMatteBorder(0,0,0,1,Color.GRAY));
-        inputText.setBackground(Color.BLACK);
-        inputText.setForeground(Color.WHITE);
-        inputText.setLineWrap(true);  
-        inputText.setWrapStyleWord(true);
-        inputText.setFont(default_font);  
-        inputText.setEditable(false);
+//    	  inputText.setBorder(BorderFactory.createMatteBorder(0,0,0,1,Color.GRAY));
+//        inputText.setBackground(Color.BLACK);
+//        inputText.setForeground(Color.WHITE);
+//        inputText.setLineWrap(true);  
+//        inputText.setWrapStyleWord(true);
+//        inputText.setFont(default_font);  
+//        inputText.setEditable(false);
         
-        JScrollPane Scrolled = new JScrollPane(inputText);
-        Scrolled.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+//        JScrollPane Scrolled = new JScrollPane(inputText);
+//        Scrolled.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         
         GridBagConstraints inputTextConstraints = new GridBagConstraints();
         inputTextConstraints.gridx = 0;
@@ -94,8 +94,8 @@ public class TextUI extends JFrame implements KeyListener
         inputTextConstraints.weighty = 5;
         inputTextConstraints.fill = GridBagConstraints.BOTH;
         inputTextConstraints.anchor = GridBagConstraints.SOUTH;
-        layout.setConstraints(Scrolled, inputTextConstraints);        
-        parentPanel.add(Scrolled); 
+//        layout.setConstraints(Scrolled, inputTextConstraints);        
+//        parentPanel.add(Scrolled); 
                 
         
         inputBox.setBackground(Color.BLACK);
@@ -382,7 +382,7 @@ public class TextUI extends JFrame implements KeyListener
 			String next = scanner.next();
 			if( (next.equals("yes") || next.equals("y")) && !scanner.hasNext()) {
 				state = State.Normal;
-				if (caller == AreYouSureCaller.Newgame)			doNewGame();
+				if      (caller == AreYouSureCaller.Newgame)	doNewGame();
 				else if (caller == AreYouSureCaller.Savegame)	doSaveGame();
 				else if (caller == AreYouSureCaller.Loadgame)	doLoadGame();
 				else if (caller == AreYouSureCaller.Exit)		doExit();
@@ -474,7 +474,7 @@ public class TextUI extends JFrame implements KeyListener
 	
 	private void printCredits() {
 		print("Created by:");
-		print("Ali, Brad, John, James, Simeon and Will");
+		print("(Put superhero names here)");
 	}
 	
 	private void printNotValidValve() {
