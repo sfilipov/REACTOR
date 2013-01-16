@@ -17,13 +17,10 @@ public class Plant {
 	private List<PlantComponent> failedComponents;
 	private Reactor reactor;
 	private List<Valve> valves;
-<<<<<<< HEAD
 	private List<ConnectorPipe> connectorPipes;
 	private Condenser condenser;
-=======
 	private List<Pump> pumps;
 	private Turbine turbine;
->>>>>>> a0109e2595dfce00d4b129a2f982e03eb65e79db
 	
 	/**
 	 * This is the default constructor that is used 
@@ -92,7 +89,6 @@ public class Plant {
 				if (pc instanceof Valve) valvesList.add((Valve) pc);
 			}
 			this.valves = valvesList;
-<<<<<<< HEAD
 			return this.valves;
 		}
 	}
@@ -123,9 +119,6 @@ public class Plant {
 				}
 			}
 			return null; // No condenser found?!
-=======
-			return valvesList;
->>>>>>> a0109e2595dfce00d4b129a2f982e03eb65e79db
 		}
 	}
 	
