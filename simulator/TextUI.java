@@ -223,7 +223,6 @@ public class TextUI extends JFrame implements KeyListener
 	    			doStep(1);
 	    		} else if (scanner.hasNextInt()) {
 	    			int n = scanner.nextInt();
-	    			// TODO max number of steps.
 	    			doStep(n);
 	    		} else {
 	    			print("Invalid usage of step command - step or step n");
@@ -355,8 +354,13 @@ public class TextUI extends JFrame implements KeyListener
 	
 	private void doStep(int numSteps)
 	{
-		presenter.step(numSteps);
-		print("Game advanced " + numSteps + " steps.");
+		if (numSteps >= 0 && numSteps <= 10) {
+			presenter.step(numSteps);
+			print("Game advanced " + numSteps + " steps.");
+		}
+		else {
+			print("Too many steps. Try a number between 0 and 10.");
+		}
 	}
 	
 	private void doNewGame() {
