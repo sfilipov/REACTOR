@@ -58,8 +58,8 @@ public class Pump extends PlantComponent {
 		return on;
 	}
 	
-	public void toggleState() {
-		on = !on;
+	public void setOn(boolean on) {
+		this.on = on;
 	}
 	
 	public void updateState() {

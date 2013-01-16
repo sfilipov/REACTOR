@@ -17,8 +17,13 @@ public class Plant {
 	private List<PlantComponent> failedComponents;
 	private Reactor reactor;
 	private List<Valve> valves;
+<<<<<<< HEAD
 	private List<ConnectorPipe> connectorPipes;
 	private Condenser condenser;
+=======
+	private List<Pump> pumps;
+	private Turbine turbine;
+>>>>>>> a0109e2595dfce00d4b129a2f982e03eb65e79db
 	
 	/**
 	 * This is the default constructor that is used 
@@ -87,6 +92,7 @@ public class Plant {
 				if (pc instanceof Valve) valvesList.add((Valve) pc);
 			}
 			this.valves = valvesList;
+<<<<<<< HEAD
 			return this.valves;
 		}
 	}
@@ -117,7 +123,34 @@ public class Plant {
 				}
 			}
 			return null; // No condenser found?!
+=======
+			return valvesList;
+>>>>>>> a0109e2595dfce00d4b129a2f982e03eb65e79db
 		}
+	}
+	
+	public List<Pump> getPumps() {
+		ArrayList<Pump> pumpsList = new ArrayList<Pump>();
+		if (this.pumps != null) {
+			return this.pumps;
+		}
+		for (PlantComponent pc : this.plantComponents) {
+			if (pc instanceof Pump) pumpsList.add((Pump) pc);
+		}
+		this.pumps = pumpsList;
+		return pumpsList;
+	}
+	
+	public Turbine getTurbine() {
+		Turbine turbine = null;
+		if (this.turbine != null) {
+			return this.turbine;
+		}
+		for (PlantComponent pc : this.plantComponents) {
+			if (pc instanceof Turbine) turbine = (Turbine) pc;
+		}
+		this.turbine = turbine;
+		return turbine;
 	}
 
 	public List<HighScore> getHighScores() {

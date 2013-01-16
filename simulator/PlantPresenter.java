@@ -53,7 +53,7 @@ public class PlantPresenter {
 	 * Returns true if command was successful, false if a valve with that ID was not found
 	 * @return true if command was successful, false if a valve with that ID was not found
 	 */
-	public boolean setValve (int valveID, boolean open) {
+	public boolean setValve(int valveID, boolean open) {
 		List<Valve> valves = plant.getValves();
 		for (Valve valve : valves) {
 			if (valveID == valve.getID()) {
@@ -63,6 +63,30 @@ public class PlantPresenter {
 		}
 		return false;
 	}
+	
+	/**
+	 * Returns true if command was successful, false if a pump with that ID was not found
+	 * @return true if command was successful, false if a pump with that ID was not found
+	 */
+	public boolean setPump(int pumpID, boolean on) {
+		List<Pump> pumps = plant.getPumps();
+		for (Pump pump : pumps) {
+			if (pumpID == pump.getID()) {
+				pump.setOn(on);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public void setControlRods(int percentageLowered) {
+		if(percentageLowered >= 0 && percentageLowered <= 100) {
+			Reactor reactor = plant.getReactor();
+			reactor.setPercentageLowered(percentageLowered);
+		}
+	}
+	
+	
 	
 	/**
 	 * Advance the game by a number of time steps.
