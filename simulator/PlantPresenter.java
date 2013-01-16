@@ -2,6 +2,8 @@ package simulator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 public class PlantPresenter {
 
@@ -20,6 +22,7 @@ public class PlantPresenter {
 	public void newGame(String operatorName) {
 		ReactorUtils utils = new ReactorUtils();
 		this.plant = utils.createNewPlant(operatorName);
+		printDebugInfo();
 	}
 	
 	//Returns true if saving a game was successful.
@@ -73,11 +76,28 @@ public class PlantPresenter {
 			updateFlow();
 			updatePlant();
 		}
+		this.plant.updateTimeStepsUsed(numSteps);
+		printDebugInfo();
 	}
 	
-	
-	
 	// ----------------		Internal methods	----------------
+	
+	private void printDebugInfo() {
+		System.out.println("------------------------------");
+		System.out.println("-- Time Step No. : " + this.plant.getTimeStepsUsed() + "\t --");
+		System.out.println("-- Reactor Steam Vol:" + this.plant.getReactor().getSteamVolume() + "\t --");
+		System.out.println("-- Reactor Water Vol:" + this.plant.getReactor().getWaterVolume() + "\t --");
+		System.out.println("-- Reactor Temp:" + this.plant.getReactor().getTemperature() + "\t --");
+		System.out.println("-- Reactor Steam Flow Out:" + this.plant.getReactor().getFlowOut().getRate() + "\t --");
+		System.out.println("-- Reactor Steam Temp Out:" + this.plant.getReactor().getFlowOut().getTemperature() + "\t --");
+		System.out.println("------------------------------");
+		System.out.println("-- Condenser Steam Vol:" + this.plant.getCondenser().getSteamVolume() + "\t --");
+		System.out.println("-- Condenser Water Vol:" + this.plant.getCondenser().getWaterVolume() + "\t --");
+		System.out.println("-- Condenser Temp:" + this.plant.getCondenser().getTemperature() + "\t --");
+		System.out.println("-- Condenser Steam Flow In:" + this.plant.getCondenser().getInput().getFlowOut().getRate() + "\t --");
+		System.out.println("-- Condenser Steam Temp In:" + this.plant.getCondenser().getInput().getFlowOut().getTemperature() + "\t --");
+	}
+	
 	
 
 	// Go through all components and call updateState()
@@ -138,31 +158,67 @@ public class PlantPresenter {
 	}
 	
 	private void updateFlow() {
-		blockFromValves();
-		blockFromConnectorPipes();
-		
-		// from closed valves.. track back to nearest connector pipe & block input.
-		// reset and update blocked paths at connectors
-		// divide flows by numOutput splits
-		// calc ConnectorFlowOuts 
+		updateSteamFlow();
+		//updateWaterFlow();
+		moveSteam();
 		// calc flow of water & steam out & into reactor/condenser. 
 	}
+
+	private void updateSteamFlow() {
+		setAllConnectorPipesUnblocked();
+		blockFromValves();
+		blockFromConnectorPipes();
+		resetFlowAllComponents();
+		propagateFlowFromReactor();
+		propagateFlowFromConnectorPipes();
+		propagateFlowBackToReactor(); // Incase all paths out are blocked!
+	}
 	
+	private void moveSteam()
+	{
+		Reactor reactor = this.plant.getReactor();
+		reactor.updateSteamVolume(-reactor.getFlowOut().getRate());
+		Condenser condenser = this.plant.getCondenser();
+		condenser.updateSteamVolume(condenser.getInput().getFlowOut().getRate());
+	}
+
+	private void propagateFlowBackToReactor()
+	{
+		Reactor reactor = this.plant.getReactor();
+		reactor.getFlowOut().setRate(reactor.getOutput().getFlowOut().getRate());
+	}
+
+	private void setAllConnectorPipesUnblocked() {
+		for (ConnectorPipe cp : this.plant.getConnectorPipes()) {
+			cp.resetState();
+		}
+	}
+	
+
 	private void blockFromValves() {
 		List<Valve> valves = this.plant.getValves();
 		for (Valve v : valves) {
-			if (!v.isOpen()) blockPreceedingConnectorPipe(v);
+			if (!v.isOpen()) blockToPreceedingConnectorPipe(v);
 		}
 	}
 	
 	private void blockFromConnectorPipes() {
 		boolean changed = true;
+		List<ConnectorPipe> connectorPipes = this.plant.getConnectorPipes();
 		while (changed) {
 			changed = false;
-			// iterate through all connector pipes and check if they're rawly blocked ap
-			// & propagate that blockage through the system. :)
+			// iterate through all connector pipes and check if they're blocked up.
+			for (ConnectorPipe c : connectorPipes) {
+				// If connectorPipe has all of it's outputs blocked
+				if (isConnectorBlocking(c)) {
+					// Block the path leading into it.
+					blockPreceedingFromConnectorPipe(c);
+					changed = true;
+				}
+			}
 		}
 	}
+	
 	
 	/**
 	 * Returns true if all outputs of a ConnectorPipe are blocked.
@@ -182,7 +238,7 @@ public class PlantPresenter {
 	 * 
 	 * @param blockedComponent component to start from.
 	 */
-	private void blockPreceedingConnectorPipe(PlantComponent blockedComponent) {
+	private void blockToPreceedingConnectorPipe(PlantComponent blockedComponent) {
 		PlantComponent currentComponent = blockedComponent.getInput();
 		PlantComponent prevComponent = blockedComponent;
 		boolean doneBlocking = false;
@@ -191,7 +247,8 @@ public class PlantPresenter {
 				((ConnectorPipe) currentComponent).setComponentBlocked(prevComponent);
 				doneBlocking = true;
 			} else if (currentComponent instanceof Reactor) {
-				currentComponent.getFlowOut().setRate(0);
+				// No need to do anything here, just stop iterating.
+				doneBlocking = true;
 			} else {
 				prevComponent = currentComponent;
 				currentComponent = currentComponent.getInput();
@@ -199,113 +256,118 @@ public class PlantPresenter {
 		}
 	}
 	
+	/**
+	 * Calls blockPreceedingConnectorPipe() for all input paths into blockedConnector. 
+	 * We assume checks have been made to ensure blockedConnector is actually blocked.
+	 * 
+	 * @param blockedConnector the blocked ConnectorPipe to start from.
+	 */
 	private void blockPreceedingFromConnectorPipe(ConnectorPipe blockedConnector) {
 		List<PlantComponent> multipleInputs = ((ConnectorPipe) blockedConnector).getInputs();
+		for (PlantComponent pc : multipleInputs) {
+			if (pc instanceof ConnectorPipe) {
+				blockPreceedingFromConnectorPipe((ConnectorPipe) pc);
+			} else {
+				blockToPreceedingConnectorPipe(pc);
+			}
+		}
 	}
 	
 	
-	/*private void calcFlowAtValve(Valve valve) {
-		if (!valve.isOpen()) {
-			valve.getFlowOut().setRate(0);
-			// block!
+	private void resetFlowAllComponents() {
+		for (PlantComponent pc : this.plant.getPlantComponents()) {
+			pc.getFlowOut().setRate(0);
+			pc.getFlowOut().setTemperature(0);
+		}
+	}
+	
+	
+	private void propagateFlowFromReactor()
+	{
+		Reactor reactor = this.plant.getReactor();
+		Condenser condenser = this.plant.getCondenser();
+		int steamDiff = reactor.getSteamVolume() - condenser.getSteamVolume();
+		int flowRate;
+		if (steamDiff > this.plant.getMaxSteamFlowRate()) {
+			flowRate = this.plant.getMaxSteamFlowRate();
 		} else {
-			PlantComponent forwardPressurePoint = findPressurePointForwards(valve);
-			PlantComponent backwardPressurePoint = findPressurePointBackwards(valve);
-			
-			
-			int forwardSteamVolume = getSteamVolume(forwardPressurePoint);
-			int backwardSteamVolume = getSteamVolume(forwardPressurePoint);
-			int steamDifference = backwardSteamVolume - forwardSteamVolume;
-			int flow = (steamDifference >= valve.getMaxSteamFlow() * numSteamValves()) ? valve.getMaxSteamFlow() : 1 ;
-			
+			flowRate = steamDiff;
 		}
-	}*/
-	
-	private int getSteamVolume(PlantComponent pressurisedComponent) {
-		// Ew! Refactor common stuff out of Reactor and Condenser!!
-		if (pressurisedComponent instanceof Reactor) 
-			return ((Reactor) pressurisedComponent).getSteamVolume();
-		if (pressurisedComponent instanceof Condenser) 
-			return ((Condenser) pressurisedComponent).getSteamVolume();
-		throw new IllegalArgumentException("Not a Pressurised Component!");
+		reactor.getFlowOut().setRate(flowRate);
+		reactor.getFlowOut().setTemperature(reactor.getTemperature());
+		propagateFlowToConnectorPipe(reactor);
 	}
 	
 	/**
-	 * Track forwards along the outputs of components from the starting point, 
-	 * startComponent, iteratively until a pressurised component is found.
-	 * 
-	 * @param startComponent Component to start from.
-	 * @return first pressurised component found.
+	 * Iterates through connector pipes, calculates their flow out & if it has changed,
+	 * propagate this new flow forward to the next connector pipe.
+	 * Do this until nothing in the system changes. 
 	 */
-	private PlantComponent findPressurePointForwards(PlantComponent startComponent) {
-		PlantComponent currentComponent = startComponent;
-		while(!currentComponent.isPressurised()) {
-			if (currentComponent instanceof ConnectorPipe) {
-				List<PlantComponent> outputs = ((ConnectorPipe) currentComponent).getOutputs();
-				if (outputs.size() > 1) {
-					/* Shit! We've got some serious shit going on here D:
-					 * 
-					 * For us, this is no problem since we don't have any crazy
-					 * pipe networks but if this algorithm is to be generalised for
-					 * any networks support for recursively tracing all paths out of 
-					 * a connector pipe will be required.
-					 */
-					return null;
-				} else {
-					currentComponent = outputs.get(0);
+	private void propagateFlowFromConnectorPipes()
+	{
+		boolean changed = true;
+		int oldRate;
+		List<ConnectorPipe> connectorPipes = this.plant.getConnectorPipes();
+		while (changed) {
+			changed = false;
+			// iterate through all connector pipes and update their rate.
+			for (ConnectorPipe c : connectorPipes) {
+				oldRate = c.getFlowOut().getRate();
+				calcConnectorFlowOut(c);
+				if (oldRate != c.getFlowOut().getRate()) {
+					propagateFlowFromConnectorPipe(c);
+					changed = true;
 				}
-			} else {
-				currentComponent = currentComponent.getOutput();
 			}
 		}
-		return currentComponent;
 	}
 	
-	/**
-	 * Track backwards along the inputs of components from the starting point, 
-	 * startComponent, iteratively until a pressurised component is found.
-	 * 
-	 * @param startComponent Component to start from.
-	 * @return first pressurised component found.
-	 */
-	private PlantComponent findPressurePointBackwards(PlantComponent startComponent) {
-		PlantComponent currentComponent = startComponent;
-		while(!currentComponent.isPressurised()) {
-			if (currentComponent instanceof ConnectorPipe) {
-				List<PlantComponent> inputs = ((ConnectorPipe) currentComponent).getInputs();
-				if (inputs.size() > 1) {
-					/* Shit! We've got some serious shit going on here D:
-					 * 
-					 * For us, this is no problem since we don't have any crazy
-					 * pipe networks but if this algorithm is to be generalised for
-					 * any networks support for recursively tracing all paths into 
-					 * a connector pipe will be required.
-					 */
-					return null;
-				} else {
-					currentComponent = inputs.get(0);
-				}
+	private void propagateFlowToConnectorPipe(PlantComponent startComponent) {
+		PlantComponent prevComponent = startComponent;
+		PlantComponent currComponent = startComponent.getOutput();
+		boolean donePropagating = false;
+		while (!donePropagating) {
+			if (currComponent instanceof ConnectorPipe) {
+				donePropagating = true;
+			} else if (currComponent instanceof Condenser) {
+				donePropagating = true;
 			} else {
-				currentComponent = currentComponent.getInput();
+				currComponent.getFlowOut().setRate(prevComponent.getFlowOut().getRate());
+				currComponent.getFlowOut().setTemperature(prevComponent.getFlowOut().getTemperature());
+				prevComponent = currComponent;
+				currComponent = currComponent.getInput();
 			}
 		}
-		return currentComponent;
 	}
+	
+	private void propagateFlowFromConnectorPipe(ConnectorPipe startConnectorPipe) {
+		Map<PlantComponent, Boolean> outputs = startConnectorPipe.getOutputsMap();
+		for (PlantComponent pc : outputs.keySet()) {
+			if (!outputs.get(pc)) {
+				if (pc instanceof ConnectorPipe) {
+					propagateFlowFromConnectorPipe((ConnectorPipe) pc);
+				} else {
+					propagateFlowToConnectorPipe(pc);
+				}
+			}
+		}
+	}
+	
 	
 	/**
 	 * Update the Flow out of a connector to reflect it's inputs and outputs.
 	 * @param connector the connector to update.
 	 */
-	/*
+	
 	private void calcConnectorFlowOut(ConnectorPipe connector) {
 		ArrayList<PlantComponent> inputs = connector.getInputs();
 		int totalFlow = 0;
 		int numOutputs = connector.numOutputs();
 		for (PlantComponent input : inputs) {
-			totalFlow += input.getFlowOut().getRate();
+			if (input != null) totalFlow += input.getFlowOut().getRate();
 		}
 		totalFlow = (numOutputs != 0) ? totalFlow / numOutputs : 0; // average the flow across all active outputs.
 		connector.getFlowOut().setRate(totalFlow);
-	}*/
+	}
 	
 }
