@@ -37,7 +37,8 @@ public class TextUI extends JFrame implements KeyListener
     private final static String prompt = "> ";
     
     private PlantPresenter presenter;
-    private State state;    
+    private State state;
+    private AreYouSureCaller caller = AreYouSureCaller.NoAction;
     
     public TextUI(PlantPresenter presenter)
     {
@@ -197,6 +198,8 @@ public class TextUI extends JFrame implements KeyListener
 			parseUninitialised(input);
 		else if (state == State.NewGame)
 			parseNewGame(input);
+		else if (state == State.AreYouSure)
+			parseAreYouSure(input);
 	}
 	
 	private void parseNormal(String input) {
@@ -207,10 +210,16 @@ public class TextUI extends JFrame implements KeyListener
 		else {
 			String command = scanner.next();
 			if (command.equals("newgame") && !scanner.hasNext()) {
-				doNewGame();
+				caller = AreYouSureCaller.Newgame;
+				doAreYouSure();
 			}
 	    	else if (command.equals("loadgame") && !scanner.hasNext()) {
-	    		doLoadGame();
+				caller = AreYouSureCaller.Loadgame;
+				doAreYouSure();
+	    	}
+	    	else if (command.equals("savegame") && !scanner.hasNext()) {
+				caller = AreYouSureCaller.Savegame;
+				doAreYouSure();
 	    	}
 	    	else if (command.equals("highscores") && !scanner.hasNext()) {
 	    		printHighScores();
@@ -223,7 +232,6 @@ public class TextUI extends JFrame implements KeyListener
 	    			doStep(1);
 	    		} else if (scanner.hasNextInt()) {
 	    			int n = scanner.nextInt();
-	    			// TODO max number of steps.
 	    			doStep(n);
 	    		} else {
 	    			print("Invalid usage of step command - step or step n");
@@ -306,7 +314,24 @@ public class TextUI extends JFrame implements KeyListener
 	    	}
 	    	else if (command.equals("set") && !scanner.hasNext()) {
 	    		print("Incorrect usage of set command - set valve, set controlrods, set pump");
-	    	} 	    		
+	    	}
+	    	else if (command.equals("repair") && scanner.hasNext()) {
+	    		String component = scanner.next();
+	    		if (component.equals("turbine") && !scanner.hasNext()) {
+	    			doRepairTurbine();
+	    		}
+	    		else if (component.equals("pump") && scanner.hasNextInt()) {
+	    			int pumpID = scanner.nextInt();
+	    			doRepairPump(pumpID);
+	    		}
+	    		else {
+	    			print("Not a valid command.");
+	    		}
+	    	}
+	    	else if ( (command.equals("exit") || command.equals("quit")) && !scanner.hasNext()) {
+	    		caller = AreYouSureCaller.Exit;
+	    		doAreYouSure();
+	    	}
 			else {
 				print("Not a valid command.");
 			}
@@ -351,12 +376,37 @@ public class TextUI extends JFrame implements KeyListener
 		}
 	}
 	
+	private void parseAreYouSure(String input) {
+		Scanner scanner = new Scanner(input);
+		if (scanner.hasNext()) {
+			String next = scanner.next();
+			if( (next.equals("yes") || next.equals("y")) && !scanner.hasNext()) {
+				state = State.Normal;
+				if (caller == AreYouSureCaller.Newgame)			doNewGame();
+				else if (caller == AreYouSureCaller.Savegame)	doSaveGame();
+				else if (caller == AreYouSureCaller.Loadgame)	doLoadGame();
+				else if (caller == AreYouSureCaller.Exit)		doExit();
+			}
+			else {
+				state = State.Normal;
+				print("Action not confirmed.");
+			}
+		}
+		caller = AreYouSureCaller.NoAction;
+		scanner.close();
+	}
+	
 	//-------------- Methods used inside parsing -------------------
 	
 	private void doStep(int numSteps)
 	{
-		presenter.step(numSteps);
-		print("Game advanced " + numSteps + " steps.");
+		if (numSteps >= 0 && numSteps <= 10) {
+			presenter.step(numSteps);
+			print("Game advanced " + numSteps + " steps.");
+		}
+		else {
+			print("Too many steps. Try a number between 0 and 10.");
+		}
 	}
 	
 	private void doNewGame() {
@@ -372,6 +422,42 @@ public class TextUI extends JFrame implements KeyListener
 		else {
 			print("Loading a game was not successful: check if a savegame file exists or start a new game.");
 		}
+	}
+	
+	private void doSaveGame() {
+		if (presenter.saveGame() && state == State.Normal) {
+			print("Game saved to file.");
+		}
+		else {
+			print("Saving a game was not successful.");
+		}
+	}
+	
+	private void doRepairTurbine() {
+		if (presenter.repairTurbine()) {
+			print("Repair on the turbine has began.");
+		}
+		else {
+			print("Turbine is either functional or already being repaired.");
+		}
+	}
+	
+	private void doRepairPump(int pumpID) {
+		if (presenter.repairPump(pumpID)) {
+			print("Repair on pump " + pumpID + " has began.");
+		}
+		else {
+			print("Pump " + pumpID + " is either functional or already being repaired.");
+		}
+	}
+	
+	private void doExit() {
+		System.exit(0);
+	}
+	
+	private void doAreYouSure() {
+		state = State.AreYouSure;
+		print("Are you sure (Y/n)");
 	}
 	
 	private void printHighScores() {
@@ -413,6 +499,10 @@ public class TextUI extends JFrame implements KeyListener
 //	}
 	
 	private enum State {
-		Normal, NewGame, YesNo, Uninitialised;
+		Normal, NewGame, AreYouSure, Uninitialised;
+	}
+	
+	private enum AreYouSureCaller {
+		Newgame, Savegame, Loadgame, Exit, NoAction;
 	}
 }
