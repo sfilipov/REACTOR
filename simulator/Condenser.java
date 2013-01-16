@@ -45,6 +45,10 @@ class Condenser extends PlantComponent {
 		return pressure;
 	}
 	
+	public int getMaxPressure() {
+		return MAX_PRESSURE;
+	}
+	
 	public int getWaterVolume() {
 		return waterVolume;
 	}

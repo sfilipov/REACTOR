@@ -171,6 +171,26 @@ public class PlantPresenter {
 		return plant.getReactor().getMinSafeWaterVolume();
 	}
 	
+	
+	public int getCondenserTemperature() {
+		return plant.getCondenser().getTemperature();
+	}
+	
+	public int getCondenserMaxTemperature() {
+		return plant.getCondenser().getMaxTemperature();
+	}
+	
+	public int getCondenserPressure() {
+		return plant.getCondenser().getPressure();
+	}
+	
+	public int getCondenserMaxPressure() {
+		return plant.getCondenser().getMaxPressure();
+	}
+	
+	public int getCondenserWaterVolume() {
+		return plant.getCondenser().getWaterVolume();
+	}
 	// ----------------		Internal methods	----------------
 	
 	private void printDebugInfo() {

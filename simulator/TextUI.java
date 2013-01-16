@@ -192,9 +192,17 @@ public class TextUI extends JFrame implements KeyListener
     }
     
     private void updateSystemText() {
-    	String reactorInfo = "PLANT READINGS\n";
+    	String reactorInfo = "PLANT READINGS\n\n";
+    	
     	reactorInfo += "REACTOR STATUS: FUNCTIONAL\n";  //If it ever becomes unfunctional, the game will end.
-    	reactorInfo += "Temperature: " + presenter.getReactorTemperature() + "\t\t| Max: " + presenter.getReactorMaxTemperature() + "\n";
+    	reactorInfo += "Temperature: "  + presenter.getReactorTemperature() + "  \t| Max: "               + presenter.getReactorMaxTemperature()     + "\n";
+    	reactorInfo += "Pressure: "     + presenter.getReactorPressure()    + " \t\t| Max: "               + presenter.getReactorMaxPressure()        + "\n";
+    	reactorInfo += "Water Volume: " + presenter.getReactorWaterVolume() + " \t| Minimum Safe Volume: " + presenter.getReactorMinSafeWaterVolume() + "\n\n";
+    	
+    	reactorInfo += "CONDENSER STATUS:\n"; //Improve
+    	reactorInfo += "Temperature: "  + presenter.getCondenserTemperature() + "  \t| Max: "               + presenter.getReactorMaxTemperature()     + "\n";
+    	reactorInfo += "Pressure: "     + presenter.getCondenserPressure()    + " \t\t| Max: "               + presenter.getReactorMaxPressure()        + "\n";
+    	reactorInfo += "Water Volume: " + presenter.getCondenserWaterVolume() + " \t| Minimum Safe Volume: " + presenter.getReactorMinSafeWaterVolume() + "\n\n";
     	systemText.setText(reactorInfo);
     }
     
