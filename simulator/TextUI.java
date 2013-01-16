@@ -180,7 +180,7 @@ public class TextUI extends JFrame implements KeyListener
     private void actUponInput() {
     	String command = inputBox.getText().substring(prompt.length());
     	print(prompt + command);
-    	parse(command.toLowerCase());
+    	parse(command);
 		inputBox.setText(prompt);
 		
 		if(state == State.Normal)
@@ -192,9 +192,11 @@ public class TextUI extends JFrame implements KeyListener
     }
     
     private void updateSystemText() {
-    	String reactorInfo = "PLANT READINGS\n\n";
+    	String reactorInfo = new String();
+    	reactorInfo += "Operator Name: " + presenter.getOperatorName() + "\n";
+    	reactorInfo += "PLANT READINGS \n\n";
     	
-    	reactorInfo += "REACTOR STATUS: FUNCTIONAL\n";  //If it ever becomes unfunctional, the game will end.
+    	reactorInfo += "REACTOR STATUS:\n";  //If it ever becomes unfunctional, the game will end.
     	reactorInfo += "Temperature: "  + presenter.getReactorTemperature() + "  \t| Max: "               + presenter.getReactorMaxTemperature()     + "\n";
     	reactorInfo += "Pressure: "     + presenter.getReactorPressure()    + " \t\t| Max: "               + presenter.getReactorMaxPressure()        + "\n";
     	reactorInfo += "Water Volume: " + presenter.getReactorWaterVolume() + " \t| Minimum Safe Volume: " + presenter.getReactorMinSafeWaterVolume() + "\n\n";
@@ -203,6 +205,24 @@ public class TextUI extends JFrame implements KeyListener
     	reactorInfo += "Temperature: "  + presenter.getCondenserTemperature() + "  \t| Max: "               + presenter.getReactorMaxTemperature()     + "\n";
     	reactorInfo += "Pressure: "     + presenter.getCondenserPressure()    + " \t\t| Max: "               + presenter.getReactorMaxPressure()        + "\n";
     	reactorInfo += "Water Volume: " + presenter.getCondenserWaterVolume() + " \t| Minimum Safe Volume: " + presenter.getReactorMinSafeWaterVolume() + "\n\n";
+    	
+    	List<Valve> valves = presenter.getValves();
+    	for (Valve v : valves) {
+    		reactorInfo += "VALVE ID: " + v.getID() + " | ";
+    		reactorInfo += "POSITION: " + (v.isOpen() ? "OPEN\n" : "CLOSED\n");
+    	}
+    	reactorInfo += "\n";
+    	
+    	List<Pump> pump = presenter.getPumps();
+    	for (Pump p : pump) {
+    		reactorInfo += "PUMP ID: " + p.getID() + "  | ";
+    		reactorInfo += "STATUS: " + ((p.isOperational()) ? "FUNCTIONAL | " : "BROKEN | ");
+    		reactorInfo += "POWER STATE: " + (p.isOn() ? "ON\n" : "OFF\n");
+    	}
+    	reactorInfo += "\n";
+    	
+    	reactorInfo += "CONTROL RODS PERCENT INTO CORE: " + presenter.getControlRodsPercentage() + "%\n";
+    	
     	systemText.setText(reactorInfo);
     }
     
@@ -210,13 +230,13 @@ public class TextUI extends JFrame implements KeyListener
     
 	private void parse(String input) {
 		if (state == State.Normal)
-			parseNormal(input);
+			parseNormal(input.toLowerCase());
 		else if (state == State.Uninitialised)
-			parseUninitialised(input);
+			parseUninitialised(input.toLowerCase());
 		else if (state == State.NewGame)
 			parseNewGame(input);
 		else if (state == State.AreYouSure)
-			parseAreYouSure(input);
+			parseAreYouSure(input.toLowerCase());
 	}
 	
 	private void parseNormal(String input) {

@@ -147,6 +147,10 @@ public class PlantPresenter {
 	
 	// ----------------		Methods used in systemText (TextUI class)	----------------
 	
+	public String getOperatorName() {
+		return plant.getOperatorName();
+	}
+	
 	public int getReactorTemperature() {
 		return plant.getReactor().getTemperature();
 	}
@@ -190,6 +194,18 @@ public class PlantPresenter {
 	
 	public int getCondenserWaterVolume() {
 		return plant.getCondenser().getWaterVolume();
+	}
+	
+	public List<Valve> getValves() {
+		return plant.getValves();
+	}
+	
+	public List<Pump> getPumps() {
+		return plant.getPumps();
+	}
+	
+	public int getControlRodsPercentage() {
+		return plant.getReactor().getPercentageLowered();
 	}
 	// ----------------		Internal methods	----------------
 	
