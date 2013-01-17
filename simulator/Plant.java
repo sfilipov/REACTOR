@@ -21,6 +21,7 @@ public class Plant {
 	private Condenser condenser;
 	private List<Pump> pumps;
 	private Turbine turbine;
+	private Generator generator;
 	
 	/**
 	 * This is the default constructor that is used 
@@ -49,8 +50,9 @@ public class Plant {
 		return score;
 	}
 
-	public void setScore(int score) {
-		this.score = score;
+	public void calcScore() {
+		int powerOutput = getGenerator().getPowerOutput();
+		this.score += powerOutput * (this.timeStepsUsed + 10);
 	}
 
 	public boolean isPaused() {
@@ -144,6 +146,18 @@ public class Plant {
 		}
 		this.turbine = turbine;
 		return turbine;
+	}
+	
+	public Generator getGenerator() {
+		Generator generator = null;
+		if (this.generator != null) {
+			return this.generator;
+		}
+		for (PlantComponent pc : this.plantComponents) {
+			if (pc instanceof Generator) generator = (Generator) pc;
+		}
+		this.generator = generator;
+		return generator;
 	}
 
 	public List<HighScore> getHighScores() {

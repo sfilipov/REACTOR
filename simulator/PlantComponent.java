@@ -5,8 +5,8 @@ import java.util.Random;
 abstract class PlantComponent {
 
 	//The values of the constants below are for illustration.
-	public final static double DEFAULT_FAILURE_RATE = 5.0;
-	public final static int DEFAULT_REPAIR_TIME = 10;
+	public final static int DEFAULT_FAILURE_RATE = 33;
+	public final static int DEFAULT_REPAIR_TIME = 5;
 	public final static boolean DEFAULT_OPERATIONAL = true;
 	public final static boolean DEFAULT_PRESSURISED = false;
 
@@ -211,7 +211,7 @@ abstract class PlantComponent {
 	 * Runs all checks for the component and changes it's operational state if needed. 
 	 */
 	public boolean checkFailure() {
-		double checkFailure = random.nextDouble();
+		int checkFailure = random.nextInt(1000);
 		if(failureRate >= checkFailure) {
 			return true;
 		}

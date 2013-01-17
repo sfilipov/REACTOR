@@ -14,7 +14,8 @@ public class ReactorUtils
 	private Plant newPlant;
 	private Reactor reactor;
 	private Condenser condenser;
-	//private Turbine turbine; 
+	private Turbine turbine;
+	private Generator generator;
 	private Valve steamValve1;
 	private Valve steamValve2;
 	private Valve waterValve1;
@@ -37,7 +38,8 @@ public class ReactorUtils
 	private void instantiateComponents() {
 		reactor = new Reactor();
 		condenser = new Condenser();
-		//turbine = new Turbine(); 
+		turbine = new Turbine();
+		generator = new Generator(turbine);
 		steamValve1 = new Valve(1, FlowType.Steam);
 		steamValve2 = new Valve(2, FlowType.Steam);
 		waterValve1 = new Valve(3, FlowType.Water);
@@ -80,7 +82,8 @@ public class ReactorUtils
 		List<PlantComponent> plantComponents = new ArrayList<PlantComponent>();
 		plantComponents.add(reactor);
 		plantComponents.add(condenser);
-		//plantComponents.add(turbine); 
+		plantComponents.add(turbine); 
+		plantComponents.add(generator);
 		plantComponents.add(steamValve1);
 		plantComponents.add(steamValve2);
 		plantComponents.add(waterValve1);

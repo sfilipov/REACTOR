@@ -193,8 +193,8 @@ public class TextUI extends JFrame implements KeyListener
     
     private void updateSystemText() {
     	String reactorInfo = new String();
-    	reactorInfo += "Operator Name: " + presenter.getOperatorName() + "\n";
-    	reactorInfo += "PLANT READINGS \n\n";
+    	reactorInfo += "Operator Name: " + presenter.getOperatorName() + "\t| SCORE: " + presenter.getScore() + "\n\n";
+    	reactorInfo += "PLANT READINGS: \n\n";
     	
     	reactorInfo += "REACTOR HEALTH: " + presenter.getReactorHealth() + "\n";  
     	reactorInfo += "Temperature: "    + presenter.getReactorTemperature() + "  \t| Max: "                + presenter.getReactorMaxTemperature()     + "\n";
