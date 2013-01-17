@@ -151,6 +151,10 @@ public class PlantPresenter {
 		return plant.getOperatorName();
 	}
 	
+	public int getScore() {
+		return plant.getScore();
+	}
+	
 	public int getReactorHealth() {
 		return plant.getReactor().getHealth();
 	}
@@ -262,6 +266,7 @@ public class PlantPresenter {
 		for (PlantComponent plantComponent : plantComponents) {
 			plantComponent.updateState();
 		}
+		plant.calcScore();
 	}
 	
 	//	private void startRepairing(PlantComponent toBeRepairedComponent) {
@@ -275,14 +280,19 @@ public class PlantPresenter {
 	
 	private void updateBeingRepaired() {
 		List<Repair> beingRepaired = plant.getBeingRepaired();
+		List<Repair> finishedRepairing = new ArrayList<Repair>();
 		List<PlantComponent> failedComponents = plant.getFailedComponents();
 		for (Repair repair : beingRepaired) {
 			repair.decTimeStepsRemaining();
 			int timeStepsRemaining = repair.getTimeStepsRemaining();
 			if(timeStepsRemaining <= 0) {
-				failedComponents.remove(repair.getPlantComponent());
-				beingRepaired.remove(repair);
+				finishedRepairing.add(repair);
 			}
+		}
+		for (Repair finished : finishedRepairing) {
+			failedComponents.remove(finished.getPlantComponent());
+			finished.getPlantComponent().setOperational(true);
+			beingRepaired.remove(finished);
 		}
 	}
 	
@@ -300,6 +310,7 @@ public class PlantPresenter {
 				else {
 					failingComponents.add(component);
 					faults++;
+					System.out.println("faults++");
 				}
 			}
 		}
@@ -308,7 +319,9 @@ public class PlantPresenter {
 		if(faults > 0) {
 			Random random = new Random();
 			int selection = random.nextInt(faults);
-			plant.addFailedComponent(failingComponents.get(selection));	
+			PlantComponent failedComponent = failingComponents.get(selection);
+			plant.addFailedComponent(failedComponent);
+			failedComponent.setOperational(false);
 		}
 	}
 	
@@ -316,7 +329,7 @@ public class PlantPresenter {
 		updateSteamFlow();
 		//updateWaterFlow();
 		moveSteam();
-		// calc flow of water & steam out & into reactor/condenser. 
+		//calculate flow of water & steam out & into reactor/condenser. 
 	}
 
 	private void updateSteamFlow() {
