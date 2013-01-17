@@ -134,7 +134,7 @@ class Condenser extends PlantComponent {
 	 */
 	private int cooldown() {
 		int tempDiff = this.temperature - COOLANT_TEMP;
-		System.out.println(tempDiff);
+		System.out.println("C: tempDiff - " + tempDiff);
 		if (tempDiff > 0) {
 			return COOLDOWN_PER_STEP;
 		} else {
@@ -147,11 +147,13 @@ class Condenser extends PlantComponent {
 		int waterCreated;
 		steamCondensed = (int) Math.round((MAX_TEMPERATURE - this.temperature) * COND_MULTIPLIER);
 		if (steamCondensed > this.steamVolume) steamCondensed = this.steamVolume;
-		waterCreated = (int) Math.ceil(steamCondensed * (1/WATER_STEAM_RATIO));
+		System.out.println("C: SteamCondensed - " + steamCondensed);
+		
+		waterCreated = (int) Math.ceil(steamCondensed * (1 / new Double(WATER_STEAM_RATIO)));
+		System.out.println("C: WaterCreated - " + waterCreated);
 			
 		this.steamVolume -= steamCondensed; // made negative as the water is removed.
 		this.waterVolume += waterCreated; 
-		
 	}
 
 	private void checkIfDamaging() {
