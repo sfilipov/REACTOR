@@ -1,13 +1,14 @@
 package simulator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 public class PlantPresenter {
 
-	public Plant plant; 
+	private Plant plant; 
 	
 	public PlantPresenter()
 	{
@@ -141,8 +142,7 @@ public class PlantPresenter {
 			updateFlow();
 		}
 		this.plant.updateTimeStepsUsed(numSteps);
-		printDebugInfo();
-		printFlowDebugInfo(this.plant.getReactor());
+		//printFlowDebugInfo(this.plant.getReactor());
 	}
 	
 	// ----------------		Methods used in systemText (TextUI class)	----------------
@@ -340,9 +340,15 @@ public class PlantPresenter {
 	private void propagateFlowBackToReactor()
 	{
 		Reactor reactor = this.plant.getReactor();
-		int firstComponentFlowRate = reactor.getOutput().getFlowOut().getRate();
+		PlantComponent nextComponent = reactor.getOutput();
+		int	nextComponentFlowRate = nextComponent.getFlowOut().getRate();
+		// If the next component is a ConnectorPipe we need to
+		// remember that the flowOut is divided by the number of active
+		// outputs!
+		if (nextComponent instanceof ConnectorPipe) 
+			nextComponentFlowRate *= ((ConnectorPipe) nextComponent).numOutputs();
 		// If the rate of flow out of the first component is zero, propagate this back to the reactor.
-		if (firstComponentFlowRate == 0) reactor.getFlowOut().setRate(firstComponentFlowRate);
+		if (nextComponentFlowRate == 0) reactor.getFlowOut().setRate(nextComponentFlowRate);
 	}
 
 	private void setAllConnectorPipesUnblocked() {
@@ -362,14 +368,19 @@ public class PlantPresenter {
 	private void blockFromConnectorPipes() {
 		boolean changed = true;
 		List<ConnectorPipe> connectorPipes = this.plant.getConnectorPipes();
+		Map<ConnectorPipe, Boolean> hasBeenPropagated = new HashMap<ConnectorPipe, Boolean>();
 		while (changed) {
 			changed = false;
 			// iterate through all connector pipes and check if they're blocked up.
 			for (ConnectorPipe c : connectorPipes) {
+				// If we're not already keeping track of c, add it to the hashmap
+				if (!hasBeenPropagated.containsKey(c)) hasBeenPropagated.put(c, false);
 				// If connectorPipe has all of it's outputs blocked
-				if (isConnectorBlocking(c)) {
+				// And the blockage hasn't been propagated
+				if (isConnectorBlocking(c) && !hasBeenPropagated.get(c)) {
 					// Block the path leading into it.
 					blockPreceedingFromConnectorPipe(c);
+					hasBeenPropagated.put(c, true);
 					changed = true;
 				}
 			}
