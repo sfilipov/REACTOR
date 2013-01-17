@@ -151,6 +151,10 @@ public class PlantPresenter {
 		return plant.getOperatorName();
 	}
 	
+	public int getReactorHealth() {
+		return plant.getReactor().getHealth();
+	}
+	
 	public int getReactorTemperature() {
 		return plant.getReactor().getTemperature();
 	}
@@ -175,6 +179,10 @@ public class PlantPresenter {
 		return plant.getReactor().getMinSafeWaterVolume();
 	}
 	
+	
+	public int getCondenserHealth() {
+		return plant.getCondenser().getHealth();
+	}
 	
 	public int getCondenserTemperature() {
 		return plant.getCondenser().getTemperature();
