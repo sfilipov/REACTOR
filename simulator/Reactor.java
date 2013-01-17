@@ -180,7 +180,6 @@ public class Reactor extends PlantComponent {
 			waterEvaporated = (int) Math.round(temperature * EVAP_MULTIPLIER);
 			if (waterEvaporated > this.waterVolume) waterEvaporated = this.waterVolume;
 			steamCreated = waterEvaporated * WATER_STEAM_RATIO;
-			System.out.println(steamCreated);
 			
 			this.waterVolume -= waterEvaporated; // made negative as the water is removed.
 			this.steamVolume += steamCreated; 
