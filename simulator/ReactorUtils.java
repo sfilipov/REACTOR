@@ -56,16 +56,9 @@ public class ReactorUtils
 		setupInputOutputReferences(reactor, connectorPipe1);
 		setupInputOutputReferences(connectorPipe1, steamValve1);
 		setupInputOutputReferences(connectorPipe1, steamValve2);
-		
-		setupInputOutputReferences(steamValve1, connectorPipe2);
-		setupInputOutputReferences(steamValve2, connectorPipe2);
-		/* Replace previous 2 lines with the following when Turbine class
-		 * is finished.
-		 * 
-		 * setupInputOutput(steamValve1, turbine);
-		 * setupInputOutput(turbine, connectorPipe2);
-		 * setupInputOutput(steamValve2, connectorPipe2);
-		 */
+		setupInputOutputReferences(steamValve1, turbine);
+		setupInputOutputReferences(turbine, connectorPipe2);
+		setupInputOutputReferences(steamValve2, connectorPipe2); 
 		setupInputOutputReferences(connectorPipe2, condenser);
 		setupInputOutputReferences(condenser, connectorPipe3);
 		setupInputOutputReferences(connectorPipe3, pump1);
