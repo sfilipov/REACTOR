@@ -121,6 +121,7 @@ class Condenser extends PlantComponent {
 	private int heating(int steamTemperature, int steamVolumeIn) {
 		int tempDiff = Math.abs(this.temperature - steamTemperature);
 		if (this.steamVolume < 1) return 0; // stops a potential divide by 0 on the next line.
+		if (steamVolumeIn == 0) return 0; // No steam flowing in => no heating.
 		return tempDiff * (1 - ((this.steamVolume - steamVolumeIn)/this.steamVolume));
 	}
 	
@@ -133,12 +134,11 @@ class Condenser extends PlantComponent {
 	 * @return amount of temperature decrease for this step.
 	 */
 	private int cooldown() {
-		int tempDiff = this.temperature - COOLANT_TEMP;
-		System.out.println("C: tempDiff - " + tempDiff);
-		if (tempDiff > 0) {
+		int potentialNewTemp = this.temperature - COOLDOWN_PER_STEP;
+		if (potentialNewTemp > COOLANT_TEMP) {
 			return COOLDOWN_PER_STEP;
 		} else {
-			return 0;
+			return this.temperature - COOLANT_TEMP;
 		}
 	}
 	
