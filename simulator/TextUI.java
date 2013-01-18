@@ -375,7 +375,7 @@ public class TextUI extends JFrame implements KeyListener
 	    		else if (component.equals("pump") && !scanner.hasNextInt()) {
 	    			printNotValidPump();
 	    		}
-	    		else if (component.equals("controlrods") && scanner.hasNextInt()) {
+	    		else if ((component.equals("controlrods") || component.equals("cr")) && scanner.hasNextInt()) {
 	    			int percentageLowered = scanner.nextInt();
 	    			if (percentageLowered >= 0 && percentageLowered <= 100 && !scanner.hasNext()) {
 	    				presenter.setControlRods(percentageLowered);
@@ -387,13 +387,14 @@ public class TextUI extends JFrame implements KeyListener
 	    		}
 	    		else if (component.equals("controlrods") && !scanner.hasNextInt()) {
 	    			print("Please select a value for the control rods: set controlrods n (n is a number between 0 and 100)");
+	    			print("You can also use \"set cr\" instead of \"set controlrods\"");
 	    		}
 	    		else {
-	    			print("Incorrect usage of set command - set valve, set controlrods, set pump");
+	    			print("Incorrect usage of set command - set valve, set controlrods (set cr), set pump");
 	    		}
 	    	}
 	    	else if (command.equals("set") && !scanner.hasNext()) {
-	    		print("Incorrect usage of set command - set valve, set controlrods, set pump");
+	    		print("Incorrect usage of set command - set valve, set controlrods (set cr), set pump");
 	    	}
 	    	else if (command.equals("repair") && scanner.hasNext()) {
 	    		String component = scanner.next();

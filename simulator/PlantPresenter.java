@@ -219,6 +219,10 @@ public class PlantPresenter {
 		return plant.getCondenser().getWaterVolume();
 	}
 	
+	public int getControlRodsPercentage() {
+		return plant.getReactor().getPercentageLowered();
+	}
+	
 	public List<Valve> getValves() {
 		return plant.getValves();
 	}
@@ -227,9 +231,6 @@ public class PlantPresenter {
 		return plant.getPumps();
 	}
 	
-	public int getControlRodsPercentage() {
-		return plant.getReactor().getPercentageLowered();
-	}
 	// ----------------		Debug methods	----------------
 	
 	private void printDebugInfo() {
