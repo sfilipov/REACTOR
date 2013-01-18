@@ -106,7 +106,7 @@ class Condenser extends PlantComponent {
 		Flow flowIn = this.getInput().getFlowOut();
 		int steamTemperature = flowIn.getTemperature();
 		
-		changeInTemp = heating(steamTemperature, this.steamIn) + cooldown();
+		changeInTemp = heating(steamTemperature, this.steamIn) - cooldown();
 		this.temperature += changeInTemp;
 	}
 	
