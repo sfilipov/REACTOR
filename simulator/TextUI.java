@@ -3,15 +3,15 @@ package simulator;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.text.NavigationFilter;
-import javax.swing.text.Position;
-import java.util.Scanner;
-import java.util.ArrayList;
-import java.util.List;
+import javax.swing.text.DefaultCaret;
 
+import java.util.Scanner;
+import java.util.List;
 
 public class TextUI extends JFrame implements KeyListener 
 {
+	private static final long serialVersionUID = -8860972241763753423L;
+	
 	private final static String START_TEXT = 
 			"To start a name game type\t\t: newgame\n"
             +"To load a saved game type\t\t: loadgame\n"
@@ -129,6 +129,10 @@ public class TextUI extends JFrame implements KeyListener
         
         JScrollPane Scroll = new JScrollPane(outputText);
         Scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        
+        // Auto scroll down!
+        DefaultCaret caret = (DefaultCaret)outputText.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
          
         GridBagConstraints OutputTextConstraints = new GridBagConstraints();
         OutputTextConstraints.gridx = 0;
