@@ -4,6 +4,7 @@ public class Pump extends PlantComponent {
 	//DEFAULT_RPM is used when a rpm argument is not passed to the constructor
 	private final static int DEFAULT_RPM = 0;
 	private final static boolean DEFAULT_ON_STATE = true;
+	private final static int MAX_RPM = 1000; 
 	
 	private int ID;
 	private int rpm;
@@ -45,8 +46,12 @@ public class Pump extends PlantComponent {
 	 * Sets a new value for the RPM of the pump.
 	 * @param rpm the new value
 	 */
-	public void setRpm(int rpm) {
-		this.rpm = rpm;
+	public void setRpm(int rpm) throws IllegalArgumentException {
+		if (rpm <= MAX_RPM && rpm >= 0) {
+			this.rpm = rpm;
+		} else {
+			throw new IllegalArgumentException("Pump rpm must be in the range [0 - " + MAX_RPM + "]");
+		}
 		/* Uncomment this if we decide that setting an rpm
 		 * when the pump is off should turn it on. 
 		 *
@@ -62,6 +67,11 @@ public class Pump extends PlantComponent {
 		this.on = on;
 	}
 	
+	public int getMaxRpm()
+	{
+		return MAX_RPM;
+	}
+
 	public void updateState() {
 		// Chill out with the valves, sippin' on Gin & Juice.
 	}
