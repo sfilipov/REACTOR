@@ -33,6 +33,7 @@ public class TextUI extends JFrame implements KeyListener
     +"| ) \\ \\__| (____/\\| )   ( || (____/\\   | |   | (___) || ) \\ \\__\n"
     +"|/   \\__/(_______/|/     \\|(_______/   )_(   (_______)|/   \\__/\n";
 	
+	private final static String MUSHROOM_ASCII = "mushroom";
 	// UI variables
 	private JTextArea systemText = new JTextArea(10,20);
     private JTextArea outputText = new JTextArea(10,20);
@@ -218,36 +219,41 @@ public class TextUI extends JFrame implements KeyListener
     private void updateSystemText() {
     	String reactorInfo = new String();
     	UIData uidata = presenter.getUIData();
-    	reactorInfo += "Operator Name: "  + uidata.getOperatorName() + "\t| SCORE: " + uidata.getScore() + "\n\n";
-    	reactorInfo += "PLANT READINGS: \n\n";
-    	
-    	reactorInfo += "REACTOR HEALTH: " + uidata.getReactorHealth() + "\n";  
-    	reactorInfo += "Temperature: "    + uidata.getReactorTemperature() + "  \t| Max: "                + uidata.getReactorMaxTemperature()     + "\n";
-    	reactorInfo += "Pressure: "       + uidata.getReactorPressure()    + " \t\t| Max: "               + uidata.getReactorMaxPressure()        + "\n";
-    	reactorInfo += "Water Volume: "   + uidata.getReactorWaterVolume() + " \t| Minimum Safe Volume: " + uidata.getReactorMinSafeWaterVolume() + "\n\n";
-    	
-    	reactorInfo += "CONDENSER HEALTH: " + uidata.getCondenserHealth()      + "\n";
-    	reactorInfo += "Temperature: "      + uidata.getCondenserTemperature() + "  \t| Max: "                + uidata.getCondenserMaxTemperature()     + "\n";
-    	reactorInfo += "Pressure: "         + uidata.getCondenserPressure()    + " \t\t| Max: "               + uidata.getCondenserMaxPressure()        + "\n";
-    	reactorInfo += "Water Volume: "     + uidata.getCondenserWaterVolume() + "\n\n";
-    	
-    	List<Valve> valves = uidata.getValves();
-    	for (Valve v : valves) {
-    		reactorInfo += "VALVE ID: " + v.getID() + " | ";
-    		reactorInfo += "POSITION: " + (v.isOpen() ? "OPEN\n" : "CLOSED\n");
+    	if (!uidata.isGameOver()) {
+        	reactorInfo += "Operator Name: "  + uidata.getOperatorName() + "\t| SCORE: " + uidata.getScore() + "\n\n";
+        	reactorInfo += "PLANT READINGS: \n\n";
+        	
+        	reactorInfo += "REACTOR HEALTH: " + uidata.getReactorHealth() + "\n";  
+        	reactorInfo += "Temperature: "    + uidata.getReactorTemperature() + "  \t| Max: "                + uidata.getReactorMaxTemperature()     + "\n";
+        	reactorInfo += "Pressure: "       + uidata.getReactorPressure()    + " \t\t| Max: "               + uidata.getReactorMaxPressure()        + "\n";
+        	reactorInfo += "Water Volume: "   + uidata.getReactorWaterVolume() + " \t| Minimum Safe Volume: " + uidata.getReactorMinSafeWaterVolume() + "\n\n";
+        	
+        	reactorInfo += "CONDENSER HEALTH: " + uidata.getCondenserHealth()      + "\n";
+        	reactorInfo += "Temperature: "      + uidata.getCondenserTemperature() + "  \t| Max: "                + uidata.getCondenserMaxTemperature()     + "\n";
+        	reactorInfo += "Pressure: "         + uidata.getCondenserPressure()    + " \t\t| Max: "               + uidata.getCondenserMaxPressure()        + "\n";
+        	reactorInfo += "Water Volume: "     + uidata.getCondenserWaterVolume() + "\n\n";
+        	
+        	List<Valve> valves = uidata.getValves();
+        	for (Valve v : valves) {
+        		reactorInfo += "VALVE ID: " + v.getID() + " | ";
+        		reactorInfo += "POSITION: " + (v.isOpen() ? "OPEN\n" : "CLOSED\n");
+        	}
+        	reactorInfo += "\n";
+        	
+        	List<Pump> pump = uidata.getPumps();
+        	for (Pump p : pump) {
+        		reactorInfo += "PUMP ID: " + p.getID() + "  | ";
+        		reactorInfo += "STATUS: " + ((p.isOperational()) ? "FUNCTIONAL | " : "BROKEN | ");
+        		reactorInfo += "POWER STATE: " + (p.isOn() ? "ON | " : "OFF | ");
+        		reactorInfo += "RPM: " + p.getRpm() + "\n";
+        	}
+        	reactorInfo += "\n";
+        	
+        	reactorInfo += "CONTROL RODS PERCENT INTO CORE: " + uidata.getControlRodsPercentage() + "%\n";
     	}
-    	reactorInfo += "\n";
-    	
-    	List<Pump> pump = uidata.getPumps();
-    	for (Pump p : pump) {
-    		reactorInfo += "PUMP ID: " + p.getID() + "  | ";
-    		reactorInfo += "STATUS: " + ((p.isOperational()) ? "FUNCTIONAL | " : "BROKEN | ");
-    		reactorInfo += "POWER STATE: " + (p.isOn() ? "ON | " : "OFF | ");
-    		reactorInfo += "RPM: " + p.getRpm() + "\n";
+    	else {
+    		reactorInfo = MUSHROOM_ASCII;
     	}
-    	reactorInfo += "\n";
-    	
-    	reactorInfo += "CONTROL RODS PERCENT INTO CORE: " + uidata.getControlRodsPercentage() + "%\n";
     	
     	systemText.setText(reactorInfo);
     }

@@ -9,6 +9,7 @@ public class Plant {
 	private final static int MAX_WATER_FLOW_RATE_PER_PUMP = 100;
 	
 	private String operatorName;
+	private boolean gameOver;
 	private int timeStepsUsed;
 	private int score;
 	private List<Repair> beingRepaired;
@@ -30,6 +31,7 @@ public class Plant {
 	 */
 	public Plant(String operatorName) {
 		this.operatorName = operatorName;
+		this.gameOver = false;
 		this.timeStepsUsed = 0;
 		this.score = 0;
 		this.beingRepaired = new ArrayList<Repair>();
@@ -211,4 +213,11 @@ public class Plant {
 		}
 	}	
 	
+	public void gameOver() {
+		this.gameOver = true;
+	}
+	
+	public boolean isGameOver() {
+		return this.gameOver;
+	}
 }

@@ -147,10 +147,10 @@ public class PlantPresenter {
 	 */
 	public void step(int numSteps) {
 		for (int i = 0; i < numSteps; i++) {
-			checkFailures();
 			updateBeingRepaired();
 			updateFlow();
 			updatePlant();
+			checkFailures();
 		}
 		this.plant.updateTimeStepsUsed(numSteps);
 		printFlowDebugInfo();
@@ -242,7 +242,7 @@ public class PlantPresenter {
 		for (PlantComponent component : plantComponents) {
 			if (component.checkFailure()) {
 				if (component instanceof Reactor || component instanceof Condenser) {
-					//GAME OVER
+					plant.gameOver();
 				}
 				else {
 					failingComponents.add(component);
