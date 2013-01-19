@@ -99,7 +99,11 @@ public class TextUI extends JFrame implements KeyListener
             }
 
             public void moveDot(NavigationFilter.FilterBypass fb, int dot, Position.Bias bias) {
-              fb.setDot(dot, bias);
+            	if (dot <= prompt.length()) {
+            		fb.setDot(prompt.length(), bias);
+            	} else {
+            		fb.setDot(dot, bias);
+            	}
             }
         };
         inputBox.setNavigationFilter(filter);
