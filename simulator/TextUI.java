@@ -35,7 +35,7 @@ public class TextUI extends JFrame implements KeyListener
     private JTextArea outputText = new JTextArea(10,20);
     private JTextField inputBox = new JTextField(30);
     private final static Font default_font = new Font("Monospaced",Font.PLAIN, 12);
-    private final static String prompt = "> ";
+    private final static String prompt = "~> ";
     
     private PlantPresenter presenter;
     private State state = State.Uninitialised;
@@ -188,9 +188,10 @@ public class TextUI extends JFrame implements KeyListener
     
     private void persistPrompt()
 	{
-    	if (inputBox.getCaret().getDot() <= prompt.length()) inputBox.getCaret().setDot(prompt.length());
+    	int promptLength = prompt.length();
+    	if (inputBox.getCaret().getDot() <= promptLength) inputBox.getCaret().setDot(promptLength);
 		if (!inputBox.getText().startsWith(prompt)) {
-			inputBox.setText(prompt + inputBox.getText().substring(1));
+			inputBox.setText(prompt + inputBox.getText().substring(promptLength - 1));
 		}
 		
 	}
