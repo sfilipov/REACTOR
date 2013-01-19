@@ -52,11 +52,7 @@ public class Pump extends PlantComponent {
 		} else {
 			throw new IllegalArgumentException("Pump rpm must be in the range [0 - " + MAX_RPM + "]");
 		}
-		/* Uncomment this if we decide that setting an rpm
-		 * when the pump is off should turn it on. 
-		 *
-		 * if (rpm != 0 && !on) on = true;
-		 */
+		if (rpm != 0 && !on) on = true;
 	}
 	
 	public boolean isOn() {
