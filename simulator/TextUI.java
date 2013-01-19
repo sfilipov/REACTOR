@@ -14,6 +14,9 @@ public class TextUI extends JFrame implements KeyListener
 {
 	private static final long serialVersionUID = -8860972241763753423L;
 	
+	private static final int MAX_TIME_STEPS_PER_COMMAND = 10; // max n for a 'step n' command
+	private static final int MAX_NAME_LENGTH = 30;
+	
 	private final static String START_TEXT = 
 			"To start a name game type\t\t: newgame\n"
             +"To load a saved game type\t\t: loadgame\n"
@@ -68,6 +71,8 @@ public class TextUI extends JFrame implements KeyListener
         add(leftPanel);
         add(rightPanel);
         setVisible(true);
+        // Auto focus the input box!
+        inputBox.grabFocus();
     }
     
     private void initInputArea(JPanel parentPanel) {
@@ -107,7 +112,6 @@ public class TextUI extends JFrame implements KeyListener
             }
         };
         inputBox.setNavigationFilter(filter);
-        
         
         inputBox.addKeyListener(this);
         parentPanel.add(inputBox);
@@ -157,6 +161,7 @@ public class TextUI extends JFrame implements KeyListener
     {
         outputText.setText(START_TEXT + REACTOR_ASCII);
         inputBox.setText(prompt);
+        inputBox.setCaretPosition(prompt.length());
     }
     
     public void keyReleased(KeyEvent k)
@@ -221,9 +226,9 @@ public class TextUI extends JFrame implements KeyListener
     	reactorInfo += "Water Volume: "   + presenter.getReactorWaterVolume() + " \t| Minimum Safe Volume: " + presenter.getReactorMinSafeWaterVolume() + "\n\n";
     	
     	reactorInfo += "CONDENSER HEALTH: " + presenter.getCondenserHealth()      + "\n"; //Improve
-    	reactorInfo += "Temperature: "      + presenter.getCondenserTemperature() + "  \t| Max: "                + presenter.getReactorMaxTemperature()     + "\n";
-    	reactorInfo += "Pressure: "         + presenter.getCondenserPressure()    + " \t\t| Max: "               + presenter.getReactorMaxPressure()        + "\n";
-    	reactorInfo += "Water Volume: "     + presenter.getCondenserWaterVolume() + " \t| Minimum Safe Volume: " + presenter.getReactorMinSafeWaterVolume() + "\n\n";
+    	reactorInfo += "Temperature: "      + presenter.getCondenserTemperature() + "  \t| Max: "                + presenter.getCondenserMaxTemperature()     + "\n";
+    	reactorInfo += "Pressure: "         + presenter.getCondenserPressure()    + " \t\t| Max: "               + presenter.getCondenserMaxPressure()        + "\n";
+    	reactorInfo += "Water Volume: "     + presenter.getCondenserWaterVolume() + "\n\n";
     	
     	List<Valve> valves = presenter.getValves();
     	for (Valve v : valves) {
@@ -236,7 +241,8 @@ public class TextUI extends JFrame implements KeyListener
     	for (Pump p : pump) {
     		reactorInfo += "PUMP ID: " + p.getID() + "  | ";
     		reactorInfo += "STATUS: " + ((p.isOperational()) ? "FUNCTIONAL | " : "BROKEN | ");
-    		reactorInfo += "POWER STATE: " + (p.isOn() ? "ON\n" : "OFF\n");
+    		reactorInfo += "POWER STATE: " + (p.isOn() ? "ON | " : "OFF | ");
+    		reactorInfo += "RPM: " + p.getRpm() + "\n";
     	}
     	reactorInfo += "\n";
     	
@@ -330,17 +336,35 @@ public class TextUI extends JFrame implements KeyListener
 		    			if (pumpCommand.equals("on") || pumpCommand.equals("off")) {
 		    				boolean success;
 		    				if (pumpCommand.equals("on")) {
-		    					success = presenter.setPump(pumpID, true);
+		    					success = presenter.setPumpOnOff(pumpID, true);
 		    				}
 		    				else { //close
-		    					success = presenter.setPump(pumpID, false);
+		    					success = presenter.setPumpOnOff(pumpID, false);
 		    				}
-		    				if (success)
+		    				if (success) {
 		    					print("Pump was successfully set");
-		    				else
-		    					print("Pump was not successfully set. Try another (smaller) pump ID.");
+		    				}
+		    				else {
+		    					print("Pump was not successfully set. Try another pump ID.");
+		    				}
 		    			}
-	    				else {
+	    				else if (pumpCommand.equals("rpm") && scanner.hasNextInt()) {
+	    					int newRpm = scanner.nextInt();
+	    					boolean success;
+	    					try {
+	    						success = presenter.setPumpRpm(pumpID, newRpm);
+	    						if (success) {
+		    						print("Pump rpm was successfully set.");
+		    					} else {
+		    						print("Pump rpm was not successfully set. Try another pump ID.");
+		    					}
+	    					} catch (IllegalArgumentException iae) {
+	    						print("Pump rpm was not successfully set.");
+	    						print(iae.getMessage());
+	    					}
+	    				}
+	    				else
+	    				{
 	    					printNotValidPump();
 	    				}
 	    			}
@@ -422,8 +446,8 @@ public class TextUI extends JFrame implements KeyListener
     }
 	
 	private void parseNewGame(String input) {
-		if (input.length() > 30) {
-			print("Your name is too long - please use a name shorter than 30 characters.");
+		if (input.length() > MAX_NAME_LENGTH) {
+			print("Your name is too long - please use a name shorter than " + MAX_NAME_LENGTH + " characters.");
 		}
 		else {
 			presenter.newGame(input);
@@ -456,12 +480,12 @@ public class TextUI extends JFrame implements KeyListener
 	
 	private void doStep(int numSteps)
 	{
-		if (numSteps >= 0 && numSteps <= 10) {
+		if (numSteps >= 0 && numSteps <= MAX_TIME_STEPS_PER_COMMAND) {
 			presenter.step(numSteps);
 			print("Game advanced " + numSteps + " steps.");
 		}
 		else {
-			print("Too many steps. Try a number between 0 and 10.");
+			print("Too many steps. Try a number between 0 and " + MAX_TIME_STEPS_PER_COMMAND + ".");
 		}
 	}
 	
@@ -534,15 +558,19 @@ public class TextUI extends JFrame implements KeyListener
 	}
 	
 	private void printNotValidValve() {
-		print("Not a valid command. Format for setting a valve: set valve id newState");
-		print("where \"id\" is the ID of the valve and \"newState\" is either \"open\" or \"close\"");
-		print("i.e. \"set valve 2 open\" or \"set valve 4 close\"");
+		print("Not a valid command.");
+		print("Format for setting a valve: set valve <id> [open | close]");
+		print("\tWhere \"id\" is the ID of the valve and \"newState\" is either \"open\" or \"close\"");
+		print("\ti.e. \"set valve 2 open\" or \"set valve 4 close\"");
 	}
 	
 	private void printNotValidPump() {
-		print("Not a valid command. Format for setting a pump: set pump id newState");
-		print("where \"id\" is the ID of the pump and \"newState\" is either \"on\" or \"off\"");
-		print("i.e. \"set pump 2 on\" or \"set pump 1 off\"");
+		print("Not a valid command.");
+		print("Format for setting a pump on or off: set pump <id> [on | off]");
+		print("\tWhere <id> is the ID of the pump.");
+		print("\ti.e. \"set pump 2 on\" or \"set pump 1 off\"");
+		print("Format for setting a pump's rpm: set pump <id> rpm <newRpm>");
+		print("\ti.e. \"set pump 2 rpm 400\" or \"set pump 1 rpm 300\"");
 	}
 	
 	private enum State {
