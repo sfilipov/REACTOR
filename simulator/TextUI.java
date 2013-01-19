@@ -33,7 +33,7 @@ public class TextUI extends JFrame implements KeyListener
     +"| ) \\ \\__| (____/\\| )   ( || (____/\\   | |   | (___) || ) \\ \\__\n"
     +"|/   \\__/(_______/|/     \\|(_______/   )_(   (_______)|/   \\__/\n";
 	
-	private final static String MUSHROOM_ASCII = "mushroom";
+	private final static String MUSHROOM_ASCII = "mushroom\n";
 	// UI variables
 	private JTextArea systemText = new JTextArea(10,20);
     private JTextArea outputText = new JTextArea(10,20);
@@ -204,11 +204,13 @@ public class TextUI extends JFrame implements KeyListener
 
 	private void actUponInput() {
     	String command = inputBox.getText().substring(prompt.length());
-    	print(prompt + command);
+    	if(!(state == State.GameOver) || command.equals("newgame")) {
+    		print(prompt + command);
+    	}
     	parse(command);
 		inputBox.setText(prompt);
 		
-		if(state == State.Normal)
+		if(state == State.Normal || state == State.GameOver)
 			updateSystemText();
     }
     
@@ -252,7 +254,8 @@ public class TextUI extends JFrame implements KeyListener
         	reactorInfo += "CONTROL RODS PERCENT INTO CORE: " + uidata.getControlRodsPercentage() + "%\n";
     	}
     	else {
-    		reactorInfo = MUSHROOM_ASCII;
+    		state = State.GameOver;
+    		reactorInfo = MUSHROOM_ASCII + "Your final score is: " + uidata.getScore();
     	}
     	
     	systemText.setText(reactorInfo);
@@ -269,6 +272,8 @@ public class TextUI extends JFrame implements KeyListener
 			parseNewGame(input);
 		else if (state == State.AreYouSure)
 			parseAreYouSure(input.toLowerCase());
+		else if (state == State.GameOver)
+			parseGameOver(input);
 	}
 	
 	private void parseNormal(String input) {
@@ -484,6 +489,23 @@ public class TextUI extends JFrame implements KeyListener
 		scanner.close();
 	}
 	
+	private void parseGameOver(String input) {
+    	Scanner scanner = new Scanner(input);
+		if (!scanner.hasNext()) {
+			//Nothing
+		}
+		else {
+	    	String next = scanner.next();
+	    	if (next.equals("newgame") && !scanner.hasNext()) {
+	    		doNewGame();
+	    	}
+	    	else {
+	    		print("The game has ended. The only command you can use is \"newgame\"");
+	    	}
+		}
+		scanner.close();
+	}
+	
 	//-------------- Methods used inside parsing -------------------
 	
 	private void doStep(int numSteps)
@@ -582,7 +604,7 @@ public class TextUI extends JFrame implements KeyListener
 	}
 	
 	private enum State {
-		Normal, NewGame, AreYouSure, Uninitialised;
+		Uninitialised, NewGame, Normal, AreYouSure, GameOver;
 	}
 	
 	private enum AreYouSureCaller {
