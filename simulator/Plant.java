@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Plant {
 	private final static int MAX_STEAM_FLOW_RATE = 900;
-	private final static int MAX_WATER_FLOW_RATE_PER_PUMP = 200;
+	private final static int MAX_WATER_FLOW_RATE_PER_PUMP = 100;
 	
 	private String operatorName;
 	private int timeStepsUsed;
