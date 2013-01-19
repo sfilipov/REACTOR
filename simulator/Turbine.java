@@ -1,17 +1,24 @@
 package simulator;
 
 public class Turbine extends PlantComponent {
-	private int rpm;
-	//Add steamInput or whatever you need.
+	private static final int MAX_TURBINE_RPM = 3500;
 	
-	Turbine() {
+	private int rpm;
+	private int maxSteamThroughput;
+	
+	Turbine(int maxSteamThroughput) {
 		super();
-		this.rpm = 1000; //Remove after this class is implemented.
+		this.maxSteamThroughput = maxSteamThroughput;
+		this.rpm = 0;
 	}
 	
 	@Override
 	public void updateState() {
-		//
+		int steamFlowIn = this.getInput().getFlowOut().getRate();
+		// Need to create a couple of new doubles mid-calc here to make sure we get a decimal
+		double linearMultiplier = 1 - (new Double((this.maxSteamThroughput - steamFlowIn))/new Double(this.maxSteamThroughput)); 
+		int newRpm = (int) Math.round(new Double(MAX_TURBINE_RPM) * linearMultiplier);
+		this.rpm = newRpm;
 	}
 	
 	/*
