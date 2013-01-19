@@ -1,7 +1,7 @@
 package simulator;
 
 public class Reactor extends PlantComponent {
-	private final static int DEFAULT_TEMPERATURE = 0;
+	private final static int DEFAULT_TEMPERATURE = 50;
 	private final static int DEFAULT_PRESSURE = 0;
 	private final static int DEFAULT_WATER_VOLUME = 8000;
 	private final static int DEFAULT_STEAM_VOLUME = 0;
