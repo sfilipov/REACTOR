@@ -217,27 +217,28 @@ public class TextUI extends JFrame implements KeyListener
     
     private void updateSystemText() {
     	String reactorInfo = new String();
-    	reactorInfo += "Operator Name: " + presenter.getOperatorName() + "\t| SCORE: " + presenter.getScore() + "\n\n";
+    	UIData uidata = presenter.getUIData();
+    	reactorInfo += "Operator Name: "  + uidata.getOperatorName() + "\t| SCORE: " + uidata.getScore() + "\n\n";
     	reactorInfo += "PLANT READINGS: \n\n";
     	
-    	reactorInfo += "REACTOR HEALTH: " + presenter.getReactorHealth() + "\n";  
-    	reactorInfo += "Temperature: "    + presenter.getReactorTemperature() + "  \t| Max: "                + presenter.getReactorMaxTemperature()     + "\n";
-    	reactorInfo += "Pressure: "       + presenter.getReactorPressure()    + " \t\t| Max: "               + presenter.getReactorMaxPressure()        + "\n";
-    	reactorInfo += "Water Volume: "   + presenter.getReactorWaterVolume() + " \t| Minimum Safe Volume: " + presenter.getReactorMinSafeWaterVolume() + "\n\n";
+    	reactorInfo += "REACTOR HEALTH: " + uidata.getReactorHealth() + "\n";  
+    	reactorInfo += "Temperature: "    + uidata.getReactorTemperature() + "  \t| Max: "                + uidata.getReactorMaxTemperature()     + "\n";
+    	reactorInfo += "Pressure: "       + uidata.getReactorPressure()    + " \t\t| Max: "               + uidata.getReactorMaxPressure()        + "\n";
+    	reactorInfo += "Water Volume: "   + uidata.getReactorWaterVolume() + " \t| Minimum Safe Volume: " + uidata.getReactorMinSafeWaterVolume() + "\n\n";
     	
-    	reactorInfo += "CONDENSER HEALTH: " + presenter.getCondenserHealth()      + "\n"; //Improve
-    	reactorInfo += "Temperature: "      + presenter.getCondenserTemperature() + "  \t| Max: "                + presenter.getCondenserMaxTemperature()     + "\n";
-    	reactorInfo += "Pressure: "         + presenter.getCondenserPressure()    + " \t\t| Max: "               + presenter.getCondenserMaxPressure()        + "\n";
-    	reactorInfo += "Water Volume: "     + presenter.getCondenserWaterVolume() + "\n\n";
+    	reactorInfo += "CONDENSER HEALTH: " + uidata.getCondenserHealth()      + "\n";
+    	reactorInfo += "Temperature: "      + uidata.getCondenserTemperature() + "  \t| Max: "                + uidata.getCondenserMaxTemperature()     + "\n";
+    	reactorInfo += "Pressure: "         + uidata.getCondenserPressure()    + " \t\t| Max: "               + uidata.getCondenserMaxPressure()        + "\n";
+    	reactorInfo += "Water Volume: "     + uidata.getCondenserWaterVolume() + "\n\n";
     	
-    	List<Valve> valves = presenter.getValves();
+    	List<Valve> valves = uidata.getValves();
     	for (Valve v : valves) {
     		reactorInfo += "VALVE ID: " + v.getID() + " | ";
     		reactorInfo += "POSITION: " + (v.isOpen() ? "OPEN\n" : "CLOSED\n");
     	}
     	reactorInfo += "\n";
     	
-    	List<Pump> pump = presenter.getPumps();
+    	List<Pump> pump = uidata.getPumps();
     	for (Pump p : pump) {
     		reactorInfo += "PUMP ID: " + p.getID() + "  | ";
     		reactorInfo += "STATUS: " + ((p.isOperational()) ? "FUNCTIONAL | " : "BROKEN | ");
@@ -246,7 +247,7 @@ public class TextUI extends JFrame implements KeyListener
     	}
     	reactorInfo += "\n";
     	
-    	reactorInfo += "CONTROL RODS PERCENT INTO CORE: " + presenter.getControlRodsPercentage() + "%\n";
+    	reactorInfo += "CONTROL RODS PERCENT INTO CORE: " + uidata.getControlRodsPercentage() + "%\n";
     	
     	systemText.setText(reactorInfo);
     }

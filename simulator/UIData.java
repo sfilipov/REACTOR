@@ -31,6 +31,8 @@ public class UIData {
 	
 	
 	UIData(Plant plant) {
+		this.plant = plant;
+		
 		this.operatorName = plant.getOperatorName();
 		this.score        = plant.getScore();
 		
@@ -120,22 +122,32 @@ public class UIData {
 		return controlRods;
 	}
 	
-	public boolean isOpenValve(int valveID) throws ValveNotFoundException {
-		for (Valve v : valves) {
-			if (v.getID() == valveID) {
-				return v.isOpen();
-			}
-		}
-		throw new ValveNotFoundException();
+	public List<Valve> getValves() {
+		return plant.getValves();
 	}
 	
-	public boolean isOnPump(int pumpID) throws PumpNotFoundException {
-		for (Pump p : pumps) {
-			if (p.getID() == pumpID) {
-				return p.isOn();
-			}
-		}
-		throw new PumpNotFoundException();
+	public List<Pump> getPumps() {
+		return plant.getPumps();
 	}
+	
+	//EXPERIMENTAL
+//	public boolean isOpenValve(int valveID) throws ValveNotFoundException {
+//		for (Valve v : valves) {
+//			if (v.getID() == valveID) {
+//				return v.isOpen();
+//			}
+//		}
+//		throw new ValveNotFoundException();
+//	}
+	
+	//EXPERIMENTAL
+//	public boolean isOnPump(int pumpID) throws PumpNotFoundException {
+//		for (Pump p : pumps) {
+//			if (p.getID() == pumpID) {
+//				return p.isOn();
+//			}
+//		}
+//		throw new PumpNotFoundException();
+//	}
 
 }

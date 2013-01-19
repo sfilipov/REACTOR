@@ -157,78 +157,9 @@ public class PlantPresenter {
 	}
 	
 	// ----------------		Methods used in systemText (TextUI class)	----------------
-	
-	public String getOperatorName() {
-		return plant.getOperatorName();
-	}
-	
-	public int getScore() {
-		return plant.getScore();
-	}
-	
-	public int getReactorHealth() {
-		return plant.getReactor().getHealth();
-	}
-	
-	public int getReactorTemperature() {
-		return plant.getReactor().getTemperature();
-	}
-	
-	public int getReactorMaxTemperature() {
-		return plant.getReactor().getMaxTemperature();
-	}
-	
-	public int getReactorPressure() {
-		return plant.getReactor().getPressure();
-	}
-	
-	public int getReactorMaxPressure() {
-		return plant.getReactor().getMaxPressure();
-	}
-	
-	public int getReactorWaterVolume() {
-		return plant.getReactor().getWaterVolume();
-	}
-	
-	public int getReactorMinSafeWaterVolume() {
-		return plant.getReactor().getMinSafeWaterVolume();
-	}
-	
-	
-	public int getCondenserHealth() {
-		return plant.getCondenser().getHealth();
-	}
-	
-	public int getCondenserTemperature() {
-		return plant.getCondenser().getTemperature();
-	}
-	
-	public int getCondenserMaxTemperature() {
-		return plant.getCondenser().getMaxTemperature();
-	}
-	
-	public int getCondenserPressure() {
-		return plant.getCondenser().getPressure();
-	}
-	
-	public int getCondenserMaxPressure() {
-		return plant.getCondenser().getMaxPressure();
-	}
-	
-	public int getCondenserWaterVolume() {
-		return plant.getCondenser().getWaterVolume();
-	}
-	
-	public int getControlRodsPercentage() {
-		return plant.getReactor().getPercentageLowered();
-	}
-	
-	public List<Valve> getValves() {
-		return plant.getValves();
-	}
-	
-	public List<Pump> getPumps() {
-		return plant.getPumps();
+	public UIData getUIData() {
+		UIData uidata = new UIData(plant);
+		return uidata;
 	}
 	
 	// ----------------		Debug methods	----------------
