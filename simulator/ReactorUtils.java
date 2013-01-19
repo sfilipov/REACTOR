@@ -38,7 +38,7 @@ public class ReactorUtils
 	private void instantiateComponents() {
 		reactor = new Reactor();
 		condenser = new Condenser();
-		turbine = new Turbine();
+		turbine = new Turbine(newPlant.getMaxSteamFlowRate());
 		generator = new Generator(turbine);
 		steamValve1 = new Valve(1, FlowType.Steam);
 		steamValve2 = new Valve(2, FlowType.Steam);
