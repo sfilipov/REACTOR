@@ -624,8 +624,7 @@ public class PlantPresenter {
 	private int calcFlowFromPumpRpm(Pump p)
 	{
 		int maxRpm = p.getMaxRpm();
-		System.out.println(this.plant.getMaxWaterFlowRatePerPump() * (1 - (new Double((maxRpm - p.getRpm())/new Double(maxRpm)))));
-		return this.plant.getMaxWaterFlowRatePerPump() * (1 - ((maxRpm - p.getRpm())/maxRpm));
+		return (int) Math.round(this.plant.getMaxWaterFlowRatePerPump() * (1 - (new Double((maxRpm - p.getRpm())/new Double(maxRpm)))));
 	}
 	
 }
