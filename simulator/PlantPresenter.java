@@ -149,8 +149,8 @@ public class PlantPresenter {
 		for (int i = 0; i < numSteps; i++) {
 			checkFailures();
 			updateBeingRepaired();
-			updatePlant();
 			updateFlow();
+			updatePlant();
 		}
 		this.plant.updateTimeStepsUsed(numSteps);
 		printFlowDebugInfo();
@@ -339,13 +339,9 @@ public class PlantPresenter {
 		
 		propagateFlowFromReactor(); // Start propagation of steam flow.
 		propagateFlowFromPumpsToCondenser(); // Total up all pump flows at condenser
-		System.out.println(1);
 		propagateFlowFromCondenser();	// Start propagation of water flow.
-		System.out.println(2);
 		propagateFlowFromConnectorPipes();
-		System.out.println(3);
 		propagateNoFlowBackToReactor(); // Incase all paths out are blocked!
-		System.out.println(4);
 		moveSteam();
 		moveWater(); 
 	}
@@ -697,6 +693,7 @@ public class PlantPresenter {
 	private int calcFlowFromPumpRpm(Pump p)
 	{
 		int maxRpm = p.getMaxRpm();
+		System.out.println(this.plant.getMaxWaterFlowRatePerPump() * (1 - (new Double((maxRpm - p.getRpm())/new Double(maxRpm)))));
 		return this.plant.getMaxWaterFlowRatePerPump() * (1 - ((maxRpm - p.getRpm())/maxRpm));
 	}
 	
