@@ -69,11 +69,22 @@ public class PlantPresenter {
 	 * Returns true if command was successful, false if a pump with that ID was not found
 	 * @return true if command was successful, false if a pump with that ID was not found
 	 */
-	public boolean setPump(int pumpID, boolean on) {
+	public boolean setPumpOnOff(int pumpID, boolean on) {
 		List<Pump> pumps = plant.getPumps();
 		for (Pump pump : pumps) {
 			if (pumpID == pump.getID()) {
 				pump.setOn(on);
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean setPumpRpm(int pumpID, int rpm) throws IllegalArgumentException {
+		List<Pump> pumps = plant.getPumps();
+		for (Pump pump : pumps) {
+			if (pumpID == pump.getID()) {
+				pump.setRpm(rpm);
 				return true;
 			}
 		}
@@ -142,7 +153,7 @@ public class PlantPresenter {
 			updateFlow();
 		}
 		this.plant.updateTimeStepsUsed(numSteps);
-		//printFlowDebugInfo(this.plant.getReactor());
+		printFlowDebugInfo();
 	}
 	
 	// ----------------		Methods used in systemText (TextUI class)	----------------
@@ -219,7 +230,7 @@ public class PlantPresenter {
 	public int getControlRodsPercentage() {
 		return plant.getReactor().getPercentageLowered();
 	}
-	// ----------------		Internal methods	----------------
+	// ----------------		Debug methods	----------------
 	
 	private void printDebugInfo() {
 		System.out.println("--------------------------");
@@ -241,23 +252,17 @@ public class PlantPresenter {
 		System.out.println("-- Stm Temp In:\t" + this.plant.getCondenser().getInput().getFlowOut().getTemperature() + "\t--");
 	}
 	
-	private void printFlowDebugInfo(PlantComponent pc) {
-		System.out.println("-----");
-		System.out.println(pc.getClass().toString());
-		System.out.println("\tFlow Out:" + pc.getFlowOut().getRate());
-		System.out.println("\tTemp Out:" + pc.getFlowOut().getTemperature());
-		if (!(pc instanceof Condenser)) {
-			if (pc instanceof ConnectorPipe) {
-				for (PlantComponent output : ((ConnectorPipe)pc).getOutputs()) {
-					printFlowDebugInfo(output);
-				}
-			} else {
-				printFlowDebugInfo(pc.getOutput());
-			}
+	private void printFlowDebugInfo() {
+		for (PlantComponent pc : this.plant.getPlantComponents()) {
+			System.out.println("-----");
+			System.out.println(pc.getClass().toString());
+			System.out.println("\tFlow Out:" + pc.getFlowOut().getRate());
+			System.out.println("\tTemp Out:" + pc.getFlowOut().getTemperature());
 		}
 			
-			
 	}
+	
+	// ------------		Update Plant Flow Methods	------------
 
 	// Go through all components and call updateState()
 	// This will do things in Reactor and Condenser objects etc.
@@ -326,22 +331,36 @@ public class PlantPresenter {
 	}
 	
 	private void updateFlow() {
-		updateSteamFlow();
-		//updateWaterFlow();
-		moveSteam();
-		//calculate flow of water & steam out & into reactor/condenser. 
-	}
-
-	private void updateSteamFlow() {
 		setAllConnectorPipesUnblocked();
 		blockFromValves();
 		blockFromConnectorPipes();
 		resetFlowAllComponents();
-		propagateFlowFromReactor();
+		
+		propagateFlowFromReactor(); // Start propagation of steam flow.
+		propagateFlowFromPumpsToCondenser(); // Total up all pump flows at condenser
+		System.out.println(1);
+		propagateFlowFromCondenser();	// Start propagation of water flow.
+		System.out.println(2);
 		propagateFlowFromConnectorPipes();
-		propagateFlowBackToReactor(); // Incase all paths out are blocked!
+		System.out.println(3);
+		propagateNoFlowBackToReactor(); // Incase all paths out are blocked!
+		System.out.println(4);
+		moveSteam();
+		moveWater(); 
 	}
 	
+	private void moveWater()
+	{
+		Condenser condenser = this.plant.getCondenser();
+		condenser.updateWaterVolume(-condenser.getFlowOut().getRate());
+		Reactor reactor = this.plant.getReactor();
+		reactor.updateWaterVolume(reactor.getInput().getFlowOut().getRate());
+	}
+
+	/**
+	 * Forcefully removes steam from the reactor and places it into the condenser.
+	 * Based upon the flow! :) 
+	 */
 	private void moveSteam()
 	{
 		Reactor reactor = this.plant.getReactor();
@@ -350,7 +369,12 @@ public class PlantPresenter {
 		condenser.updateSteamVolume(condenser.getInput().getFlowOut().getRate());
 	}
 
-	private void propagateFlowBackToReactor()
+	/**
+	 * If all paths out of the reactor are blocked and the reactor is 
+	 * connected to a ConnectorPipe, then the 'zero flow' will not have been
+	 * propagated back to it's flowOut. We therefore need to check whether or not 
+	 */
+	private void propagateNoFlowBackToReactor()
 	{
 		Reactor reactor = this.plant.getReactor();
 		PlantComponent nextComponent = reactor.getOutput();
@@ -364,20 +388,35 @@ public class PlantPresenter {
 		if (nextComponentFlowRate == 0) reactor.getFlowOut().setRate(nextComponentFlowRate);
 	}
 
+	/**
+	 * Resets all ConnectorPipe paths to unblocked.
+	 * We do this to all ConnectorPipes at the beginning of each updatePlant()
+	 * before propagating the blockages since valves can change state between 
+	 * steps.
+	 */
 	private void setAllConnectorPipesUnblocked() {
 		for (ConnectorPipe cp : this.plant.getConnectorPipes()) {
 			cp.resetState();
 		}
 	}
 	
-
+	/**
+	 * Iterates through all valves in the system and if they are closed we
+	 * propagate the blockage through to the next preceding ConnectorPipe.
+	 */
 	private void blockFromValves() {
 		List<Valve> valves = this.plant.getValves();
 		for (Valve v : valves) {
-			if (!v.isOpen()) blockToPreceedingConnectorPipe(v);
+			if (!v.isOpen()) blockToPrecedingConnectorPipe(v);
 		}
 	}
 	
+	/**
+	 * Iterates through all ConnectorPipes in the system and propagates the blockage,
+	 * if all outputs of that ConnectorPipe is blocked.
+	 * 
+	 * This is done until all blocked ConnectorPipes have had their blockage propagated.
+	 */
 	private void blockFromConnectorPipes() {
 		boolean changed = true;
 		List<ConnectorPipe> connectorPipes = this.plant.getConnectorPipes();
@@ -392,7 +431,7 @@ public class PlantPresenter {
 				// And the blockage hasn't been propagated
 				if (isConnectorBlocking(c) && !hasBeenPropagated.get(c)) {
 					// Block the path leading into it.
-					blockPreceedingFromConnectorPipe(c);
+					blockPrecedingFromConnectorPipe(c);
 					hasBeenPropagated.put(c, true);
 					changed = true;
 				}
@@ -419,7 +458,7 @@ public class PlantPresenter {
 	 * 
 	 * @param blockedComponent component to start from.
 	 */
-	private void blockToPreceedingConnectorPipe(PlantComponent blockedComponent) {
+	private void blockToPrecedingConnectorPipe(PlantComponent blockedComponent) {
 		PlantComponent currentComponent = blockedComponent.getInput();
 		PlantComponent prevComponent = blockedComponent;
 		boolean doneBlocking = false;
@@ -438,23 +477,29 @@ public class PlantPresenter {
 	}
 	
 	/**
-	 * Calls blockPreceedingConnectorPipe() for all input paths into blockedConnector. 
+	 * Calls blockPrecedingConnectorPipe() for all input paths into blockedConnector. 
 	 * We assume checks have been made to ensure blockedConnector is actually blocked.
+	 * 
+	 * If an input is a ConnectorPipe, recursively call this function to make sure 
+	 * all blockages are properly propagated. 
 	 * 
 	 * @param blockedConnector the blocked ConnectorPipe to start from.
 	 */
-	private void blockPreceedingFromConnectorPipe(ConnectorPipe blockedConnector) {
+	private void blockPrecedingFromConnectorPipe(ConnectorPipe blockedConnector) {
 		List<PlantComponent> multipleInputs = ((ConnectorPipe) blockedConnector).getInputs();
 		for (PlantComponent pc : multipleInputs) {
 			if (pc instanceof ConnectorPipe) {
-				blockPreceedingFromConnectorPipe((ConnectorPipe) pc);
+				blockPrecedingFromConnectorPipe((ConnectorPipe) pc);
 			} else {
-				if (pc != null) blockToPreceedingConnectorPipe(pc);
+				if (pc != null) blockToPrecedingConnectorPipe(pc);
 			}
 		}
 	}
 	
-	
+	/**
+	 * Resets the flow of all components back ready for the flow around the system to be
+	 * recalculated for the current state of the plant.
+	 */
 	private void resetFlowAllComponents() {
 		for (PlantComponent pc : this.plant.getPlantComponents()) {
 			pc.getFlowOut().setRate(0);
@@ -462,16 +507,28 @@ public class PlantPresenter {
 		}
 	}
 	
-	
+	/**
+	 * Start off propagation of the flow from the reactor to the next 
+	 * ConnectorPipe encountered.
+	 */
 	private void propagateFlowFromReactor()
 	{
 		int flowRate = calcReactorFlowOut();
 		Reactor reactor = this.plant.getReactor();
 		reactor.getFlowOut().setRate(flowRate);
 		reactor.getFlowOut().setTemperature(reactor.getTemperature());
-		propagateFlowToConnectorPipe(reactor);
+		propagateFlowToNextConnectorPipe(reactor);
 	}
 	
+	/**
+	 * Calculate and return the flow of steam out of the reactor due to the difference in
+	 * steam volume between the reactor and condenser.
+	 * 
+	 * This method ignores any blockages, these are dealt with when the flow is propagated
+	 * around the system.
+	 *  
+	 * @return rate of flow of steam out of the reactor.
+	 */
 	private int calcReactorFlowOut() {
 		Reactor reactor = this.plant.getReactor();
 		Condenser condenser = this.plant.getCondenser();
@@ -488,7 +545,8 @@ public class PlantPresenter {
 	/**
 	 * Iterates through connector pipes, calculates their flow out & if it has changed,
 	 * propagate this new flow forward to the next connector pipe.
-	 * Do this until nothing in the system changes. 
+	 * Do this until nothing in the system changes 
+	 * (Inspired by bubble sort's changed flag... "Good Ol' Bubble Sort!")
 	 */
 	private void propagateFlowFromConnectorPipes()
 	{
@@ -509,9 +567,16 @@ public class PlantPresenter {
 		}
 	}
 	
-	private void propagateFlowToConnectorPipe(PlantComponent startComponent) {
+	/**
+	 * Propagates the flow rate and temperature to every component from startComponent
+	 * until a ConnectorPipe is encountered.
+	 * 
+	 * @param startComponent Component to start the propagation from.
+	 */
+	private void propagateFlowToNextConnectorPipe(PlantComponent startComponent) {
 		PlantComponent prevComponent;
-		prevComponent = (startComponent instanceof Reactor) ? startComponent : startComponent.getInput();
+		// If startComponent.isPressurised() (=> it is a reactor or condenser) start from here, not its input. 
+		prevComponent = (startComponent.isPressurised()) ? startComponent : startComponent.getInput();
 		PlantComponent currComponent = startComponent;
 		boolean donePropagating = false;
 		while (!donePropagating) {
@@ -520,11 +585,10 @@ public class PlantPresenter {
 			} else if (currComponent instanceof Condenser) {
 				donePropagating = true;
 			} else {
-				
 				currComponent.getFlowOut().setRate(prevComponent.getFlowOut().getRate());
 				currComponent.getFlowOut().setTemperature(prevComponent.getFlowOut().getTemperature());
 				prevComponent = currComponent;
-				currComponent = currComponent.getInput();
+				currComponent = currComponent.getOutput();
 			}
 		}
 	}
@@ -536,7 +600,7 @@ public class PlantPresenter {
 				if (pc instanceof ConnectorPipe) {
 					propagateFlowFromConnectorPipe((ConnectorPipe) pc);
 				} else {
-					propagateFlowToConnectorPipe(pc);
+					propagateFlowToNextConnectorPipe(pc);
 				}
 			}
 		}
@@ -547,7 +611,6 @@ public class PlantPresenter {
 	 * Update the Flow out of a connector to reflect it's inputs and outputs.
 	 * @param connector the connector to update.
 	 */
-	
 	private void calcConnectorFlowOut(ConnectorPipe connector) {
 		ArrayList<PlantComponent> inputs = connector.getInputs();
 		int totalFlow = 0;
@@ -565,6 +628,75 @@ public class PlantPresenter {
 		avgTemp = (numInputs != 0) ? avgTemp / numInputs : 0;
 		connector.getFlowOut().setRate(totalFlow);
 		connector.getFlowOut().setTemperature(avgTemp);
+	}
+	
+	private void propagateFlowFromCondenser()
+	{
+		Condenser condenser = this.plant.getCondenser();
+		condenser.getFlowOut().setTemperature(condenser.getTemperature());
+		propagateFlowToNextConnectorPipe(condenser);
+	}
+
+	/**
+	 * Tracks back from a pump and if there is a clear path to the condenser
+	 * adds the flow increase at this pump to the flow out of the condenser.
+	 * 
+	 * This method does not support multiple condensers.
+	 */
+	private void propagateFlowFromPumpsToCondenser()
+	{
+		int flowRate;
+		PlantComponent currentComponent;
+		PlantComponent precedingComponent;
+		boolean blockedPath = false;
+		// Iterate through all pumps and start tracking back through the system
+		for (Pump p : this.plant.getPumps()) {
+			flowRate = calcFlowFromPumpRpm(p);
+			blockedPath = false;
+			currentComponent = p;
+			precedingComponent = p.getInput();
+			// Until we find the condenser or our path is blocked
+			while(!(precedingComponent instanceof Condenser) || blockedPath) {
+				if (!(precedingComponent instanceof ConnectorPipe)) {
+					// Nothing to see here... Move along (to the next component ;)
+					currentComponent = precedingComponent;
+					precedingComponent = precedingComponent.getInput();
+				} else {
+					// Check if the path we've come in from at this connector pipe is blocked
+					if (((ConnectorPipe) precedingComponent).getOutputsMap().get(currentComponent)) {
+						// YOU SHALL NOT PASS!
+						blockedPath = true;
+					} else {
+						currentComponent = precedingComponent;
+						List<PlantComponent> possiblePaths = ((ConnectorPipe) precedingComponent).getInputs();
+						if (possiblePaths.size() > 1) { 
+							/* There is more than one possible path..
+							 * Luckily we know our system will only ever have one so we
+							 * can get away with this hard coded hackery...
+							 * 
+							 * You will need to recursively trace all paths and remember where you've
+							 * been until you find the reactor, should you require strange paths through
+							 * the system. If you do... enjoy!
+							 */
+							precedingComponent = possiblePaths.get(0);
+						} else {
+							precedingComponent = possiblePaths.get(0);
+						}
+					}
+				}
+			}
+			/* If we did indeed find the condenser then add the flow increase from this pump to
+			 * the flow out of the condenser.
+			 */
+			if (precedingComponent instanceof Condenser) 
+				precedingComponent.getFlowOut().setRate(precedingComponent.getFlowOut().getRate() + flowRate);
+		}
+	}
+
+	private int calcFlowFromPumpRpm(Pump p)
+	{
+		int maxRpm = p.getMaxRpm();
+		return this.plant.getMaxWaterFlowRatePerPump() * (1 - ((maxRpm - p.getRpm())/maxRpm));
 	}
 	
 }
