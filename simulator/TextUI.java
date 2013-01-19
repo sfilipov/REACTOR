@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
+import javax.swing.text.NavigationFilter;
+import javax.swing.text.Position;
 
 import java.util.Scanner;
 import java.util.List;
@@ -31,7 +33,6 @@ public class TextUI extends JFrame implements KeyListener
 	// UI variables
 	private JTextArea systemText = new JTextArea(10,20);
     private JTextArea outputText = new JTextArea(10,20);
-    //private JTextArea inputText = new JTextArea(10,20);
     private JTextField inputBox = new JTextField(30);
     private final static Font default_font = new Font("Monospaced",Font.PLAIN, 12);
     private final static String prompt = "> ";
@@ -59,7 +60,6 @@ public class TextUI extends JFrame implements KeyListener
         
         JPanel rightPanel = new JPanel();
         initSystemArea(rightPanel);
-        
         GridLayout rightPanelGridLayout = new GridLayout(1,1);
         rightPanel.setLayout(rightPanelGridLayout);
         
@@ -71,32 +71,7 @@ public class TextUI extends JFrame implements KeyListener
     }
     
     private void initInputArea(JPanel parentPanel) {
-    	GridBagLayout layout = (GridBagLayout) parentPanel.getLayout(); 
-  
-//    	  inputText.setBorder(BorderFactory.createMatteBorder(0,0,0,1,Color.GRAY));
-//        inputText.setBackground(Color.BLACK);
-//        inputText.setForeground(Color.WHITE);
-//        inputText.setLineWrap(true);  
-//        inputText.setWrapStyleWord(true);
-//        inputText.setFont(default_font);  
-//        inputText.setEditable(false);
-        
-//        JScrollPane Scrolled = new JScrollPane(inputText);
-//        Scrolled.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        
-        GridBagConstraints inputTextConstraints = new GridBagConstraints();
-        inputTextConstraints.gridx = 0;
-        inputTextConstraints.gridy = 1;
-        inputTextConstraints.gridwidth = 1;
-        inputTextConstraints.gridheight = 1;
-        inputTextConstraints.weightx = 10;
-        inputTextConstraints.weighty = 5;
-        inputTextConstraints.fill = GridBagConstraints.BOTH;
-        inputTextConstraints.anchor = GridBagConstraints.SOUTH;
-//        layout.setConstraints(Scrolled, inputTextConstraints);        
-//        parentPanel.add(Scrolled); 
-                
-        
+    	GridBagLayout layout = (GridBagLayout) parentPanel.getLayout();        
         inputBox.setBackground(Color.BLACK);
         inputBox.setForeground(Color.WHITE);
         inputBox.setFont(default_font);
@@ -112,6 +87,24 @@ public class TextUI extends JFrame implements KeyListener
         inputBoxConstraints.fill = GridBagConstraints.BOTH;
         inputBoxConstraints.anchor = GridBagConstraints.SOUTH;
         layout.setConstraints(inputBox, inputBoxConstraints);
+        
+        // Anti Prompt deletion navigation filter!
+        NavigationFilter filter = new NavigationFilter() {
+            public void setDot(NavigationFilter.FilterBypass fb, int dot, Position.Bias bias) {
+            	if (dot <= prompt.length()) {
+            		fb.setDot(prompt.length(), bias);
+            	} else {
+            		fb.setDot(dot, bias);
+            	}
+            }
+
+            public void moveDot(NavigationFilter.FilterBypass fb, int dot, Position.Bias bias) {
+              fb.setDot(dot, bias);
+            }
+        };
+        inputBox.setNavigationFilter(filter);
+        
+        
         inputBox.addKeyListener(this);
         parentPanel.add(inputBox);
     }
@@ -119,7 +112,7 @@ public class TextUI extends JFrame implements KeyListener
     private void initOutputArea(JPanel parentPanel) {
     	GridBagLayout layout = (GridBagLayout) parentPanel.getLayout();
     	
-    	outputText.setBorder(BorderFactory.createMatteBorder(0,0,2,1,Color.GRAY));
+    	//outputText.setBorder(BorderFactory.createMatteBorder(0,0,2,1,Color.GRAY));
         outputText.setBackground(Color.BLACK);
         outputText.setForeground(Color.WHITE); 
         outputText.setFont(default_font);
@@ -164,7 +157,12 @@ public class TextUI extends JFrame implements KeyListener
     
     public void keyReleased(KeyEvent k)
     {
-    	
+    	int keyCode = k.getKeyCode();
+    	switch (keyCode) {
+    		case KeyEvent.VK_BACK_SPACE:
+    			persistPrompt();
+    			break;
+    	}
     }
     
     public void keyTyped(KeyEvent k)
@@ -177,11 +175,23 @@ public class TextUI extends JFrame implements KeyListener
         switch (keyCode) {
 			case KeyEvent.VK_ENTER:
 				actUponInput();
-				break;	
+				break;
+			case KeyEvent.VK_BACK_SPACE:
+    			persistPrompt();
+    			break;
         }
     }
     
-    private void actUponInput() {
+    private void persistPrompt()
+	{
+    	if (inputBox.getCaret().getDot() <= prompt.length()) inputBox.getCaret().setDot(prompt.length());
+		if (!inputBox.getText().startsWith(prompt)) {
+			inputBox.setText(prompt + inputBox.getText().substring(1));
+		}
+		
+	}
+
+	private void actUponInput() {
     	String command = inputBox.getText().substring(prompt.length());
     	print(prompt + command);
     	parse(command);
