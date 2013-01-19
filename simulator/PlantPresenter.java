@@ -147,10 +147,15 @@ public class PlantPresenter {
 	 */
 	public void step(int numSteps) {
 		for (int i = 0; i < numSteps; i++) {
-			updateBeingRepaired();
-			updateFlow();
-			updatePlant();
-			checkFailures();
+			if (!plant.isGameOver()) {
+				updateBeingRepaired();
+				updateFlow();
+				updatePlant();
+				checkFailures();
+			}
+			else {
+				break;
+			}
 		}
 		this.plant.updateTimeStepsUsed(numSteps);
 		printFlowDebugInfo();

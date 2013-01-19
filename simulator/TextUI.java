@@ -58,6 +58,7 @@ public class TextUI extends JFrame implements KeyListener
     +"     \\    |___|___|_                       |/\\   /__/|   \n"
     +"     /      |   |                           \\/   |__|/    \n"
     +"                                                           \n";
+	
 	// UI variables
 	private JTextArea systemText = new JTextArea(10,20);
     private JTextArea outputText = new JTextArea(10,20);
