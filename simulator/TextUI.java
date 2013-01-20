@@ -304,7 +304,7 @@ public class TextUI extends JFrame implements KeyListener
 		else if (state == State.AreYouSure)
 			parseAreYouSure(input.toLowerCase());
 		else if (state == State.GameOver)
-			parseGameOver(input);
+			parseUninitialised(input);
 	}
 	
 	private void parseNormal(String input) {
@@ -469,22 +469,25 @@ public class TextUI extends JFrame implements KeyListener
 			//Nothing
 		}
 		else {
-	    	String next = scanner.next();
-	    	if (next.equals("newgame") && !scanner.hasNext()) {
+	    	String command = scanner.next();
+	    	if (command.equals("newgame") && !scanner.hasNext()) {
 	    		doNewGame();
 	    	}
-	    	else if (next.equals("loadgame") && !scanner.hasNext()) {
+	    	else if (command.equals("loadgame") && !scanner.hasNext()) {
 	    		doLoadGame();
 	    	}
-	    	else if (next.equals("highscores") && !scanner.hasNext()) {
+	    	else if (command.equals("highscores") && !scanner.hasNext()) {
 	    		printHighScores();
 	    		//print("Ask for high scores after the game is initialised.");
 	    	}
-	    	else if (next.equals("credits") && !scanner.hasNext()) {
+	    	else if (command.equals("credits") && !scanner.hasNext()) {
 	    		printCredits();
 	    	}
+	    	else if ( (command.equals("exit") || command.equals("quit")) && !scanner.hasNext()) {
+	    		doExit();
+	    	}
 	    	else {
-	    		print("The game is uninitialised. Please use one of the following commands: newgame, loadgame, highscores, credits.");
+	    		print("The game is uninitialised. Please use one of the following commands: newgame, loadgame, highscores, credits, exit.");
 	    	}
 		}
 		scanner.close();
@@ -521,22 +524,22 @@ public class TextUI extends JFrame implements KeyListener
 		scanner.close();
 	}
 	
-	private void parseGameOver(String input) {
-    	Scanner scanner = new Scanner(input);
-		if (!scanner.hasNext()) {
-			//Nothing
-		}
-		else {
-	    	String next = scanner.next();
-	    	if (next.equals("newgame") && !scanner.hasNext()) {
-	    		doNewGame();
-	    	}
-	    	else {
-	    		print("The game has ended. The only command you can use is \"newgame\"");
-	    	}
-		}
-		scanner.close();
-	}
+//	private void parseGameOver(String input) {
+//    	Scanner scanner = new Scanner(input);
+//		if (!scanner.hasNext()) {
+//			//Nothing
+//		}
+//		else {
+//	    	String next = scanner.next();
+//	    	if (next.equals("newgame") && !scanner.hasNext()) {
+//	    		doNewGame();
+//	    	}
+//	    	else {
+//	    		print("The game has ended. The only command you can use is \"newgame\"");
+//	    	}
+//		}
+//		scanner.close();
+//	}
 	
 	//-------------- Methods used inside parsing -------------------
 	
