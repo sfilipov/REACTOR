@@ -253,7 +253,7 @@ public class TextUI extends JFrame implements KeyListener
         	reactorInfo += "POWER OUTPUT: " + uidata.getPowerOutput() + "\n\n";
         	
         	reactorInfo += "TURBINE : " + ((uidata.isTurbineFunctional()) ? "FUNCTIONAL" : "BROKEN") + "\n";
-        	reactorInfo += "Current Rpm : " + uidata.getTurbineRpm() + "\n\n";
+        	reactorInfo += "Current RPM : " + uidata.getTurbineRpm() + "\n\n";
         	
         	reactorInfo += "REACTOR HEALTH: " + uidata.getReactorHealth() + "\n";  
         	reactorInfo += "Temperature: "    + uidata.getReactorTemperature() + "  \t| Max: "                + uidata.getReactorMaxTemperature()     + "\n";
