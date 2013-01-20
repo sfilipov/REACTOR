@@ -1,13 +1,11 @@
 package simulator;
 
 import java.util.List;
-import java.util.ArrayList;
 
-public class UIData {
-	private Plant plant;
-	
-	private String operatorName;
-	private int    score;
+public class UIData {	
+	private String  operatorName;
+	private int     score;
+	private boolean gameOver;
 	
 	private int reactorHealth;
 	private int reactorTemperature;
@@ -30,11 +28,10 @@ public class UIData {
 	private List<Pump>  pumps;
 	
 	
-	UIData(Plant plant) {
-		this.plant = plant;
-		
+	UIData(Plant plant) {		
 		this.operatorName = plant.getOperatorName();
 		this.score        = plant.getScore();
+		this.gameOver     = plant.isGameOver();
 		
 		this.reactorHealth             = plant.getReactor().getHealth();
 		this.reactorTemperature        = plant.getReactor().getTemperature();
@@ -63,6 +60,10 @@ public class UIData {
 	
 	public int getScore() {
 		return score;
+	}
+	
+	public boolean isGameOver() {
+		return gameOver;
 	}
 	
 	public int getReactorHealth() {
@@ -123,11 +124,11 @@ public class UIData {
 	}
 	
 	public List<Valve> getValves() {
-		return plant.getValves();
+		return valves;
 	}
 	
 	public List<Pump> getPumps() {
-		return plant.getPumps();
+		return pumps;
 	}
 	
 	//EXPERIMENTAL

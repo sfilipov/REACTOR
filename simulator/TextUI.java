@@ -33,6 +33,32 @@ public class TextUI extends JFrame implements KeyListener
     +"| ) \\ \\__| (____/\\| )   ( || (____/\\   | |   | (___) || ) \\ \\__\n"
     +"|/   \\__/(_______/|/     \\|(_______/   )_(   (_______)|/   \\__/\n";
 	
+	private final static String MUSHROOM_ASCII = 
+	 "                             ____                          \n"
+    +"           ____  , -- -        ---   -.                    \n"
+    +"        (((   ((  ///   //   '  \\-\\ \\  )) ))            \n"
+    +"    ///    ///  (( _        _   -- \\--     \\\\ \\)       \n"
+    +" ((( ==  ((  -- ((             ))  )- ) __   ))  )))       \n"
+    +"  ((  (( -=   ((  ---  (          _ ) ---  ))   ))         \n"
+    +"     (( __ ((    ()(((  \\  / ///     )) __ )))            \n"
+    +"            \\_ (( __  |     | __  ) _ ))                  \n"
+    +"                      ,|  |  |                             \n"
+    +"                     `-._____,-'                           \n"
+    +"                     `--.___,--'                           \n"
+    +"                       |     |                             \n"
+    +"                       |    ||                             \n"
+    +"                       | ||  |                             \n"
+    +"             ,    _,   |   | |                             \n"
+    +"    (  ((  ((((  /,| __|     |  ))))  )))  )  ))           \n"
+    +"  (()))       __/ ||(    ,,     ((//\\     )     ))))      \n"
+    +" (( ///_.___ _/    ||,,_____,_,,, (|\\ \\___.....__..  ))  \n"
+    +"       ____/      |/______________| \\/_/\\__              \n"
+    +"      /                                \\/_/|              \n"
+    +"     /  |___|___|__                        ||     ___      \n"
+    +"     \\    |___|___|_                       |/\\   /__/|   \n"
+    +"     /      |   |                           \\/   |__|/    \n"
+    +"                                                           \n";
+	
 	// UI variables
 	private JTextArea systemText = new JTextArea(10,20);
     private JTextArea outputText = new JTextArea(10,20);
@@ -203,11 +229,13 @@ public class TextUI extends JFrame implements KeyListener
 
 	private void actUponInput() {
     	String command = inputBox.getText().substring(prompt.length());
-    	print(prompt + command);
+    	if(!(state == State.GameOver) || command.equals("newgame")) {
+    		print(prompt + command);
+    	}
     	parse(command);
 		inputBox.setText(prompt);
 		
-		if(state == State.Normal)
+		if(state == State.Normal || state == State.GameOver)
 			updateSystemText();
     }
     
@@ -218,36 +246,42 @@ public class TextUI extends JFrame implements KeyListener
     private void updateSystemText() {
     	String reactorInfo = new String();
     	UIData uidata = presenter.getUIData();
-    	reactorInfo += "Operator Name: "  + uidata.getOperatorName() + "\t| SCORE: " + uidata.getScore() + "\n\n";
-    	reactorInfo += "PLANT READINGS: \n\n";
-    	
-    	reactorInfo += "REACTOR HEALTH: " + uidata.getReactorHealth() + "\n";  
-    	reactorInfo += "Temperature: "    + uidata.getReactorTemperature() + "  \t| Max: "                + uidata.getReactorMaxTemperature()     + "\n";
-    	reactorInfo += "Pressure: "       + uidata.getReactorPressure()    + " \t\t| Max: "               + uidata.getReactorMaxPressure()        + "\n";
-    	reactorInfo += "Water Volume: "   + uidata.getReactorWaterVolume() + " \t| Minimum Safe Volume: " + uidata.getReactorMinSafeWaterVolume() + "\n\n";
-    	
-    	reactorInfo += "CONDENSER HEALTH: " + uidata.getCondenserHealth()      + "\n";
-    	reactorInfo += "Temperature: "      + uidata.getCondenserTemperature() + "  \t| Max: "                + uidata.getCondenserMaxTemperature()     + "\n";
-    	reactorInfo += "Pressure: "         + uidata.getCondenserPressure()    + " \t\t| Max: "               + uidata.getCondenserMaxPressure()        + "\n";
-    	reactorInfo += "Water Volume: "     + uidata.getCondenserWaterVolume() + "\n\n";
-    	
-    	List<Valve> valves = uidata.getValves();
-    	for (Valve v : valves) {
-    		reactorInfo += "VALVE ID: " + v.getID() + " | ";
-    		reactorInfo += "POSITION: " + (v.isOpen() ? "OPEN\n" : "CLOSED\n");
+    	if (!uidata.isGameOver()) {
+        	reactorInfo += "Operator Name: "  + uidata.getOperatorName() + "\t| SCORE: " + uidata.getScore() + "\n\n";
+        	reactorInfo += "PLANT READINGS: \n\n";
+        	
+        	reactorInfo += "REACTOR HEALTH: " + uidata.getReactorHealth() + "\n";  
+        	reactorInfo += "Temperature: "    + uidata.getReactorTemperature() + "  \t| Max: "                + uidata.getReactorMaxTemperature()     + "\n";
+        	reactorInfo += "Pressure: "       + uidata.getReactorPressure()    + " \t\t| Max: "               + uidata.getReactorMaxPressure()        + "\n";
+        	reactorInfo += "Water Volume: "   + uidata.getReactorWaterVolume() + " \t| Minimum Safe Volume: " + uidata.getReactorMinSafeWaterVolume() + "\n\n";
+        	
+        	reactorInfo += "CONDENSER HEALTH: " + uidata.getCondenserHealth()      + "\n";
+        	reactorInfo += "Temperature: "      + uidata.getCondenserTemperature() + "  \t| Max: "                + uidata.getCondenserMaxTemperature()     + "\n";
+        	reactorInfo += "Pressure: "         + uidata.getCondenserPressure()    + " \t\t| Max: "               + uidata.getCondenserMaxPressure()        + "\n";
+        	reactorInfo += "Water Volume: "     + uidata.getCondenserWaterVolume() + "\n\n";
+        	
+        	List<Valve> valves = uidata.getValves();
+        	for (Valve v : valves) {
+        		reactorInfo += "VALVE ID: " + v.getID() + " | ";
+        		reactorInfo += "POSITION: " + (v.isOpen() ? "OPEN\n" : "CLOSED\n");
+        	}
+        	reactorInfo += "\n";
+        	
+        	List<Pump> pump = uidata.getPumps();
+        	for (Pump p : pump) {
+        		reactorInfo += "PUMP ID: " + p.getID() + "  | ";
+        		reactorInfo += "STATUS: " + ((p.isOperational()) ? "FUNCTIONAL | " : "BROKEN | ");
+        		reactorInfo += "POWER STATE: " + (p.isOn() ? "ON | " : "OFF | ");
+        		reactorInfo += "RPM: " + p.getRpm() + "\n";
+        	}
+        	reactorInfo += "\n";
+        	
+        	reactorInfo += "CONTROL RODS PERCENT INTO CORE: " + uidata.getControlRodsPercentage() + "%\n";
     	}
-    	reactorInfo += "\n";
-    	
-    	List<Pump> pump = uidata.getPumps();
-    	for (Pump p : pump) {
-    		reactorInfo += "PUMP ID: " + p.getID() + "  | ";
-    		reactorInfo += "STATUS: " + ((p.isOperational()) ? "FUNCTIONAL | " : "BROKEN | ");
-    		reactorInfo += "POWER STATE: " + (p.isOn() ? "ON | " : "OFF | ");
-    		reactorInfo += "RPM: " + p.getRpm() + "\n";
+    	else {
+    		state = State.GameOver;
+    		reactorInfo = MUSHROOM_ASCII + "Your final score is: " + uidata.getScore();
     	}
-    	reactorInfo += "\n";
-    	
-    	reactorInfo += "CONTROL RODS PERCENT INTO CORE: " + uidata.getControlRodsPercentage() + "%\n";
     	
     	systemText.setText(reactorInfo);
     }
@@ -263,6 +297,8 @@ public class TextUI extends JFrame implements KeyListener
 			parseNewGame(input);
 		else if (state == State.AreYouSure)
 			parseAreYouSure(input.toLowerCase());
+		else if (state == State.GameOver)
+			parseGameOver(input);
 	}
 	
 	private void parseNormal(String input) {
@@ -478,6 +514,23 @@ public class TextUI extends JFrame implements KeyListener
 		scanner.close();
 	}
 	
+	private void parseGameOver(String input) {
+    	Scanner scanner = new Scanner(input);
+		if (!scanner.hasNext()) {
+			//Nothing
+		}
+		else {
+	    	String next = scanner.next();
+	    	if (next.equals("newgame") && !scanner.hasNext()) {
+	    		doNewGame();
+	    	}
+	    	else {
+	    		print("The game has ended. The only command you can use is \"newgame\"");
+	    	}
+		}
+		scanner.close();
+	}
+	
 	//-------------- Methods used inside parsing -------------------
 	
 	private void doStep(int numSteps)
@@ -576,7 +629,7 @@ public class TextUI extends JFrame implements KeyListener
 	}
 	
 	private enum State {
-		Normal, NewGame, AreYouSure, Uninitialised;
+		Uninitialised, NewGame, Normal, AreYouSure, GameOver;
 	}
 	
 	private enum AreYouSureCaller {
