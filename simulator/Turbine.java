@@ -18,7 +18,7 @@ public class Turbine extends PlantComponent {
 		// Need to create a couple of new doubles mid-calc here to make sure we get a decimal
 		double linearMultiplier = 1 - (new Double((this.maxSteamThroughput - steamFlowIn))/new Double(this.maxSteamThroughput)); 
 		int newRpm = (int) Math.round(new Double(MAX_TURBINE_RPM) * linearMultiplier);
-		this.rpm = newRpm;
+		this.rpm = (this.isOperational()) ? newRpm : 0;
 	}
 	
 	/*
