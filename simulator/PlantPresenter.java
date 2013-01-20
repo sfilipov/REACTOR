@@ -40,14 +40,50 @@ public class PlantPresenter {
 	
 	//Returns true if saving a game was successful.
 	public boolean saveGame(){
-		// write serialised Plant to file?
-		return false;
+		FileOutputStream fileOut = null;
+		ObjectOutputStream out   = null;
+		try {
+			fileOut = new FileOutputStream("save.ser");
+			out =     new ObjectOutputStream(fileOut);
+			out.writeObject(plant);
+			out.close();
+			fileOut.close();
+			return true;
+		}
+		catch (IOException ex) {
+			ex.printStackTrace();
+			return false;
+		}
 	}
 	
 	//Returns true if loading a game was successful.
 	public boolean loadGame() {
-		// read plant object from file
-		return false;
+		Plant plant = null;
+		FileInputStream fileIn  = null;
+		ObjectInputStream in = null;
+		try {
+			File f = new File("save.ser");
+			if(f.exists()) {
+				fileIn = new FileInputStream(f);
+				in = new ObjectInputStream(fileIn);
+				plant = (Plant) in.readObject();
+				in.close();
+				fileIn.close();
+				this.plant = plant;
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		catch (IOException io) {
+			io.printStackTrace();
+			return false;
+		}
+		catch (ClassNotFoundException c) {
+			c.printStackTrace();
+			return false;
+		}
 	}
 	
 	public void togglePaused() {
@@ -69,19 +105,21 @@ public class PlantPresenter {
 	public boolean addHighScore(HighScore newHighScore) {
 		List<HighScore> highScores = plant.getHighScores();
 		int size = highScores.size();
-		for (int i=0; i < 10; i++) {
-			if (i < size) {
-				HighScore oldHighScore = highScores.get(i);
-				if (oldHighScore.compareTo(newHighScore) < 0) {
-					highScores.add(i, newHighScore);
+		if (newHighScore.getHighScore() > 0) {
+			for (int i=0; i < 10; i++) {
+				if (i < size) {
+					HighScore oldHighScore = highScores.get(i);
+					if (oldHighScore.compareTo(newHighScore) < 0) {
+						highScores.add(i, newHighScore);
+						writeHighScores();
+						return true;
+					}
+				}
+				else {
+					highScores.add(size, newHighScore);
 					writeHighScores();
 					return true;
 				}
-			}
-			else {
-				highScores.add(size, newHighScore);
-				writeHighScores();
-				return true;
 			}
 		}
 		return false;

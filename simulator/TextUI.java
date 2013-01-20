@@ -605,8 +605,10 @@ public class TextUI extends JFrame implements KeyListener
 	private void printHighScores() {
 		List<HighScore> highScores = presenter.getHighScores();
 		if (!highScores.isEmpty()) {
+			int i = 1;
     		for (HighScore highScore : highScores) {
-    			print(highScore.getName() + ": " + highScore.getHighScore());
+    			print(i + ": " + highScore.getName() + ": " + highScore.getHighScore());
+    			i++;
     		}
 		}
 		else {

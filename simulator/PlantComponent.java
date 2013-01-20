@@ -1,8 +1,9 @@
 package simulator;
 
 import java.util.Random;
+import java.io.Serializable;
 
-abstract class PlantComponent {
+abstract class PlantComponent implements Serializable{
 
 	//The values of the constants below are for illustration.
 	public final static int DEFAULT_FAILURE_RATE = 33;

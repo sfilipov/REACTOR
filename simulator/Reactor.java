@@ -1,5 +1,7 @@
 package simulator;
 
+import java.io.Serializable;
+
 public class Reactor extends PlantComponent {
 	private final static int DEFAULT_TEMPERATURE = 50;
 	private final static int DEFAULT_PRESSURE = 0;
@@ -219,7 +221,7 @@ public class Reactor extends PlantComponent {
 		}
 	}
 	
-	private final class ControlRod {
+	private final class ControlRod implements Serializable {
 		private final static int DEFAULT_PERCENTAGE = 100;
 		private int percentageLowered;
 		

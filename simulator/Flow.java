@@ -1,6 +1,8 @@
 package simulator;
 
-public class Flow {
+import java.io.Serializable;
+
+public class Flow implements Serializable {
 	
 	private final static int DEFAULT_RATE = 0;
 	private final static FlowType DEFAULT_TYPE = FlowType.Water;

@@ -1,10 +1,15 @@
 package simulator;
 
-//import java.io.Serializable;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Plant {
+public class Plant implements Serializable {
+	/**
+	 * serialVersionUID: http://docs.oracle.com/javase/7/docs/api/java/io/Serializable.html
+	 */
+	private static final long serialVersionUID = 4799981348038802742L;
+	
 	private final static int MAX_STEAM_FLOW_RATE = 400;
 	private final static int MAX_WATER_FLOW_RATE_PER_PUMP = 400;
 	

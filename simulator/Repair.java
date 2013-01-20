@@ -1,6 +1,8 @@
 package simulator;
 
-public class Repair {
+import java.io.Serializable;
+
+public class Repair implements Serializable {
 
 	private PlantComponent plantComponent;
 	private int timeStepsRemaining;
