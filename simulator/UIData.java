@@ -22,6 +22,10 @@ public class UIData {
 	private int condenserMaxPressure;
 	private int condenserWaterVolume;
 	
+	private int turbineRpm;
+	private boolean turbineFunctional;
+	private int powerOutput;
+	
 	private int controlRods;
 	
 	private List<Valve> valves;
@@ -32,6 +36,10 @@ public class UIData {
 		this.operatorName = plant.getOperatorName();
 		this.score        = plant.getScore();
 		this.gameOver     = plant.isGameOver();
+		
+		this.turbineRpm			= plant.getTurbine().getRpm();
+		this.turbineFunctional	= plant.getTurbine().isOperational();
+		this.powerOutput  		= plant.getGenerator().getPowerOutput();
 		
 		this.reactorHealth             = plant.getReactor().getHealth();
 		this.reactorTemperature        = plant.getReactor().getTemperature();
@@ -129,6 +137,18 @@ public class UIData {
 	
 	public List<Pump> getPumps() {
 		return pumps;
+	}
+
+	public int getTurbineRpm() {
+		return turbineRpm;
+	}
+
+	public int getPowerOutput() {
+		return powerOutput;
+	}
+
+	public boolean isTurbineFunctional() {
+		return turbineFunctional;
 	}
 	
 	//EXPERIMENTAL
