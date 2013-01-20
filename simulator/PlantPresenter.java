@@ -14,11 +14,12 @@ import java.util.Map.Entry;
 import java.util.Random;
 public class PlantPresenter {
 
-	private Plant plant; 
+	private Plant plant;
 	
-	public PlantPresenter()
+	public PlantPresenter(ReactorUtils utils)
 	{
-		//Nothing
+		this.plant = utils.createNewPlant();
+		readHighScores();
 	}
 	
 	/* ----------------		Methods	for UI to call	----------------
@@ -28,7 +29,8 @@ public class PlantPresenter {
 	
 	public void newGame(String operatorName) {
 		ReactorUtils utils = new ReactorUtils();
-		this.plant = utils.createNewPlant(operatorName);
+		this.plant = utils.createNewPlant();
+		this.plant.setOperatorName(operatorName);
 		readHighScores();
 		// update things as per the default values.
 		// mainly to calculate the pressure etc in these things.
@@ -67,8 +69,8 @@ public class PlantPresenter {
 	public boolean addHighScore(HighScore newHighScore) {
 		List<HighScore> highScores = plant.getHighScores();
 		int size = highScores.size();
-		if(size >= 10) {
-			for (int i=0; i < 10; i++) {
+		for (int i=0; i < 10; i++) {
+			if (i < size) {
 				HighScore oldHighScore = highScores.get(i);
 				if (oldHighScore.compareTo(newHighScore) < 0) {
 					highScores.add(i, newHighScore);
@@ -76,11 +78,11 @@ public class PlantPresenter {
 					return true;
 				}
 			}
-		}
-		else {
-			highScores.add(size, newHighScore);
-			writeHighScores();
-			return true;
+			else {
+				highScores.add(size, newHighScore);
+				writeHighScores();
+				return true;
+			}
 		}
 		return false;
 	}

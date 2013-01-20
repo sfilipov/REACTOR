@@ -477,7 +477,8 @@ public class TextUI extends JFrame implements KeyListener
 	    		doLoadGame();
 	    	}
 	    	else if (next.equals("highscores") && !scanner.hasNext()) {
-	    		print("Ask for high scores after the game is initialised.");
+	    		printHighScores();
+	    		//print("Ask for high scores after the game is initialised.");
 	    	}
 	    	else if (next.equals("credits") && !scanner.hasNext()) {
 	    		printCredits();

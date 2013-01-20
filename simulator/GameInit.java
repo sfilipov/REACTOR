@@ -20,7 +20,7 @@ public class GameInit {
 	
 	public GameInit() {
 		utils = new ReactorUtils();
-		presenter = new PlantPresenter();
+		presenter = new PlantPresenter(utils);
 		view = new TextUI(presenter);
 	}
 	

@@ -29,8 +29,8 @@ public class Plant {
 	 * This is the default constructor that is used 
 	 * when there is no saved game (i.e. new game)
 	 */
-	public Plant(String operatorName) {
-		this.operatorName = operatorName;
+	public Plant() {
+		this.operatorName = null;
 		this.gameOver = false;
 		this.timeStepsUsed = 0;
 		this.score = 0;
