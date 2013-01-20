@@ -1,5 +1,11 @@
 package simulator;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +29,7 @@ public class PlantPresenter {
 	public void newGame(String operatorName) {
 		ReactorUtils utils = new ReactorUtils();
 		this.plant = utils.createNewPlant(operatorName);
+		readHighScores();
 		// update things as per the default values.
 		// mainly to calculate the pressure etc in these things.
 		updateFlow();
@@ -51,6 +58,31 @@ public class PlantPresenter {
 	 */
 	public List<HighScore> getHighScores() {
 		return plant.getHighScores();
+	}
+	
+	/**
+	 * Adds a new score to high scores if the new score is in the top 10 of all scores.
+	 * @return true if adding was successful and the new score is in top 10, false otherwise.
+	 */
+	public boolean addHighScore(HighScore newHighScore) {
+		List<HighScore> highScores = plant.getHighScores();
+		int size = highScores.size();
+		if(size >= 10) {
+			for (int i=0; i < 10; i++) {
+				HighScore oldHighScore = highScores.get(i);
+				if (oldHighScore.compareTo(newHighScore) < 0) {
+					highScores.add(i, newHighScore);
+					writeHighScores();
+					return true;
+				}
+			}
+		}
+		else {
+			highScores.add(size, newHighScore);
+			writeHighScores();
+			return true;
+		}
+		return false;
 	}
 	
 	/**
@@ -170,6 +202,52 @@ public class PlantPresenter {
 		return uidata;
 	}
 	
+	// ----------------		Internal helper methods ------------------
+	private void writeHighScores() {
+		List<HighScore> highScores = plant.getHighScores();
+		FileOutputStream fileOut   = null;
+		ObjectOutputStream out = null;
+		try {
+			fileOut = new FileOutputStream("highscores.ser");
+			out = new ObjectOutputStream(fileOut);
+			out.writeObject(highScores);
+			out.close();
+			fileOut.close();
+		}
+		catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	private void readHighScores() {
+		List<HighScore> highScores = null;
+		FileInputStream fileIn  = null;
+		ObjectInputStream in = null;
+		try {
+			File f = new File("highscores.ser");
+			if(f.exists()) {
+				fileIn = new FileInputStream(f);
+				in = new ObjectInputStream(fileIn);
+				highScores = (List<HighScore>) in.readObject();
+				in.close();
+				fileIn.close();
+				plant.setHighScores(highScores);
+			}
+		}
+		catch (IOException io) {
+			io.printStackTrace();
+		}
+		catch (ClassNotFoundException c) {
+			c.printStackTrace();
+		}
+	}
+	
+	private void gameOver() {
+		plant.gameOver();
+		HighScore highScore = new HighScore(plant.getOperatorName(), plant.getScore());
+		addHighScore(highScore);
+	}
+	
 	// ----------------		Debug methods	----------------
 	
 	private void printDebugInfo() {
@@ -250,7 +328,7 @@ public class PlantPresenter {
 		for (PlantComponent component : plantComponents) {
 			if (component.checkFailure()) {
 				if (component instanceof Reactor || component instanceof Condenser) {
-					plant.gameOver();
+					gameOver();
 				}
 				else {
 					failingComponents.add(component);

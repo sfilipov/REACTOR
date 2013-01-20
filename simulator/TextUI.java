@@ -286,6 +286,7 @@ public class TextUI extends JFrame implements KeyListener
     	else {
     		state = State.GameOver;
     		reactorInfo = MUSHROOM_ASCII + "Your final score is: " + uidata.getScore();
+    		
     	}
     	
     	systemText.setText(reactorInfo);

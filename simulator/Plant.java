@@ -36,7 +36,7 @@ public class Plant {
 		this.score = 0;
 		this.beingRepaired = new ArrayList<Repair>();
 		this.isPaused = false;
-		this.highScores = new ArrayList<HighScore>(10);
+		this.highScores = new ArrayList<HighScore>();
 		this.plantComponents = new ArrayList<PlantComponent>();
 		this.failedComponents = new ArrayList<PlantComponent>();
 	}
@@ -169,25 +169,16 @@ public class Plant {
 	}
 
 	public List<HighScore> getHighScores() {
-		this.highScores = this.highScores.subList(0, 10); //Trims the high scores list to only the first 10 elements
+		if(this.highScores.size() > 10) {
+			this.highScores = this.highScores.subList(0, 10); //Trims the high scores list to only the first 10 elements
+		}
 		return this.highScores;
 	}
 	
-	/**
-	 * Adds a new score to high scores if the new score is in the top 10 of all scores.
-	 * @return true if adding was successful and the new score is in top 10, false otherwise.
-	 */
-	public boolean addHighScore(HighScore newHighScore) {
-		for (int i=0; i < 10; i++) {
-			HighScore oldHighScore = highScores.get(i);
-			if (oldHighScore == null || oldHighScore.compareTo(newHighScore) < 0) {
-				highScores.add(i, newHighScore);
-				return true;
-			}
-		}
-		return false;
+	public void setHighScores(List<HighScore> highScores) {
+		this.highScores = highScores;
 	}
-
+	
 	public int getTimeStepsUsed() {
 		return timeStepsUsed;
 	}

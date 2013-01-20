@@ -1,6 +1,13 @@
 package simulator;
 
-public class HighScore implements Comparable<HighScore> {
+import java.io.Serializable;
+
+public class HighScore implements Comparable<HighScore>, Serializable {
+	/**
+	 * serialVersionUID: http://docs.oracle.com/javase/7/docs/api/java/io/Serializable.html
+	 */
+	private static final long serialVersionUID = 3713046493639284783L;
+	
 	private String name;
 	private int highScore;
 	
