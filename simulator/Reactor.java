@@ -7,14 +7,16 @@ public class Reactor extends PlantComponent {
 	private final static int DEFAULT_STEAM_VOLUME = 0;
 	
 	private final static int MAX_TEMPERATURE = 2865; // 2865C is the melting point of uranium oxide.
-	private final static int MAX_PRESSURE = 500;
+	private final static int MAX_PRESSURE = 2000;
 	private final static int MAX_HEALTH = 100;
 	private final static int MAX_HEATING_PER_STEP = 100; // in degrees C. maximum amount to increase temp by in a step. 
 	private final static int MIN_SAFE_WATER_VOLUME = 2000;
 	private final static int UNSAFE_HEATING_MULTIPLIER = 2; // amount to increase 
 	private final static int WATER_STEAM_RATIO = 2; // 1:2 water to steam
 	private final static int HEALTH_CHANGE_WHEN_DAMAGING = 10;
-	private final static double EVAP_MULTIPLIER = 0.5; // conversion from temperature to amount evaporated. 
+	private final static double EVAP_MULTIPLIER = 0.2; // conversion from temperature to amount evaporated. 
+	private final static double VOL_TO_PRESSURE_MULTIPLIER = 0.15;
+	private final static int BOILING_POINT = 285; // boiling point of water at 1000psi - no variable boiling point.
 	
 	private int temperature;
 	private int pressure;
@@ -23,6 +25,7 @@ public class Reactor extends PlantComponent {
 	private int health;
 	private ControlRod controlRod;
 	private int waterPumpedIn;
+	private int steamOut;
 	
 	public Reactor() {
 		super(0,0,true,true); // Never fails, is operational and is pressurised.
@@ -86,8 +89,8 @@ public class Reactor extends PlantComponent {
 	 *  
 	 * @param amount the amount of steam to add to the volume.
 	 */
-	public void updateSteamVolume(int amount)
-	{
+	public void updateSteamVolume(int amount) {
+		if (amount < 0) this.steamOut = amount; 
 		this.steamVolume += amount;
 	}
 
@@ -107,7 +110,7 @@ public class Reactor extends PlantComponent {
 	
 	public void updateState() {
 		updateTemperature();
-		//updatePressure();
+		updatePressure();
 		evaporateWater();
 		checkIfDamaging();
 	}
@@ -121,6 +124,12 @@ public class Reactor extends PlantComponent {
 		this.temperature += changeInTemp;
 	}
 	
+	private void updatePressure() {
+		int currentPressure;
+		currentPressure = (int) Math.round(new Double(this.steamVolume) * VOL_TO_PRESSURE_MULTIPLIER);
+		this.pressure = currentPressure;
+	}
+	
 	/**
 	 * Calculates the amount of cooldown in the reactor for this
 	 * time step. Dependent upon the temperature and volume of water being
@@ -131,9 +140,10 @@ public class Reactor extends PlantComponent {
 	 * @return how much to reduce the temperature by. 
 	 */
 	private int cooldown(int waterTemperature, int pumpedIn) {
-		int tempDiff = this.temperature - waterTemperature; 
+		int waterInTempDiff = this.temperature - waterTemperature; 
 		if (this.waterVolume < 1) return 0; // stops a potential divide by 0 on the next line.
-		return tempDiff * (1 - ((this.waterVolume - pumpedIn)/this.waterVolume));
+		return (int) Math.round(waterInTempDiff * (1 - (new Double(this.waterVolume - pumpedIn)/ this.waterVolume)));
+		
 	}
 	
 	/**
@@ -174,15 +184,15 @@ public class Reactor extends PlantComponent {
 	private void evaporateWater() {
 		int waterEvaporated;
 		int steamCreated;
-		// Don't evaporate anything if the reactor is not above 100 degrees.
-		if (this.temperature > 100) {
+		// Don't evaporate anything if the reactor is not above boiling point.
+		if (this.temperature > BOILING_POINT) {
 			// I don't like this hacky cast but ah well.
 			waterEvaporated = (int) Math.round(temperature * EVAP_MULTIPLIER);
 			if (waterEvaporated > this.waterVolume) waterEvaporated = this.waterVolume;
 			steamCreated = waterEvaporated * WATER_STEAM_RATIO;
-			
+		
 			this.waterVolume -= waterEvaporated; // made negative as the water is removed.
-			this.steamVolume += steamCreated; 
+			this.steamVolume += steamCreated;
 		}
 	}
 	

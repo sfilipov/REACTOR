@@ -23,7 +23,10 @@ public class PlantPresenter {
 	public void newGame(String operatorName) {
 		ReactorUtils utils = new ReactorUtils();
 		this.plant = utils.createNewPlant(operatorName);
-		printDebugInfo();
+		// update things as per the default values.
+		// mainly to calculate the pressure etc in these things.
+		updateFlow();
+		updatePlant();
 	}
 	
 	//Returns true if saving a game was successful.
@@ -153,7 +156,7 @@ public class PlantPresenter {
 			updatePlant();
 		}
 		this.plant.updateTimeStepsUsed(numSteps);
-		printFlowDebugInfo();
+		//printFlowDebugInfo();
 	}
 	
 	// ----------------		Methods used in systemText (TextUI class)	----------------
@@ -247,7 +250,7 @@ public class PlantPresenter {
 				else {
 					failingComponents.add(component);
 					faults++;
-					System.out.println("faults++");
+					System.out.println("faults++ - " + component.getClass().getName());
 				}
 			}
 		}
@@ -280,9 +283,16 @@ public class PlantPresenter {
 	private void moveWater()
 	{
 		Condenser condenser = this.plant.getCondenser();
-		condenser.updateWaterVolume(-condenser.getFlowOut().getRate());
 		Reactor reactor = this.plant.getReactor();
-		reactor.updateWaterVolume(reactor.getInput().getFlowOut().getRate());
+		int waterInCondenser = condenser.getWaterVolume();
+		int amountOut = 0;
+		int condenserFlowOut = condenser.getFlowOut().getRate();
+		// Check if there's enough water in the condenser to fulfil the flow rate.
+		amountOut = (waterInCondenser > condenser.getFlowOut().getRate()) ?
+						condenserFlowOut: 
+						waterInCondenser; // otherwise empty out the condenser!)
+		condenser.updateWaterVolume(-amountOut);
+		reactor.updateWaterVolume(amountOut);
 	}
 
 	/**
@@ -292,8 +302,8 @@ public class PlantPresenter {
 	private void moveSteam()
 	{
 		Reactor reactor = this.plant.getReactor();
-		reactor.updateSteamVolume(-reactor.getFlowOut().getRate());
 		Condenser condenser = this.plant.getCondenser();
+		reactor.updateSteamVolume(-reactor.getFlowOut().getRate());
 		condenser.updateSteamVolume(condenser.getInput().getFlowOut().getRate());
 	}
 
@@ -467,6 +477,7 @@ public class PlantPresenter {
 		} else {
 			flowRate = steamDiff;
 		}
+		if (reactor.getSteamVolume() < flowRate) flowRate = reactor.getSteamVolume();
 		return flowRate;
 	}
 	
@@ -573,18 +584,21 @@ public class PlantPresenter {
 	 */
 	private void propagateFlowFromPumpsToCondenser()
 	{
+		Condenser condenser = this.plant.getCondenser();
 		int flowRate;
 		PlantComponent currentComponent;
 		PlantComponent precedingComponent;
 		boolean blockedPath = false;
 		// Iterate through all pumps and start tracking back through the system
 		for (Pump p : this.plant.getPumps()) {
+			// If the pump is broken, move onto the next one.
+			if (this.plant.getFailedComponents().contains(p)) break;
 			flowRate = calcFlowFromPumpRpm(p);
 			blockedPath = false;
 			currentComponent = p;
 			precedingComponent = p.getInput();
 			// Until we find the condenser or our path is blocked
-			while(!(precedingComponent instanceof Condenser) || blockedPath) {
+			while(!(precedingComponent instanceof Condenser) && !blockedPath) {
 				if (!(precedingComponent instanceof ConnectorPipe)) {
 					// Nothing to see here... Move along (to the next component ;)
 					currentComponent = precedingComponent;
@@ -599,8 +613,13 @@ public class PlantPresenter {
 						List<PlantComponent> possiblePaths = ((ConnectorPipe) precedingComponent).getInputs();
 						if (possiblePaths.size() > 1) { 
 							/* There is more than one possible path..
-							 * Luckily we know our system will only ever have one so we
-							 * can get away with this hard coded hackery...
+							 * Luckily we know our system will only ever have one path 
+							 * back to the condenser from a pump so we can get away with
+							 * this hard coded hackery... 
+							 * 
+							 * There could only be more than one path back to a condenser
+							 * if there were multiple condensers or there were wierd loops in the
+							 * system.
 							 * 
 							 * You will need to recursively trace all paths and remember where you've
 							 * been until you find the reactor, should you require strange paths through
@@ -616,9 +635,15 @@ public class PlantPresenter {
 			/* If we did indeed find the condenser then add the flow increase from this pump to
 			 * the flow out of the condenser.
 			 */
-			if (precedingComponent instanceof Condenser) 
-				precedingComponent.getFlowOut().setRate(precedingComponent.getFlowOut().getRate() + flowRate);
+			if (precedingComponent instanceof Condenser) {
+				int condenserFlowOut = precedingComponent.getFlowOut().getRate();
+				precedingComponent.getFlowOut().setRate(condenserFlowOut + flowRate);
+			}
 		}
+		// Finally.. Make sure the flow out of the reactor will take us into negative volume.
+		int condenserWaterVolume = condenser.getWaterVolume();
+		int condenserFlowOut = condenser.getFlowOut().getRate();
+		if (condenserFlowOut > condenserWaterVolume) condenser.getFlowOut().setRate(condenserWaterVolume);
 	}
 
 	private int calcFlowFromPumpRpm(Pump p)

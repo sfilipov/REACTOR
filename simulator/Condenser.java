@@ -7,13 +7,14 @@ class Condenser extends PlantComponent {
 	private final static int DEFAULT_STEAM_VOLUME = 0;
 	
 	private final static int MAX_TEMPERATURE = 2000;
-	private final static int MAX_PRESSURE = 500;
+	private final static int MAX_PRESSURE = 2000;
 	private final static int MAX_HEALTH = 100;
 	private final static int HEALTH_CHANGE_WHEN_DAMAGING = 10;
 	private final static int COOLANT_TEMP = 20; // temperature of the coolant coming in
-	private final static int COOLDOWN_PER_STEP = 50; // Amount to cool the condenser per step. 
+	private final static int COOLDOWN_PER_STEP = 200; // Amount to cool the condenser per step. 
 	private final static int WATER_STEAM_RATIO = 2; // water to steam ratio.
 	private final static double COND_MULTIPLIER = 0.8; // temperature to steam condensed multiplier.
+	private final static double VOL_TO_PRESSURE_MULTIPLIER = 0.15;
 	
 	private int temperature;
 	private int pressure;
@@ -89,7 +90,7 @@ class Condenser extends PlantComponent {
 	public void updateState() {
 		updateTemperature();
 		condenseSteam();
-		//updatePressure();
+		updatePressure();
 		checkIfDamaging();
 	}
 	
@@ -110,6 +111,12 @@ class Condenser extends PlantComponent {
 		this.temperature += changeInTemp;
 	}
 	
+	private void updatePressure() {
+		int currentPressure;
+		currentPressure = (int) Math.round(new Double(this.steamVolume) * VOL_TO_PRESSURE_MULTIPLIER);
+		this.pressure = currentPressure;
+	}
+	
 	/**
 	 * Calculates the increase in temperature based upon the temperature and volume
 	 * of steam coming into the condenser.
@@ -119,8 +126,8 @@ class Condenser extends PlantComponent {
 	 * @return amount of temperature increase for this step.
 	 */
 	private int heating(int steamTemperature, int steamVolumeIn) {
-		int tempDiff = Math.abs(this.temperature - steamTemperature);
-		if (this.steamVolume < 1) return 0; // stops a potential divide by 0 on the next line.
+		int tempDiff = steamTemperature - this.temperature;
+		if (this.steamVolume < 1) return 0; // stops a potential divide by 0.
 		if (steamVolumeIn == 0) return 0; // No steam flowing in => no heating.
 		return tempDiff * (1 - ((this.steamVolume - steamVolumeIn)/this.steamVolume));
 	}
@@ -142,23 +149,36 @@ class Condenser extends PlantComponent {
 		}
 	}
 	
+	/**
+	 * Not very physics accurate, but it provides a reasonable model of 
+	 * the behaviour of steam condensing.
+	 */
 	private void condenseSteam() {
 		int steamCondensed;
 		int waterCreated;
-		steamCondensed = (int) Math.round((MAX_TEMPERATURE - this.temperature) * COND_MULTIPLIER);
-		if (steamCondensed > this.steamVolume) steamCondensed = this.steamVolume;
-		System.out.println("C: SteamCondensed - " + steamCondensed);
+		if (this.temperature < MAX_TEMPERATURE) {
+			steamCondensed = (int) Math.ceil((MAX_TEMPERATURE - this.temperature) * COND_MULTIPLIER);
+		} else {
+			steamCondensed = 0;
+		}
 		
+		if (steamCondensed > this.steamVolume) steamCondensed = this.steamVolume;
 		waterCreated = (int) Math.ceil(steamCondensed * (1 / new Double(WATER_STEAM_RATIO)));
-		System.out.println("C: WaterCreated - " + waterCreated);
-			
+		/*
+		 * Since we do a dodgy division above, to make sure we aren't losing / creating
+		 * water we remultiply out the waterCreated.
+		 */
+		steamCondensed = waterCreated * WATER_STEAM_RATIO;	
 		this.steamVolume -= steamCondensed; // made negative as the water is removed.
-		this.waterVolume += waterCreated; 
+		this.waterVolume += waterCreated;
 	}
 
 	private void checkIfDamaging() {
+		if(this.temperature >= MAX_TEMPERATURE) {
+			damageCondenser();
+		}
 		if(this.pressure >= MAX_PRESSURE) {
-			damageCondenser();			// Method to damage Condenser
+			damageCondenser();
 		}
 	}
 		

@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Plant {
-	private final static int MAX_STEAM_FLOW_RATE = 900;
-	private final static int MAX_WATER_FLOW_RATE_PER_PUMP = 100;
+	private final static int MAX_STEAM_FLOW_RATE = 400;
+	private final static int MAX_WATER_FLOW_RATE_PER_PUMP = 400;
 	
 	private String operatorName;
 	private int timeStepsUsed;
