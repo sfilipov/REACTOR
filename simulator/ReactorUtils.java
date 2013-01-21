@@ -18,8 +18,6 @@ public class ReactorUtils
 	private Generator generator;
 	private Valve steamValve1;
 	private Valve steamValve2;
-	private Valve waterValve1;
-	private Valve waterValve2;
 	private Pump pump1;
 	private Pump pump2;
 	private ConnectorPipe connectorPipe1;
@@ -42,8 +40,6 @@ public class ReactorUtils
 		generator = new Generator(turbine);
 		steamValve1 = new Valve(1, FlowType.Steam);
 		steamValve2 = new Valve(2, FlowType.Steam);
-		waterValve1 = new Valve(3, FlowType.Water);
-		waterValve2 = new Valve(4, FlowType.Water);
 		pump1 = new Pump(1);
 		pump2 = new Pump(2);
 		connectorPipe1 = new ConnectorPipe();
@@ -63,10 +59,8 @@ public class ReactorUtils
 		setupInputOutputReferences(condenser, connectorPipe3);
 		setupInputOutputReferences(connectorPipe3, pump1);
 		setupInputOutputReferences(connectorPipe3, pump2);
-		setupInputOutputReferences(pump1, waterValve1);
-		setupInputOutputReferences(pump2, waterValve2);
-		setupInputOutputReferences(waterValve1, connectorPipe4);
-		setupInputOutputReferences(waterValve2, connectorPipe4);
+		setupInputOutputReferences(pump1, connectorPipe4);
+		setupInputOutputReferences(pump2, connectorPipe4);
 		setupInputOutputReferences(connectorPipe4, reactor);
 	}
 	
@@ -79,8 +73,6 @@ public class ReactorUtils
 		plantComponents.add(generator);
 		plantComponents.add(steamValve1);
 		plantComponents.add(steamValve2);
-		plantComponents.add(waterValve1);
-		plantComponents.add(waterValve2);
 		plantComponents.add(pump1);
 		plantComponents.add(pump2);
 		plantComponents.add(connectorPipe1);
