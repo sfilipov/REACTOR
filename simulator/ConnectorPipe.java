@@ -22,7 +22,7 @@ public class ConnectorPipe extends PlantComponent {
 	/* Since these objects will effectively be invisible to the user,
 	 * they should never fail!
 	 */
-	private final static double FAILURE_RATE = 0.0d;
+	private final static int FAILURE_RATE = 0;
 	private final static int REPAIR_TIME = 0;
 	
 	private List<PlantComponent> inputs;

@@ -9,7 +9,7 @@ public class Generator extends PlantComponent {
 	private Turbine turbine;
 	
 	Generator(Turbine turbine) {
-		super(0.0, 0); //Perfect - never fails
+		super(0, 0); //Perfect - never fails
 		this.turbine = turbine;
 		this.powerOutput = 0;
 	}

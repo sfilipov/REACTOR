@@ -8,12 +8,12 @@ abstract class PlantComponent implements Serializable{
 	private static final long serialVersionUID = -4184587415447732647L;
 	
 	//The values of the constants below are for illustration.
-	public final static int DEFAULT_FAILURE_RATE = 33;
-	public final static int DEFAULT_REPAIR_TIME = 5;
+	public final static int DEFAULT_FAILURE_RATE = 10; //1%
+	public final static int DEFAULT_REPAIR_TIME = 5; 
 	public final static boolean DEFAULT_OPERATIONAL = true;
 	public final static boolean DEFAULT_PRESSURISED = false;
 
-	private double failureRate;
+	private int failureRate;
 	private int repairTime;
 	private boolean operational; //Possibly unnecessary
 	private boolean pressurised;
@@ -42,7 +42,7 @@ abstract class PlantComponent implements Serializable{
 	 * @param failureRate the chance of a component to fail randomly
 	 * @param repairTime the number of steps needed to repair the component
 	 */
-	protected PlantComponent(double failureRate, int repairTime) {
+	protected PlantComponent(int failureRate, int repairTime) {
 		this.failureRate = failureRate;
 		this.repairTime = repairTime;
 		this.operational = DEFAULT_OPERATIONAL;
@@ -60,7 +60,7 @@ abstract class PlantComponent implements Serializable{
 	 * @param operational determines whether the component is initially
 	 * 					  operational or not
 	 */
-	protected PlantComponent(double failureRate, int repairTime, boolean operational) {
+	protected PlantComponent(int failureRate, int repairTime, boolean operational) {
 		this.failureRate = failureRate;
 		this.repairTime = repairTime;
 		this.operational = operational;
@@ -79,7 +79,7 @@ abstract class PlantComponent implements Serializable{
 	 * 					  operational or not
 	 * @param pressurised determines whether or not the component is pressurised.
 	 */
-	protected PlantComponent(double failureRate, int repairTime, boolean operational, boolean pressurised) {
+	protected PlantComponent(int failureRate, int repairTime, boolean operational, boolean pressurised) {
 		this.failureRate = failureRate;
 		this.repairTime = repairTime;
 		this.operational = operational;
@@ -98,7 +98,7 @@ abstract class PlantComponent implements Serializable{
 	 * 					  operational or not
 	 * @param pressurised determines whether or not the component is pressurised.
 	 */
-	protected PlantComponent(double failureRate, int repairTime, boolean operational, boolean pressurised, Flow flow) {
+	protected PlantComponent(int failureRate, int repairTime, boolean operational, boolean pressurised, Flow flow) {
 		this.failureRate = failureRate;
 		this.repairTime = repairTime;
 		this.operational = operational;
@@ -111,7 +111,7 @@ abstract class PlantComponent implements Serializable{
 	 * Returns the current chance of the component to fail randomly.
 	 * @return the current chance of the component to fail randomly
 	 */
-	protected double getFailureRate() {
+	protected int getFailureRate() {
 		return failureRate;
 	}
 	
@@ -119,7 +119,7 @@ abstract class PlantComponent implements Serializable{
 	 * Sets a new value for failureRate.
 	 * @param failureRate the new value for failureRate
 	 */
-	protected void setFailureRate(double failureRate) {
+	protected void setFailureRate(int failureRate) {
 		this.failureRate = failureRate;
 	}
 	

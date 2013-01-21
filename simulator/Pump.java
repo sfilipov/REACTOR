@@ -8,19 +8,22 @@ public class Pump extends PlantComponent {
 	private final static int DEFAULT_RPM = 0;
 	private final static boolean DEFAULT_ON_STATE = true;
 	private final static int MAX_RPM = 1000; 
+	public final static int DEFAULT_FAILURE_RATE = 10; //1%
+	public final static int DEFAULT_REPAIR_TIME = 5;
+	private final static int MAX_FAILURE_RATE = 50; //5%
 	
 	private int ID;
 	private int rpm;
 	private boolean on;
 	
 	public Pump(int ID) {
-		super();
+		super(DEFAULT_FAILURE_RATE, DEFAULT_REPAIR_TIME);
 		this.ID = ID;
 		setRpm(DEFAULT_RPM);
 		this.on = DEFAULT_ON_STATE;
 	}
 	
-	public Pump(int ID, double failureRate, int repairTime, int rpm) {
+	public Pump(int ID, int failureRate, int repairTime, int rpm) {
 		super(failureRate, repairTime);
 		this.ID = ID;
 		setRpm(rpm);
@@ -72,10 +75,17 @@ public class Pump extends PlantComponent {
 	}
 
 	public void updateState() {
-		// Chill out with the valves, sippin' on Gin & Juice.
+		increaseFailureRate();
 	}
 	
 	public boolean checkFailure() {
 		return super.checkFailure();
+	}
+	
+	private void increaseFailureRate() {
+		int currentFailureRate = this.getFailureRate();
+		if (currentFailureRate < MAX_FAILURE_RATE) {
+			this.setFailureRate(++currentFailureRate);
+		}
 	}
 }
