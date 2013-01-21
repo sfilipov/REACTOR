@@ -14,11 +14,13 @@ import java.util.Random;
 public class PlantPresenter {
 
 	private Plant plant;
+	private UIData uidata;
 	
 	public PlantPresenter(ReactorUtils utils)
 	{
 		this.plant = utils.createNewPlant();
 		readHighScores();
+		uidata = new UIData(plant);
 	}
 	
 	/* ----------------		Methods	for UI to call	----------------
@@ -105,7 +107,7 @@ public class PlantPresenter {
 		List<HighScore> highScores = plant.getHighScores();
 		int size = highScores.size();
 		if (newHighScore.getHighScore() > 0) {
-			for (int i=0; i < 10; i++) {
+			for (int i=0; i < 20; i++) {
 				if (i < size) {
 					HighScore oldHighScore = highScores.get(i);
 					if (oldHighScore.compareTo(newHighScore) < 0) {

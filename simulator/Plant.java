@@ -174,8 +174,8 @@ public class Plant implements Serializable {
 	}
 
 	public List<HighScore> getHighScores() {
-		if(this.highScores.size() > 10) {
-			this.highScores = this.highScores.subList(0, 10); //Trims the high scores list to only the first 10 elements
+		if(this.highScores.size() > 20) {
+			this.highScores = this.highScores.subList(0, 20); //Trims the high scores list to only the first 10 elements
 		}
 		return this.highScores;
 	}
