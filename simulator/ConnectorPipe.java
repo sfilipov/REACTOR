@@ -16,6 +16,9 @@ import java.util.Map.Entry;
  *
  */
 public class ConnectorPipe extends PlantComponent {
+	
+	private static final long serialVersionUID = 4562191438219268556L;
+	
 	/* Since these objects will effectively be invisible to the user,
 	 * they should never fail!
 	 */

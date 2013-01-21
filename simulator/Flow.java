@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 public class Flow implements Serializable {
 	
+	private static final long serialVersionUID = 8001114698646828534L;
+	
 	private final static int DEFAULT_RATE = 0;
 	private final static FlowType DEFAULT_TYPE = FlowType.Water;
 	private final static int DEFAULT_TEMPERATURE = 0;

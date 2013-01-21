@@ -1,6 +1,8 @@
 package simulator;
 
 public class Turbine extends PlantComponent {
+	private static final long serialVersionUID = 1106025692966179166L;
+
 	private static final int MAX_TURBINE_RPM = 3500;
 	
 	private int rpm;

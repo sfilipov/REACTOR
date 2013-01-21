@@ -1,6 +1,9 @@
 package simulator;
 
 public class Pump extends PlantComponent {
+
+	private static final long serialVersionUID = -446684199807618671L;
+	
 	//DEFAULT_RPM is used when a rpm argument is not passed to the constructor
 	private final static int DEFAULT_RPM = 0;
 	private final static boolean DEFAULT_ON_STATE = true;

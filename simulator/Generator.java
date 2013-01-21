@@ -1,6 +1,8 @@
 package simulator;
 
 public class Generator extends PlantComponent {
+	private static final long serialVersionUID = -7558087247939142245L;
+
 	private static final int DIVISOR = 123; //Random number to make score look better (not a multiple of 10/100/1000)
 	
 	private int powerOutput;

@@ -1,5 +1,7 @@
 package simulator;
 
-public enum FlowType {
+import java.io.Serializable;
+
+public enum FlowType implements Serializable {
 	Water, Steam;
 }

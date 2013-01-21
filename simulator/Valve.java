@@ -1,6 +1,8 @@
 package simulator;
 
 public class Valve extends PlantComponent {
+	private static final long serialVersionUID = -4238759395307525755L;
+	
 	private final static double VALVE_FAILURE_RATE = 0.0;
 	private final static int VALVE_REPAIR_RATE = 0;
 	private final static boolean DEFAULT_OPEN_STATE = true;

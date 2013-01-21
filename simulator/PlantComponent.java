@@ -5,6 +5,8 @@ import java.io.Serializable;
 
 abstract class PlantComponent implements Serializable{
 
+	private static final long serialVersionUID = -4184587415447732647L;
+	
 	//The values of the constants below are for illustration.
 	public final static int DEFAULT_FAILURE_RATE = 33;
 	public final static int DEFAULT_REPAIR_TIME = 5;

@@ -3,7 +3,8 @@ package simulator;
 import java.io.Serializable;
 
 public class Repair implements Serializable {
-
+	private static final long serialVersionUID = 1819944421888642516L;
+	
 	private PlantComponent plantComponent;
 	private int timeStepsRemaining;
 	
