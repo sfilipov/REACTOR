@@ -59,6 +59,13 @@ public class TextUI extends JFrame implements KeyListener
     +"     /      |   |                           \\/   |__|/    \n"
     +"                                                           \n";
 	
+	private final static String LAMPREY_ASCII =           
+	 "     _____                  __                              \n"
+	+"    |_   _|___ ___ _____   |  |   ___ _____ ___ ___ ___ _ _ \n" 
+	+"      | | | -_| .'|     |  |  |__| .'|     | . |  _| -_| | |\n"
+	+"      |_| |___|__,|_|_|_|  |_____|__,|_|_|_|  _|_| |___|_  |\n"
+	+"      |_|                                              |___|";
+	
 	// UI variables
 	private JTextArea systemText = new JTextArea(10,20);
     private JTextArea outputText = new JTextArea(10,20);
@@ -620,8 +627,9 @@ public class TextUI extends JFrame implements KeyListener
 	}
 	
 	private void printCredits() {
-		print("Created by:");
-		print("(Put superhero names here)");
+		print("~-----------~        Lovingly crafted by:        ~-----------~");
+		print(LAMPREY_ASCII);
+		print("~-----~      Ali, Brad, James, John, Simeon & Will     ~-----~");
 	}
 	
 	private void printNotValidValve() {
