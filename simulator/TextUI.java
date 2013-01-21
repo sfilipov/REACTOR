@@ -456,7 +456,9 @@ public class TextUI extends JFrame implements KeyListener
 	    			doRepairPump(pumpID);
 	    		}
 	    		else {
-	    			print("Not a valid command.");
+	    			print("Not a valid command. You can use \"set\" a pump or valve, \"repair\" a pump or the turbine " +
+	    					"and \"step\" once or up to 10 times. You can also start a \"newgame\", save or load a game, " +
+	    					"check the \"highscores\" or the \"credits\".");
 	    		}
 	    	}
 	    	else if ( (command.equals("exit") || command.equals("quit")) && !scanner.hasNext()) {
@@ -464,7 +466,9 @@ public class TextUI extends JFrame implements KeyListener
 	    		doAreYouSure();
 	    	}
 			else {
-				print("Not a valid command.");
+    			print("Not a valid command. You can use \"set\" a pump or valve, \"repair\" a pump or the turbine " +
+    					"and \"step\" once or up to 10 times. You can also start a \"newgame\", save or load a game, " +
+    					"check the \"highscores\" or the \"credits\".");
 			}
 		}
 		scanner.close();
