@@ -1,8 +1,11 @@
 package simulator;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class UIData {	
+public class UIData {
+	private Plant plant;
+	
 	private String  operatorName;
 	private int     score;
 	private boolean gameOver;
@@ -31,8 +34,43 @@ public class UIData {
 	private List<Valve> valves;
 	private List<Pump>  pumps;
 	
+	private List<PlantComponent> brokenOnStep;
 	
-	UIData(Plant plant) {		
+	UIData(Plant plant) {
+		this.plant = plant;
+		
+		this.operatorName = plant.getOperatorName();
+		this.score        = plant.getScore();
+		this.gameOver     = plant.isGameOver();
+		
+		this.turbineRpm			= plant.getTurbine().getRpm();
+		this.turbineFunctional	= plant.getTurbine().isOperational();
+		this.powerOutput  		= plant.getGenerator().getPowerOutput();
+		
+		this.reactorHealth             = plant.getReactor().getHealth();
+		this.reactorTemperature        = plant.getReactor().getTemperature();
+		this.reactorMaxTemperature     = plant.getReactor().getMaxTemperature();
+		this.reactorPressure           = plant.getReactor().getPressure();
+		this.reactorMaxPressure        = plant.getReactor().getMaxPressure();
+		this.reactorWaterVolume        = plant.getReactor().getWaterVolume();
+		this.reactorMinSafeWaterVolume = plant.getReactor().getMinSafeWaterVolume();
+		
+		this.condenserHealth         = plant.getCondenser().getHealth();
+	    this.condenserTemperature    = plant.getCondenser().getTemperature();
+	    this.condenserMaxTemperature = plant.getCondenser().getMaxTemperature();
+	    this.condenserPressure       = plant.getCondenser().getPressure();
+	    this.condenserMaxPressure    = plant.getCondenser().getMaxPressure();
+	    this.condenserWaterVolume    = plant.getCondenser().getWaterVolume();
+	    
+	    this.controlRods = plant.getReactor().getPercentageLowered();
+	    
+	    this.valves = plant.getValves();
+	    this.pumps  = plant.getPumps();
+	    
+	    this.brokenOnStep = new ArrayList<PlantComponent>();
+	}
+	
+	public void updateUIData() {
 		this.operatorName = plant.getOperatorName();
 		this.score        = plant.getScore();
 		this.gameOver     = plant.isGameOver();
@@ -151,24 +189,15 @@ public class UIData {
 		return turbineFunctional;
 	}
 	
-	//EXPERIMENTAL
-//	public boolean isOpenValve(int valveID) throws ValveNotFoundException {
-//		for (Valve v : valves) {
-//			if (v.getID() == valveID) {
-//				return v.isOpen();
-//			}
-//		}
-//		throw new ValveNotFoundException();
-//	}
+	public void addBrokenOnStep(PlantComponent broken) {
+		brokenOnStep.add(broken);
+	}
 	
-	//EXPERIMENTAL
-//	public boolean isOnPump(int pumpID) throws PumpNotFoundException {
-//		for (Pump p : pumps) {
-//			if (p.getID() == pumpID) {
-//				return p.isOn();
-//			}
-//		}
-//		throw new PumpNotFoundException();
-//	}
-
+	public void resetBrokenOnStep() {
+		brokenOnStep = new ArrayList<PlantComponent>();
+	}
+	
+	public List<PlantComponent> getBrokenOnStep() {
+		return brokenOnStep;
+	}
 }

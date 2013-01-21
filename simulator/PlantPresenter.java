@@ -33,6 +33,7 @@ public class PlantPresenter {
 		this.plant = utils.createNewPlant();
 		this.plant.setOperatorName(operatorName);
 		readHighScores();
+		uidata = new UIData(plant);
 		// update things as per the default values.
 		// mainly to calculate the pressure etc in these things.
 		updateFlow();
@@ -71,6 +72,7 @@ public class PlantPresenter {
 				in.close();
 				fileIn.close();
 				this.plant = plant;
+				uidata = new UIData(plant);
 				return true;
 			}
 			else {
@@ -239,8 +241,7 @@ public class PlantPresenter {
 	
 	// ----------------		Methods used in systemText (TextUI class)	----------------
 	public UIData getUIData() {
-		UIData uidata = new UIData(plant);
-		return uidata;
+		return this.uidata;
 	}
 	
 	// ----------------		Internal helper methods ------------------
@@ -362,12 +363,13 @@ public class PlantPresenter {
 	
 	private void checkFailures() {
 		List<PlantComponent> plantComponents  = plant.getPlantComponents();
+		List<PlantComponent> failedComponents = plant.getFailedComponents();
 		List<PlantComponent> failingComponents = new ArrayList<PlantComponent>();
 		int faults = 0;
 		
 		//Checks all components if they randomly fail
 		for (PlantComponent component : plantComponents) {
-			if (component.checkFailure()) {
+			if (component.checkFailure() && !failedComponents.contains(component)) {
 				if (component instanceof Reactor || component instanceof Condenser) {
 					gameOver();
 				}
@@ -385,6 +387,7 @@ public class PlantPresenter {
 			PlantComponent failedComponent = failingComponents.get(selection);
 			plant.addFailedComponent(failedComponent);
 			failedComponent.setOperational(false);
+			uidata.addBrokenOnStep(failedComponent);
 		}
 	}
 	

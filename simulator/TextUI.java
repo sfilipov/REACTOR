@@ -7,6 +7,8 @@ import javax.swing.text.DefaultCaret;
 import javax.swing.text.NavigationFilter;
 import javax.swing.text.Position;
 
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.List;
 
@@ -74,6 +76,7 @@ public class TextUI extends JFrame implements KeyListener
     private final static String prompt = "~> ";
     
     private PlantPresenter presenter;
+    private UIData uidata;
     private State state = State.Uninitialised;
     private AreYouSureCaller caller = AreYouSureCaller.NoAction;
     
@@ -81,6 +84,7 @@ public class TextUI extends JFrame implements KeyListener
     {
     	super("REACTOR");
     	this.presenter = presenter;
+    	this.uidata = presenter.getUIData();
         initWindow();
         startUp();     
     }
@@ -252,7 +256,8 @@ public class TextUI extends JFrame implements KeyListener
     
     private void updateSystemText() {
     	String reactorInfo = new String();
-    	UIData uidata = presenter.getUIData();
+    	uidata = presenter.getUIData();
+    	uidata.updateUIData();
     	if (!uidata.isGameOver()) {
         	reactorInfo += "Operator Name: "  + uidata.getOperatorName() + "\t| SCORE: " + uidata.getScore() + "\n\n";
         	reactorInfo += "PLANT READINGS: \n\n";
@@ -535,29 +540,23 @@ public class TextUI extends JFrame implements KeyListener
 		scanner.close();
 	}
 	
-//	private void parseGameOver(String input) {
-//    	Scanner scanner = new Scanner(input);
-//		if (!scanner.hasNext()) {
-//			//Nothing
-//		}
-//		else {
-//	    	String next = scanner.next();
-//	    	if (next.equals("newgame") && !scanner.hasNext()) {
-//	    		doNewGame();
-//	    	}
-//	    	else {
-//	    		print("The game has ended. The only command you can use is \"newgame\"");
-//	    	}
-//		}
-//		scanner.close();
-//	}
-	
 	//-------------- Methods used inside parsing -------------------
 	
 	private void doStep(int numSteps)
 	{
 		if (numSteps >= 0 && numSteps <= MAX_TIME_STEPS_PER_COMMAND) {
 			presenter.step(numSteps);
+			List<PlantComponent> brokenOnStep = uidata.getBrokenOnStep();
+			for (PlantComponent broken : brokenOnStep) {
+				if (broken instanceof Turbine) {
+					print("The turbine has broken " + randomReason());  
+				}
+				else if (broken instanceof Pump) {
+					Pump pBroken = (Pump) broken;
+					print("Pump " + pBroken.getID() + " has broken " + randomReason());
+				}
+			}
+			uidata.resetBrokenOnStep();
 			print("Game advanced " + numSteps + " steps.");
 		}
 		else {
@@ -650,6 +649,16 @@ public class TextUI extends JFrame implements KeyListener
 		print("\ti.e. \"set pump 2 on\" or \"set pump 1 off\"");
 		print("Format for setting a pump's rpm: set pump <id> rpm <newRpm>");
 		print("\ti.e. \"set pump 2 rpm 400\" or \"set pump 1 rpm 300\"");
+	}
+	
+	private String randomReason() {
+		Random random = new Random();
+		List<String> reasons = new ArrayList<String>();
+		reasons.add("because of malfunction.");
+		reasons.add("because of bad weather conditions outside the plant.");
+		reasons.add("because of big stress on the component");
+		int selection = random.nextInt(reasons.size());
+		return reasons.get(selection);
 	}
 	
 	private enum State {
