@@ -373,7 +373,6 @@ public class PlantPresenter {
 				else {
 					failingComponents.add(component);
 					faults++;
-					System.out.println("faults++ - " + component.getClass().getName());
 				}
 			}
 		}
