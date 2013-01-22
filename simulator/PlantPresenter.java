@@ -747,7 +747,7 @@ public class PlantPresenter {
 							 * this hard coded hackery... 
 							 * 
 							 * There could only be more than one path back to a condenser
-							 * if there were multiple condensers or there were wierd loops in the
+							 * if there were multiple condensers or there were weird loops in the
 							 * system.
 							 * 
 							 * You will need to recursively trace all paths and remember where you've
