@@ -544,8 +544,8 @@ public class PlantPresenter {
 	 * Calls blockPrecedingConnectorPipe() for all input paths into blockedConnector. 
 	 * We assume checks have been made to ensure blockedConnector is actually blocked.
 	 * 
-	 * If an input is a ConnectorPipe, recursively call this function to make sure 
-	 * all blockages are properly propagated. 
+	 * If an input is a ConnectorPipe, set the output that blockedConnector is connected
+	 * to blocked.
 	 * 
 	 * @param blockedConnector the blocked ConnectorPipe to start from.
 	 */
@@ -553,7 +553,7 @@ public class PlantPresenter {
 		List<PlantComponent> multipleInputs = ((ConnectorPipe) blockedConnector).getInputs();
 		for (PlantComponent pc : multipleInputs) {
 			if (pc instanceof ConnectorPipe) {
-				blockPrecedingFromConnectorPipe((ConnectorPipe) pc);
+				((ConnectorPipe) pc).setComponentBlocked(blockedConnector);
 			} else {
 				if (pc != null) blockToPrecedingConnectorPipe(pc);
 			}
