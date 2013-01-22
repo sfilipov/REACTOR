@@ -84,7 +84,7 @@ public class TextUI extends JFrame implements KeyListener
     private final static Font default_font = new Font("Monospaced",Font.PLAIN, 12);
     private final static String prompt = "~> ";
     
-    private PlantController presenter;
+    private PlantController controller;
     private UIData uidata;
     private State state = State.Uninitialised;
     private AreYouSureCaller caller = AreYouSureCaller.NoAction;
@@ -92,7 +92,7 @@ public class TextUI extends JFrame implements KeyListener
     public TextUI(PlantController presenter)
     {
     	super("REACTOR");
-    	this.presenter = presenter;
+    	this.controller = presenter;
     	this.uidata = presenter.getUIData();
         initWindow();
         startUp();     
@@ -265,7 +265,7 @@ public class TextUI extends JFrame implements KeyListener
     
     private void updateSystemText() {
     	String reactorInfo = new String();
-    	uidata = presenter.getUIData();
+    	uidata = controller.getUIData();
     	uidata.updateUIData();
     	if (!uidata.isGameOver()) {
         	reactorInfo += "Operator Name: "  + uidata.getOperatorName() + "\t| SCORE: " + uidata.getScore() + "\n\n";
@@ -372,10 +372,10 @@ public class TextUI extends JFrame implements KeyListener
 		    			if (valveCommand.equals("open") || valveCommand.equals("close")) {
 		    				boolean success;
 		    				if (valveCommand.equals("open")) {
-		    					success = presenter.setValve(valveID, true);
+		    					success = controller.setValve(valveID, true);
 		    				}
 		    				else { //close
-		    					success = presenter.setValve(valveID, false);
+		    					success = controller.setValve(valveID, false);
 		    				}
 		    				if (success)
 		    					print("Valve was successfully set");
@@ -400,10 +400,10 @@ public class TextUI extends JFrame implements KeyListener
 		    			if (pumpCommand.equals("on") || pumpCommand.equals("off")) {
 		    				boolean success;
 		    				if (pumpCommand.equals("on")) {
-		    					success = presenter.setPumpOnOff(pumpID, true);
+		    					success = controller.setPumpOnOff(pumpID, true);
 		    				}
 		    				else { //close
-		    					success = presenter.setPumpOnOff(pumpID, false);
+		    					success = controller.setPumpOnOff(pumpID, false);
 		    				}
 		    				if (success) {
 		    					print("Pump was successfully set");
@@ -416,7 +416,7 @@ public class TextUI extends JFrame implements KeyListener
 	    					int newRpm = scanner.nextInt();
 	    					boolean success;
 	    					try {
-	    						success = presenter.setPumpRpm(pumpID, newRpm);
+	    						success = controller.setPumpRpm(pumpID, newRpm);
 	    						if (success) {
 		    						print("Pump rpm was successfully set.");
 		    					} else {
@@ -442,7 +442,7 @@ public class TextUI extends JFrame implements KeyListener
 	    		else if ((component.equals("controlrods") || component.equals("cr")) && scanner.hasNextInt()) {
 	    			int percentageLowered = scanner.nextInt();
 	    			if (percentageLowered >= 0 && percentageLowered <= 100 && !scanner.hasNext()) {
-	    				presenter.setControlRods(percentageLowered);
+	    				controller.setControlRods(percentageLowered);
 	    				print("Control rods were successfully set.");
 	    			}
 	    			else {
@@ -523,7 +523,7 @@ public class TextUI extends JFrame implements KeyListener
 			print("Your name is too long - please use a name shorter than " + MAX_NAME_LENGTH + " characters.");
 		}
 		else {
-			presenter.newGame(input);
+			controller.newGame(input);
 			state = State.Normal;
 			print("New game started.");
 		}
@@ -554,7 +554,7 @@ public class TextUI extends JFrame implements KeyListener
 	private void doStep(int numSteps)
 	{
 		if (numSteps >= 0 && numSteps <= MAX_TIME_STEPS_PER_COMMAND) {
-			presenter.step(numSteps);
+			controller.step(numSteps);
 			List<PlantComponent> brokenOnStep = uidata.getBrokenOnStep();
 			for (PlantComponent broken : brokenOnStep) {
 				if (broken instanceof Turbine) {
@@ -579,7 +579,7 @@ public class TextUI extends JFrame implements KeyListener
 	}
 	
 	private void doLoadGame() {
-		if (presenter.loadGame()) {
+		if (controller.loadGame()) {
 			state = State.Normal;
 			print("Game loaded from file.");
 		}
@@ -589,7 +589,7 @@ public class TextUI extends JFrame implements KeyListener
 	}
 	
 	private void doSaveGame() {
-		if (presenter.saveGame() && state == State.Normal) {
+		if (controller.saveGame() && state == State.Normal) {
 			print("Game saved to file.");
 		}
 		else {
@@ -598,7 +598,7 @@ public class TextUI extends JFrame implements KeyListener
 	}
 	
 	private void doRepairTurbine() {
-		if (presenter.repairTurbine()) {
+		if (controller.repairTurbine()) {
 			print("Repair on the turbine has began.");
 		}
 		else {
@@ -607,7 +607,7 @@ public class TextUI extends JFrame implements KeyListener
 	}
 	
 	private void doRepairPump(int pumpID) {
-		if (presenter.repairPump(pumpID)) {
+		if (controller.repairPump(pumpID)) {
 			print("Repair on pump " + pumpID + " has began.");
 		}
 		else {
@@ -625,7 +625,7 @@ public class TextUI extends JFrame implements KeyListener
 	}
 	
 	private void printHighScores() {
-		List<HighScore> highScores = presenter.getHighScores();
+		List<HighScore> highScores = controller.getHighScores();
 		if (!highScores.isEmpty()) {
 			int i = 1;
     		for (HighScore highScore : highScores) {
