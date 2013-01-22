@@ -15,7 +15,7 @@ class Condenser extends PlantComponent {
 	private final static int COOLANT_TEMP = 20; // temperature of the coolant coming in
 	private final static int COOLDOWN_PER_STEP = 200; // Amount to cool the condenser per step. 
 	private final static int WATER_STEAM_RATIO = 2; // water to steam ratio.
-	private final static double COND_MULTIPLIER = 0.8; // temperature to steam condensed multiplier.
+	private final static double COND_MULTIPLIER = 0.2; // temperature to steam condensed multiplier.
 	private final static double VOL_TO_PRESSURE_MULTIPLIER = 0.15;
 	
 	private int temperature;
