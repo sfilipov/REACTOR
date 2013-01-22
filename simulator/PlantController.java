@@ -11,6 +11,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
+/**
+ * PlantController is the "controller" in our MVC design. It has
+ * methods necessary to control the data held in Plant, to execute methods
+ * that relate to UI functions, to give information about the Plant to an UI.
+ */
 public class PlantController {
 
 	private Plant plant;

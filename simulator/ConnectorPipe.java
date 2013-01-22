@@ -123,11 +123,17 @@ public class ConnectorPipe extends PlantComponent {
 		}
 	}
 	
+	/**
+	 * Does nothing (nothing to update).
+	 */
 	@Override
 	public void updateState() {
 		// Do nothing.
 	}
 
+	/**
+	 * Never breaks - returns false always.
+	 */
 	@Override
 	public boolean checkFailure() {
 		return false; //Never breaks.

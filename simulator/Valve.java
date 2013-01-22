@@ -1,5 +1,10 @@
 package simulator;
 
+/**
+ * Valve is a component that doesn't randomly fail (currently).
+ * It doesn't do anything on its own - it is used in the system to
+ * control the flow (stop the flow).
+ */
 public class Valve extends PlantComponent {
 	private static final long serialVersionUID = -4238759395307525755L;
 	
@@ -59,16 +64,26 @@ public class Valve extends PlantComponent {
 		this.open = open;
 	}
 	
+	/**
+	 * Returns the maximum amount that can flow per turn.
+	 * @return the maximum amount that can flow per turn.
+	 */
 	public int getMaxSteamFlow() {
 		return MAX_STEAM_FLOW;
 	}
 	
+	/**
+	 * Does nothing (valves don't have anything to update).
+	 */
 	@Override
 	public void updateState() {
 		// Just chill like a valve.
 		// (Valves do nothing themselves)
 	}
 	
+	/**
+	 * Does nothing (valves don't fail).
+	 */
 	@Override
 	public boolean checkFailure() {
 		return super.checkFailure();
