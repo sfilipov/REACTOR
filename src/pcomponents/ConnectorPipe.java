@@ -1,4 +1,4 @@
-package simulator;
+package pcomponents;
 
 import java.util.ArrayList;
 import java.util.HashMap;

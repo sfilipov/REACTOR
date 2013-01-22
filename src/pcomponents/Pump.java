@@ -1,4 +1,4 @@
-package simulator;
+package pcomponents;
 
 /**
  * Pump is a plant component that pumps some amount of water based on pump's "on"

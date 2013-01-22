@@ -1,4 +1,6 @@
-package simulator;
+package pcomponents;
+
+import simulator.Flow;
 
 
 /**

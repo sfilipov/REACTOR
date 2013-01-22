@@ -1,7 +1,7 @@
 package simulator;
 
 import java.io.Serializable;
-
+import pcomponents.*;
 
 /**
  * Repair class keeps track of the components that are being repaired.

@@ -1,4 +1,4 @@
-package simulator;
+package pcomponents;
 
 /**
  * The turbine is a class that makes the generator create power output.

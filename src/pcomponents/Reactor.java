@@ -1,6 +1,9 @@
-package simulator;
+package pcomponents;
 
 import java.io.Serializable;
+
+import simulator.Flow;
+import simulator.FlowType;
 
 
 /**
