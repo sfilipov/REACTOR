@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Random;
 
 /**
- * PlantController is the "controller" in our MVC design. It has
+ * PlantController is the "controller" of the MVC design of the game. It has
  * methods necessary to control the data held in Plant, to execute methods
  * that relate to UI functions, to give information about the Plant to an UI.
  */

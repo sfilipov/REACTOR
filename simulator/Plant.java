@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * Plant class is holder of all plant components, the score, time steps passed, the name of the
- * player, etc.
+ * player, etc. It represents the "model" of the MVC model of the game.
  */
 public class Plant implements Serializable {
 	/**
