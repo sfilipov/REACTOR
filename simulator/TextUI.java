@@ -665,6 +665,7 @@ public class TextUI extends JFrame implements KeyListener
 		reasons.add("because of malfunction.");
 		reasons.add("because of bad weather conditions outside the plant.");
 		reasons.add("because of big stress on the component");
+		reasons.add("because of a big earthquake.");
 		int selection = random.nextInt(reasons.size());
 		return reasons.get(selection);
 	}
