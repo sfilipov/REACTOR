@@ -584,9 +584,25 @@ public class PlantPresenter {
 		Reactor reactor = this.plant.getReactor();
 		reactor.getFlowOut().setRate(flowRate);
 		reactor.getFlowOut().setTemperature(reactor.getTemperature());
+		limitReactorFlowDueToValveMaxFlow(reactor);
+		
 		propagateFlowToNextConnectorPipe(reactor);
 	}
 	
+	private void limitReactorFlowDueToValveMaxFlow(Reactor reactor)
+	{
+		int maxFlow = 0;
+		for (Valve v : this.plant.getValves()) {
+			// If there is a path backwards from this valve to the reactor.
+			// Also implying that it is actually in front of the reactor.
+			if (isPathTo(v, reactor, false)) {
+				// increase the maximum flow allowed out of the reactor.
+				maxFlow += v.getMaxSteamFlow();
+			}
+		}
+		if (reactor.getFlowOut().getRate() > maxFlow) reactor.getFlowOut().setRate(maxFlow);
+	}
+
 	/**
 	 * Calculate and return the flow of steam out of the reactor due to the difference in
 	 * steam volume between the reactor and condenser.
