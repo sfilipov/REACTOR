@@ -1,5 +1,10 @@
 package simulator;
 
+/**
+ * The turbine is a class that makes the generator create power output.
+ * The RPM is created based on the steam flow in. The turbine has a chance
+ * to fail randomly.
+ */
 public class Turbine extends PlantComponent {
 	private static final long serialVersionUID = 1106025692966179166L;
 
