@@ -471,7 +471,7 @@ public class PlantController {
 		propagateFlowFromPumpsToCondenser(); // Total up all pump flows at condenser
 		propagateFlowFromCondenser();	// Start propagation of water flow.
 		propagateFlowFromConnectorPipes();
-		propagateNoFlowBackToReactor(); // Incase all paths out are blocked!
+		//propagateNoFlowBackToReactor(); // Incase all paths out are blocked!
 		moveSteam();
 		moveWater(); 
 	}
@@ -650,10 +650,17 @@ public class PlantController {
 	{
 		int flowRate = calcReactorFlowOut();
 		Reactor reactor = this.plant.getReactor();
-		reactor.getFlowOut().setRate(flowRate);
-		reactor.getFlowOut().setTemperature(reactor.getTemperature());
-		limitReactorFlowDueToValveMaxFlow(reactor);
-		propagateFlowToNextConnectorPipe(reactor);
+		Condenser condenser = this.plant.getCondenser();
+		// If there's a clear path from the reactor to the condenser then calculate
+		// and start off the flow being propagated.
+		if (isPathTo(reactor, condenser, true)) {
+			reactor.getFlowOut().setRate(flowRate);
+			reactor.getFlowOut().setTemperature(reactor.getTemperature());
+			limitReactorFlowDueToValveMaxFlow(reactor);
+			propagateFlowToNextConnectorPipe(reactor);
+		} else {
+			// Otherwise, all paths are blocked & don't bother.
+		}
 	}
 	
 	//TODO Will - Javadoc comment.
@@ -803,8 +810,9 @@ public class PlantController {
 		// Iterate through all pumps and start tracking back through the system
 		for (Pump p : this.plant.getPumps()) {
 			// If the pump is broken, move onto the next one.
-			if (this.plant.getFailedComponents().contains(p)) break;
-			increaseCondenserFlowOutFromPump(p);
+			if (!this.plant.getFailedComponents().contains(p) && p.getInput() != null) {
+				increaseCondenserFlowOutFromPump(p);
+			}
 		}
 		// Finally.. Make sure the flow out of the condenser will not take us into negative volume.
 		int condenserWaterVolume = condenser.getWaterVolume();
@@ -873,7 +881,6 @@ public class PlantController {
 			condenser.getFlowOut().setRate(condenserFlowOut + flowRate);
 		}
 	}
-	
 	
 	/**
 	 * Returns true if there exists a path from start to goal that is not blocked and does not 

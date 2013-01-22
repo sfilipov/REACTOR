@@ -39,10 +39,11 @@ public class Pump extends PlantComponent {
 	/**
 	 * Returns the current RPM value of the pump.
 	 * Note: If the pump is off, the RPM returned will be zero.
+	 * 		 If the pump is broken, the RPM returned will also be zero.
 	 * @return the current RPM value of the pump
 	 */
 	public int getRpm() {
-		return on ? rpm : 0;
+		return (!on || !this.isOperational()) ? 0 : rpm;
 	}
 	
 	/**
