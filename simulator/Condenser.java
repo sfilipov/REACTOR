@@ -25,6 +25,11 @@ class Condenser extends PlantComponent {
 	private int steamVolume;
 	private int steamIn;
 	
+	/**
+	 * Constructor for Condenser.
+	 * 
+	 * The created Condenser never fails randomly and is pressured.
+	 */
 	public Condenser() {
 		super(0,0,true,true); // Never randomly fails, is operational and is pressurised. 
 		this.health = MAX_HEALTH;
@@ -36,22 +41,42 @@ class Condenser extends PlantComponent {
 
 	// ----------- Getters & Setters ---------------
 	
-	public int getMaxTemperature() {
-		return MAX_TEMPERATURE;
-	}
-	
+	/**
+	 * Return  the temperature of the condenser.
+	 * @return the temperature of the condenser.
+	 */
 	public int getTemperature() {
 		return temperature;
 	}
 	
+	/**
+	 * Return  the max temperature of the condenser.
+	 * @return the max temperature of the condenser.
+	 */
+	public int getMaxTemperature() {
+		return MAX_TEMPERATURE;
+	}
+	
+	/**
+	 * Return  the pressure of the condenser.
+	 * @return the pressure of the condenser.
+	 */
 	public int getPressure() {
 		return pressure;
 	}
 	
+	/**
+	 * Return  the max pressure of the condenser.
+	 * @return the max pressure of the condenser.
+	 */
 	public int getMaxPressure() {
 		return MAX_PRESSURE;
 	}
 	
+	/**
+	 * Return  the current water volume inside the condenser.
+	 * @return the current water volume inside the condenser.
+	 */
 	public int getWaterVolume() {
 		return waterVolume;
 	}
@@ -65,6 +90,10 @@ class Condenser extends PlantComponent {
 		this.waterVolume += amount;
 	}
 	
+	/**
+	 * Return  the current steam volume inside the condenser.
+	 * @return the current steam volume inside the condenser.
+	 */
 	public int getSteamVolume()
 	{
 		return steamVolume;
@@ -85,10 +114,20 @@ class Condenser extends PlantComponent {
 		this.steamVolume += amount;
 	}
 
+	/**
+	 * Return  the current health of the condenser.
+	 * @return the current health of the condenser.
+	 */
 	public int getHealth() {
 		return health;
 	}
-		
+	
+	/**
+	 * Updates the state of the condenser.
+	 * 
+	 * Updates the temperature, condense some steam to water,
+	 * updates the pressure and damage the condenser if it has to.
+	 */
 	public void updateState() {
 		updateTemperature();
 		condenseSteam();
@@ -96,6 +135,15 @@ class Condenser extends PlantComponent {
 		checkIfDamaging();
 	}
 	
+	
+	/**
+	 * Checks if the condenser fails.
+	 * 
+	 * If the health is below 0 and the method returns true,
+	 * the PlantController will detect a game over state.
+	 * 
+	 * @return true if health is below 0
+	 */
 	@Override
 	public boolean checkFailure() {
 		if (health <= 0)
@@ -104,6 +152,13 @@ class Condenser extends PlantComponent {
 			return false;
 	}
 
+	/**
+	 * Updates the temperature.
+	 * 
+	 * Calculates a new value for the temperature based on
+	 * heating because of steam flowing in the condenser and
+	 * cooling.
+	 */
 	private void updateTemperature() {
 		int changeInTemp;
 		Flow flowIn = this.getInput().getFlowOut();
@@ -113,6 +168,11 @@ class Condenser extends PlantComponent {
 		this.temperature += changeInTemp;
 	}
 	
+	/**
+	 * Updates the pressure.
+	 * 
+	 * Calculates a new value for the pressure.
+	 */
 	private void updatePressure() {
 		int currentPressure;
 		currentPressure = (int) Math.round(new Double(this.steamVolume) * VOL_TO_PRESSURE_MULTIPLIER);
@@ -175,6 +235,13 @@ class Condenser extends PlantComponent {
 		this.waterVolume += waterCreated;
 	}
 
+	/**
+	 * Damages the condenser if appropriate.
+	 * 
+	 * Damages the condenser if the current temperature is above
+	 * the max temperature and if the current pressure is
+	 * above the max pressure.
+	 */
 	private void checkIfDamaging() {
 		if(this.temperature >= MAX_TEMPERATURE) {
 			damageCondenser();
@@ -183,7 +250,12 @@ class Condenser extends PlantComponent {
 			damageCondenser();
 		}
 	}
-		
+	
+	/**
+	 * Damages the condenser.
+	 * 
+	 * Lowers the health by HEALTH_CHANGE_WHEN_DAMAGING.
+	 */
 	private void damageCondenser() {
 		health -= HEALTH_CHANGE_WHEN_DAMAGING;
 	}
