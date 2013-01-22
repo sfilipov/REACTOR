@@ -236,7 +236,7 @@ public class PlantPresenter {
 			}
 		}
 		this.plant.updateTimeStepsUsed(numSteps);
-		printFlowDebugInfo();
+		//printFlowDebugInfo();
 	}
 	
 	// ----------------		Methods used in systemText (TextUI class)	----------------
@@ -585,7 +585,6 @@ public class PlantPresenter {
 		reactor.getFlowOut().setRate(flowRate);
 		reactor.getFlowOut().setTemperature(reactor.getTemperature());
 		limitReactorFlowDueToValveMaxFlow(reactor);
-		
 		propagateFlowToNextConnectorPipe(reactor);
 	}
 	
