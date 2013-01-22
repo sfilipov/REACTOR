@@ -236,7 +236,7 @@ public class PlantPresenter {
 			}
 		}
 		this.plant.updateTimeStepsUsed(numSteps);
-		//printFlowDebugInfo();
+		printFlowDebugInfo();
 	}
 	
 	// ----------------		Methods used in systemText (TextUI class)	----------------
@@ -313,9 +313,12 @@ public class PlantPresenter {
 	}
 	
 	private void printFlowDebugInfo() {
+		System.out.println("--------------------------");
 		for (PlantComponent pc : this.plant.getPlantComponents()) {
 			System.out.println("-----");
 			System.out.println(pc.getClass().toString());
+			if (pc instanceof Pump) System.out.println("\tID:" + ((Pump) pc).getID());
+			if (pc instanceof Valve) System.out.println("\tID:" + ((Valve) pc).getID());
 			System.out.println("\tFlow Out:" + pc.getFlowOut().getRate());
 			System.out.println("\tTemp Out:" + pc.getFlowOut().getTemperature());
 		}
