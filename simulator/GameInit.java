@@ -3,11 +3,12 @@ package simulator;
 /**
  * GameInit class bootstraps the entire game.
  * 
- * It creates the Plant object and populates it
- * with the system model defined in the JSON config file.
- * It also instantiates the GUI (Interface and gives it  
- * a reference to the presenter. 
- * The presenter is given a reference to the Plant (Model)
+ * It first instantiates a ReactorUtils object that can create 
+ * new plant objects.
+ * The controller takes a reference to the ReactorUtils object 
+ * so that it can get a new Plant if and when they're needed.
+ * It also instantiates the UI and gives it a reference to
+ * the controller for routing user commands. 
  * 
  * @author WillFrew
  *
@@ -15,13 +16,13 @@ package simulator;
 public class GameInit {
 	
 	private TextUI view;
-	private PlantPresenter presenter; 
+	private PlantController controller;
 	private ReactorUtils utils;
 	
 	public GameInit() {
 		utils = new ReactorUtils();
-		presenter = new PlantPresenter(utils);
-		view = new TextUI(presenter);
+		controller = new PlantController(utils);
+		view = new TextUI(controller);
 	}
 	
 	@SuppressWarnings("unused")
