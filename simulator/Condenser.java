@@ -2,7 +2,7 @@ package simulator;
 
 class Condenser extends PlantComponent {
 	private static final long serialVersionUID = 4348915919668272154L;
-	
+
 	private final static int DEFAULT_TEMPERATURE = 50;
 	private final static int DEFAULT_PRESSURE = 0;
 	private final static int DEFAULT_WATER_VOLUME = 2000;
