@@ -28,6 +28,10 @@ public class PlantPresenter {
 	 * user. 
 	 */
 	
+	/**
+	 * Creates a new Game - used in UI to start a new game.
+	 * @param operatorName the name of the player
+	 */
 	public void newGame(String operatorName) {
 		ReactorUtils utils = new ReactorUtils();
 		this.plant = utils.createNewPlant();
@@ -40,7 +44,10 @@ public class PlantPresenter {
 		updatePlant();
 	}
 	
-	//Returns true if saving a game was successful.
+	/**
+	 * Saves the state of the current game (plant) into a file called "save.ser" inside the current folder.
+	 * @return true if saving a game was successful, false otherwise.
+	 */
 	public boolean saveGame(){
 		FileOutputStream fileOut = null;
 		ObjectOutputStream out   = null;
@@ -58,7 +65,11 @@ public class PlantPresenter {
 		}
 	}
 	
-	//Returns true if loading a game was successful.
+	/**
+	 * Loads the state of the current game (plant) from a file called "save.ser" inside the current folder.
+	 * If the file does not exist, the load will not be successful (nothing will happen).
+	 * @return true if loading a game was successful, false otherwise.
+	 */
 	public boolean loadGame() {
 		Plant plant = null;
 		FileInputStream fileIn  = null;
@@ -89,6 +100,12 @@ public class PlantPresenter {
 		}
 	}
 	
+	/**
+	 * Pauses/resumes the game on call.
+	 * 
+	 * Currently not in used as the game is turn based. Gives the possibility
+	 * to easily create a real-time game.
+	 */
 	public void togglePaused() {
 		this.plant.setPaused(!this.plant.isPaused());
 	}
@@ -158,6 +175,14 @@ public class PlantPresenter {
 		return false;
 	}
 	
+	/**
+	 * Sets the RPM of a particular pump.
+	 * 
+	 * @param  pumpID the internal ID of the pump.
+	 * @param  rpm the new value of the RPM, needs to be in range (0 to MAX_RPM).
+	 * @return true if setting the RPM was successful, false otherwise.
+	 * @throws IllegalArgumentException if RPM is out of the allowed range (rpm < 0 || rpm > MAX_RPM).
+	 */
 	public boolean setPumpRpm(int pumpID, int rpm) throws IllegalArgumentException {
 		List<Pump> pumps = plant.getPumps();
 		for (Pump pump : pumps) {
@@ -169,6 +194,15 @@ public class PlantPresenter {
 		return false;
 	}
 	
+	/**
+	 * Sets a new percentage for the control rods.
+	 * 
+	 * Setting the percentage to 100 means that the control rods are fully inside
+	 * the reactor and the reaction stops. Setting the percentage to 0 means that
+	 * the control rods are outside of the reactor.
+	 * 
+	 * @param percentageLowered the new value of percentageLowered
+	 */
 	public void setControlRods(int percentageLowered) {
 		if(percentageLowered >= 0 && percentageLowered <= 100) {
 			Reactor reactor = plant.getReactor();
@@ -195,6 +229,11 @@ public class PlantPresenter {
 		return false; //Turbine has not failed
 	}
 	
+	/**
+	 * Start the repair of a particular pump.
+	 * @param  pumpID the internal ID of the pump to be repaired.
+	 * @return true only if the pump is found, has failed and is not already being repaired.
+	 */
 	public boolean repairPump(int pumpID) {
 		List<Pump> pumps = plant.getPumps();
 		Pump foundPump = null;
@@ -221,6 +260,9 @@ public class PlantPresenter {
 	/**
 	 * Advance the game by a number of time steps.
 	 * 
+	 * If the game reaches a game over state before all steps are executed,
+	 * the game stops stepping.
+	 * 
 	 * @param numSteps number of timesteps to advance the game by.
 	 */
 	public void step(int numSteps) {
@@ -240,11 +282,19 @@ public class PlantPresenter {
 	}
 	
 	// ----------------		Methods used in systemText (TextUI class)	----------------
+	/**
+	 * Return  the current UIData object related to the plant.
+	 * @return the current UIData object related to the plant.
+	 */
 	public UIData getUIData() {
 		return this.uidata;
 	}
 	
 	// ----------------		Internal helper methods ------------------
+	
+	/**
+	 * Writes all highscores currently inside plant to a file called "highscores.ser".
+	 */
 	private void writeHighScores() {
 		List<HighScore> highScores = plant.getHighScores();
 		FileOutputStream fileOut   = null;
@@ -261,6 +311,9 @@ public class PlantPresenter {
 		}
 	}
 	
+	/**
+	 * Loads all saved highscores from a file called "highscore.ser" to plant's highscores list.
+	 */
 	private void readHighScores() {
 		List<HighScore> highScores = null;
 		FileInputStream fileIn  = null;
@@ -284,6 +337,9 @@ public class PlantPresenter {
 		}
 	}
 	
+	/**
+	 * Sets the game over state of the plant and adds the score of the player to "highscores" if it's big enough.
+	 */
 	private void gameOver() {
 		plant.gameOver();
 		HighScore highScore = new HighScore(plant.getOperatorName(), plant.getScore());
@@ -291,7 +347,9 @@ public class PlantPresenter {
 	}
 	
 	// ----------------		Debug methods	----------------
-	
+	/**
+	 * Prints debug info to the console.
+	 */
 	private void printDebugInfo() {
 		System.out.println("--------------------------");
 		System.out.println("--   Time Step No.: " + this.plant.getTimeStepsUsed() + "\t--");
@@ -312,6 +370,9 @@ public class PlantPresenter {
 		System.out.println("-- Stm Temp In:\t" + this.plant.getCondenser().getInput().getFlowOut().getTemperature() + "\t--");
 	}
 	
+	/**
+	 * Prints debug info related to the flow of the plant to the console.
+	 */
 	private void printFlowDebugInfo() {
 		System.out.println("--------------------------");
 		for (PlantComponent pc : this.plant.getPlantComponents()) {
@@ -326,9 +387,9 @@ public class PlantPresenter {
 	}
 	
 	// ------------		Update Plant Flow Methods	------------
-
-	// Go through all components and call updateState()
-	// This will do things in Reactor and Condenser objects etc.
+	/**
+	 * Go through all components and call updateState() then calculates the current score.
+	 */
 	private void updatePlant() {
 		List<PlantComponent> plantComponents = plant.getPlantComponents();
 		for (PlantComponent plantComponent : plantComponents) {
@@ -337,15 +398,14 @@ public class PlantPresenter {
 		plant.calcScore();
 	}
 	
-	//	private void startRepairing(PlantComponent toBeRepairedComponent) {
-	//		List<PlantComponent> failedComponents = plant.getFailedComponents(); 
-	//		List<Repair> beingRepairedComponents = plant.getBeingRepaired();
-	//		if (failedComponents.contains(toBeRepairedComponent)) {
-	//			Repair repair = new Repair(toBeRepairedComponent);
-	//			beingRepairedComponents.add(repair);
-	//		}
-	//	}
-	
+	/**
+	 * Updates the state of the components that are being repaired.
+	 * 
+	 * Decreases the number of steps left until a component's repairing is completed.
+	 * Then checks all components and if they are finished repairing and take
+	 * appropriate actions if that is the case (remove from lists of failed components
+	 * and set to operational).
+	 */
 	private void updateBeingRepaired() {
 		List<Repair> beingRepaired = plant.getBeingRepaired();
 		List<Repair> finishedRepairing = new ArrayList<Repair>();
@@ -364,6 +424,12 @@ public class PlantPresenter {
 		}
 	}
 	
+	/**
+	 * Goes through all components and check for failures.
+	 * 
+	 * If more than one component fails, only one is actually getting broken.
+	 * If a reactor or condenser is broken, then the game is over.
+	 */
 	private void checkFailures() {
 		List<PlantComponent> plantComponents  = plant.getPlantComponents();
 		List<PlantComponent> failedComponents = plant.getFailedComponents();
@@ -394,6 +460,7 @@ public class PlantPresenter {
 		}
 	}
 	
+	//TODO Will - Javadoc comment.
 	private void updateFlow() {
 		setAllConnectorPipesUnblocked();
 		blockFromValves();
@@ -409,6 +476,7 @@ public class PlantPresenter {
 		moveWater(); 
 	}
 	
+	//TODO Will - Javadoc comment.
 	private void moveWater()
 	{
 		Condenser condenser = this.plant.getCondenser();
@@ -588,6 +656,7 @@ public class PlantPresenter {
 		propagateFlowToNextConnectorPipe(reactor);
 	}
 	
+	//TODO Will - Javadoc comment.
 	private void limitReactorFlowDueToValveMaxFlow(Reactor reactor)
 	{
 		int maxFlow = 0;
@@ -676,6 +745,7 @@ public class PlantPresenter {
 		}
 	}
 	
+	//TODO Will - Javadoc comment.
 	private void propagateFlowFromConnectorPipe(ConnectorPipe startConnectorPipe) {
 		Map<PlantComponent, Boolean> outputs = startConnectorPipe.getOutputsMap();
 		for (PlantComponent pc : outputs.keySet()) {
@@ -713,6 +783,7 @@ public class PlantPresenter {
 		connector.getFlowOut().setTemperature(avgTemp);
 	}
 	
+	//TODO Will - Javadoc comment.
 	private void propagateFlowFromCondenser()
 	{
 		Condenser condenser = this.plant.getCondenser();
@@ -741,6 +812,7 @@ public class PlantPresenter {
 		if (condenserFlowOut > condenserWaterVolume) condenser.getFlowOut().setRate(condenserWaterVolume);
 	}
 	
+	//TODO Will - Javadoc comment.
 	private void increaseCondenserFlowOutFromPumpOld(Pump p) {
 		int flowRate = calcFlowFromPumpRpm(p);
 		PlantComponent currentComponent = p;
@@ -790,6 +862,7 @@ public class PlantPresenter {
 		}
 	}
 	
+	//TODO Will - Javadoc comment.
 	private void increaseCondenserFlowOutFromPump(Pump p) {
 		int flowRate = calcFlowFromPumpRpm(p);
 		Condenser condenser = this.plant.getCondenser();
@@ -854,7 +927,8 @@ public class PlantPresenter {
 		}
 		return true;
 	}
-
+	
+	//TODO Will - Javadoc comment.
 	private int calcFlowFromPumpRpm(Pump p)
 	{
 		int maxRpm = p.getMaxRpm();
