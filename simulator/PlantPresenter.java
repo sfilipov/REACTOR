@@ -750,9 +750,9 @@ public class PlantPresenter {
 							 * if there were multiple condensers or there were weird loops in the
 							 * system.
 							 * 
-							 * You will need to recursively trace all paths and remember where you've
-							 * been until you find the reactor, should you require strange paths through
-							 * the system. If you do... enjoy!
+							 * You will need to recursively send out scouts to head down all possible
+							 * paths and find the condenser(s) splitting the flow from this pump each
+							 * time you encounter a ConnectorPipe with multiple inputs.
 							 */
 							precedingComponent = possiblePaths.get(0);
 						} else {
@@ -769,7 +769,7 @@ public class PlantPresenter {
 				precedingComponent.getFlowOut().setRate(condenserFlowOut + flowRate);
 			}
 		}
-		// Finally.. Make sure the flow out of the reactor will take us into negative volume.
+		// Finally.. Make sure the flow out of the condenser will not take us into negative volume.
 		int condenserWaterVolume = condenser.getWaterVolume();
 		int condenserFlowOut = condenser.getFlowOut().getRate();
 		if (condenserFlowOut > condenserWaterVolume) condenser.getFlowOut().setRate(condenserWaterVolume);
