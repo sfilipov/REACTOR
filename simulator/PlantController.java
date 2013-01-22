@@ -11,12 +11,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-public class PlantPresenter {
+public class PlantController {
 
 	private Plant plant;
 	private UIData uidata;
 	
-	public PlantPresenter(ReactorUtils utils)
+	public PlantController(ReactorUtils utils)
 	{
 		this.plant = utils.createNewPlant();
 		readHighScores();

@@ -75,12 +75,12 @@ public class TextUI extends JFrame implements KeyListener
     private final static Font default_font = new Font("Monospaced",Font.PLAIN, 12);
     private final static String prompt = "~> ";
     
-    private PlantPresenter presenter;
+    private PlantController presenter;
     private UIData uidata;
     private State state = State.Uninitialised;
     private AreYouSureCaller caller = AreYouSureCaller.NoAction;
     
-    public TextUI(PlantPresenter presenter)
+    public TextUI(PlantController presenter)
     {
     	super("REACTOR");
     	this.presenter = presenter;
