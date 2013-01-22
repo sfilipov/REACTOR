@@ -404,7 +404,7 @@ public class PlantController {
 		propagateFlowFromPumpsToCondenser(); // Total up all pump flows at condenser
 		propagateFlowFromCondenser();	// Start propagation of water flow.
 		propagateFlowFromConnectorPipes();
-		propagateNoFlowBackToReactor(); // Incase all paths out are blocked!
+		//propagateNoFlowBackToReactor(); // Incase all paths out are blocked!
 		moveSteam();
 		moveWater(); 
 	}
@@ -582,10 +582,17 @@ public class PlantController {
 	{
 		int flowRate = calcReactorFlowOut();
 		Reactor reactor = this.plant.getReactor();
-		reactor.getFlowOut().setRate(flowRate);
-		reactor.getFlowOut().setTemperature(reactor.getTemperature());
-		limitReactorFlowDueToValveMaxFlow(reactor);
-		propagateFlowToNextConnectorPipe(reactor);
+		Condenser condenser = this.plant.getCondenser();
+		// If there's a clear path from the reactor to the condenser then calculate
+		// and start off the flow being propagated.
+		if (isPathTo(reactor, condenser, true)) {
+			reactor.getFlowOut().setRate(flowRate);
+			reactor.getFlowOut().setTemperature(reactor.getTemperature());
+			limitReactorFlowDueToValveMaxFlow(reactor);
+			propagateFlowToNextConnectorPipe(reactor);
+		} else {
+			// Otherwise, all paths are blocked & don't bother.
+		}
 	}
 	
 	private void limitReactorFlowDueToValveMaxFlow(Reactor reactor)
@@ -732,62 +739,14 @@ public class PlantController {
 		// Iterate through all pumps and start tracking back through the system
 		for (Pump p : this.plant.getPumps()) {
 			// If the pump is broken, move onto the next one.
-			if (this.plant.getFailedComponents().contains(p)) break;
-			increaseCondenserFlowOutFromPump(p);
+			if (!this.plant.getFailedComponents().contains(p) && p.getInput() != null) {
+				increaseCondenserFlowOutFromPump(p);
+			}
 		}
 		// Finally.. Make sure the flow out of the condenser will not take us into negative volume.
 		int condenserWaterVolume = condenser.getWaterVolume();
 		int condenserFlowOut = condenser.getFlowOut().getRate();
 		if (condenserFlowOut > condenserWaterVolume) condenser.getFlowOut().setRate(condenserWaterVolume);
-	}
-	
-	private void increaseCondenserFlowOutFromPumpOld(Pump p) {
-		int flowRate = calcFlowFromPumpRpm(p);
-		PlantComponent currentComponent = p;
-		PlantComponent precedingComponent= p.getInput();
-		boolean blockedPath = false;
-		// Until we find the condenser or our path is blocked
-		while(!(precedingComponent instanceof Condenser) && !blockedPath) {
-			if (!(precedingComponent instanceof ConnectorPipe)) {
-				// Nothing to see here... Move along (to the next component ;)
-				currentComponent = precedingComponent;
-				precedingComponent = precedingComponent.getInput();
-			} else {
-				// Check if the path we've come in from at this connector pipe is blocked
-				if (((ConnectorPipe) precedingComponent).getOutputsMap().get(currentComponent)) {
-					// YOU SHALL NOT PASS!
-					blockedPath = true;
-				} else {
-					currentComponent = precedingComponent;
-					List<PlantComponent> possiblePaths = ((ConnectorPipe) precedingComponent).getInputs();
-					if (possiblePaths.size() > 1) { 
-						/* There is more than one possible path..
-						 * Luckily we know our system will only ever have one path 
-						 * back to the condenser from a pump so we can get away with
-						 * this hard coded hackery... 
-						 * 
-						 * There could only be more than one path back to a condenser
-						 * if there were multiple condensers or there were weird loops in the
-						 * system.
-						 * 
-						 * You will need to recursively send out scouts to head down all possible
-						 * paths and find the condenser(s) splitting the flow from this pump each
-						 * time you encounter a ConnectorPipe with multiple inputs.
-						 */
-						precedingComponent = possiblePaths.get(0);
-					} else {
-						precedingComponent = possiblePaths.get(0);
-					}
-				}
-			}
-		}
-		/* If we did indeed find the condenser then add the flow increase from this pump to
-		 * the flow out of the condenser.
-		 */
-		if (precedingComponent instanceof Condenser) {
-			int condenserFlowOut = precedingComponent.getFlowOut().getRate();
-			precedingComponent.getFlowOut().setRate(condenserFlowOut + flowRate);
-		}
 	}
 	
 	private void increaseCondenserFlowOutFromPump(Pump p) {
@@ -800,7 +759,6 @@ public class PlantController {
 			condenser.getFlowOut().setRate(condenserFlowOut + flowRate);
 		}
 	}
-	
 	
 	/**
 	 * Returns true if there exists a path from start to goal that is not blocked and does not 

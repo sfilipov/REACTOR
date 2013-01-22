@@ -1,7 +1,7 @@
 package simulator;
 
 class Condenser extends PlantComponent {
-	private static final long serialVersionUID = 4348915919668272154L;
+	private static final long serialVersionUID = 4348915919668272156L;
 	
 	private final static int DEFAULT_TEMPERATURE = 50;
 	private final static int DEFAULT_PRESSURE = 0;
@@ -13,7 +13,7 @@ class Condenser extends PlantComponent {
 	private final static int MAX_HEALTH = 100;
 	private final static int HEALTH_CHANGE_WHEN_DAMAGING = 10;
 	private final static int COOLANT_TEMP = 20; // temperature of the coolant coming in
-	private final static int COOLDOWN_PER_STEP = 200; // Amount to cool the condenser per step. 
+	private final static int MAX_COOLDOWN_PER_STEP = 250; // Maximum amount to cool the condenser per step. 
 	private final static int WATER_STEAM_RATIO = 2; // water to steam ratio.
 	private final static double COND_MULTIPLIER = 0.2; // temperature to steam condensed multiplier.
 	private final static double VOL_TO_PRESSURE_MULTIPLIER = 0.15;
@@ -24,14 +24,16 @@ class Condenser extends PlantComponent {
 	private int waterVolume;
 	private int steamVolume;
 	private int steamIn;
+	private Pump coolantPump;
 	
-	public Condenser() {
+	public Condenser(Pump coolantPump) {
 		super(0,0,true,true); // Never randomly fails, is operational and is pressurised. 
 		this.health = MAX_HEALTH;
 		this.temperature = DEFAULT_TEMPERATURE;
 		this.pressure = DEFAULT_PRESSURE;
 		this.waterVolume = DEFAULT_WATER_VOLUME;
 		this.steamVolume = DEFAULT_STEAM_VOLUME;
+		this.coolantPump = coolantPump;
 	}
 
 	// ----------- Getters & Setters ---------------
@@ -88,6 +90,10 @@ class Condenser extends PlantComponent {
 	public int getHealth() {
 		return health;
 	}
+
+	public Pump getCoolantPump() {
+		return coolantPump;
+	}
 		
 	public void updateState() {
 		updateTemperature();
@@ -143,14 +149,21 @@ class Condenser extends PlantComponent {
 	 * @return amount of temperature decrease for this step.
 	 */
 	private int cooldown() {
-		int potentialNewTemp = this.temperature - COOLDOWN_PER_STEP;
+		int cooldownAmount = cooldownPerStep();
+		int potentialNewTemp = this.temperature - cooldownAmount;
 		if (potentialNewTemp > COOLANT_TEMP) {
-			return COOLDOWN_PER_STEP;
+			return cooldownAmount;
 		} else {
 			return this.temperature - COOLANT_TEMP;
 		}
 	}
 	
+	private int cooldownPerStep() {
+		int maxRpm = coolantPump.getMaxRpm();
+		int currRpm = coolantPump.getRpm();
+		return (int) Math.round(MAX_COOLDOWN_PER_STEP * new Double(currRpm)/maxRpm);
+	}
+
 	/**
 	 * Not very physics accurate, but it provides a reasonable model of 
 	 * the behaviour of steam condensing.

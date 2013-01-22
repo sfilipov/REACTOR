@@ -23,7 +23,8 @@ public class ReactorUtils
 	private Valve waterValve2;		// Alt
 	private Pump pump1;
 	private Pump pump2;
-	private Pump pump3;		   		// Alt
+	private Pump coolantPump;
+	private Pump pump4;				// Alt
 	private ConnectorPipe connectorPipe1;
 	private ConnectorPipe connectorPipe2;
 	private ConnectorPipe connectorPipe3;
@@ -48,8 +49,6 @@ public class ReactorUtils
 	}
 
 	private void instantiateComponents() {
-		reactor = new Reactor();
-		condenser = new Condenser();
 		steamValve1 = new Valve(1, FlowType.Steam);
 		steamValve2 = new Valve(2, FlowType.Steam);
 		steamValve3 = new Valve(3, FlowType.Steam);
@@ -59,7 +58,10 @@ public class ReactorUtils
 		generator = new Generator(turbine);
 		pump1 = new Pump(1);
 		pump2 = new Pump(2);
-		pump3 = new Pump(3);
+		coolantPump = new Pump(3);
+		pump4 = new Pump(4);
+		condenser = new Condenser(coolantPump);
+		reactor = new Reactor();
 		connectorPipe1 = new ConnectorPipe();
 		connectorPipe2 = new ConnectorPipe();
 		connectorPipe3 = new ConnectorPipe();
@@ -102,10 +104,10 @@ public class ReactorUtils
 		setupInputOutputReferences(condenser, connectorPipe3);
 		setupInputOutputReferences(connectorPipe3, pump1);
 		setupInputOutputReferences(connectorPipe3, pump2);
-		setupInputOutputReferences(connectorPipe3, pump3);
+		setupInputOutputReferences(connectorPipe3, pump4);
 		setupInputOutputReferences(pump1, waterValve1);
 		setupInputOutputReferences(pump2, waterValve2);
-		setupInputOutputReferences(pump3, connectorPipe4);
+		setupInputOutputReferences(pump4, connectorPipe4);
 		setupInputOutputReferences(waterValve1, connectorPipe4);
 		setupInputOutputReferences(waterValve2, connectorPipe4);
 		
@@ -123,6 +125,7 @@ public class ReactorUtils
 		plantComponents.add(steamValve2);
 		plantComponents.add(pump1);
 		plantComponents.add(pump2);
+		plantComponents.add(condenser.getCoolantPump());
 		plantComponents.add(connectorPipe1);
 		plantComponents.add(connectorPipe2);
 		plantComponents.add(connectorPipe3);
@@ -144,7 +147,8 @@ public class ReactorUtils
 		plantComponents.add(waterValve2);
 		plantComponents.add(pump1);
 		plantComponents.add(pump2);
-		plantComponents.add(pump3);
+		plantComponents.add(condenser.getCoolantPump());
+		plantComponents.add(pump4);
 		plantComponents.add(connectorPipe1);
 		plantComponents.add(connectorPipe2);
 		plantComponents.add(connectorPipe3);
@@ -172,5 +176,4 @@ public class ReactorUtils
 			to.setInput(from);
 		}
 	}
-	
 }
