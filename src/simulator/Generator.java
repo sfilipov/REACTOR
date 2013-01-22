@@ -18,7 +18,7 @@ public class Generator extends PlantComponent {
 	 * 
 	 * @param turbine the turbine that the power output calculations are based on
 	 */
-	Generator(Turbine turbine) {
+	public Generator(Turbine turbine) {
 		super(0, 0, 0); //Perfect - never fails
 		this.turbine = turbine;
 		this.powerOutput = 0;

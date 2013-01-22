@@ -2,6 +2,7 @@ package simulator;
 
 import java.io.Serializable;
 
+
 /**
  * Repair class keeps track of the components that are being repaired.
  * When a component's timeStepsRemaining reach 0, the component needs to be

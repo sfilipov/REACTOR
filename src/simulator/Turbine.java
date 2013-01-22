@@ -16,7 +16,7 @@ public class Turbine extends PlantComponent {
 	private int rpm;
 	private int maxSteamThroughput;
 	
-	Turbine(int maxSteamThroughput) {
+	public Turbine(int maxSteamThroughput) {
 		super(DEFAULT_FAILURE_RATE, DEFAULT_REPAIR_TIME, MAX_FAILURE_RATE);
 		this.maxSteamThroughput = maxSteamThroughput;
 		this.rpm = 0;

@@ -3,12 +3,13 @@ package simulator;
 import java.util.Random;
 import java.io.Serializable;
 
+
 /**
  * PlantComponent is an abstract class that has fields and methods that apply
  * to most or all plant components. That allows for flexible changes to future
  * implementations (i.e. valves/generator that break randomly).
  */
-abstract class PlantComponent implements Serializable{
+public abstract class PlantComponent implements Serializable{
 
 	private static final long serialVersionUID = -4184587415447732647L;
 	
@@ -120,7 +121,7 @@ abstract class PlantComponent implements Serializable{
 	 * Returns the number of turns that it takes for a component to repair.
 	 * @return the number of turns that it takes for a component to repair
 	 */	
-	protected int getRepairTime() {
+	public int getRepairTime() {
 		return repairTime;
 	}
 	
@@ -185,7 +186,7 @@ abstract class PlantComponent implements Serializable{
 	 * Returns true if the component is operational (working correctly).
 	 * @return true if the component is operational (working correctly)
 	 */
-	protected boolean isOperational() {
+	public boolean isOperational() {
 		return operational;
 	}
 	
@@ -194,7 +195,7 @@ abstract class PlantComponent implements Serializable{
 	 * working correctly, false if it has failed.
 	 * @param operational the new state of the component
 	 */
-	protected void setOperational(boolean operational) {
+	public void setOperational(boolean operational) {
 		this.operational = operational;
 	}
 	

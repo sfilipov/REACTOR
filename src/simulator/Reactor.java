@@ -2,6 +2,7 @@ package simulator;
 
 import java.io.Serializable;
 
+
 /**
  * A reactor is an object that controls the nuclear reaction
  * inside the plant. Based on the percentage of lowering of

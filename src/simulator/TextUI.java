@@ -7,6 +7,7 @@ import javax.swing.text.DefaultCaret;
 import javax.swing.text.NavigationFilter;
 import javax.swing.text.Position;
 
+
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
