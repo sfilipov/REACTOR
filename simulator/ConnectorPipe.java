@@ -25,12 +25,13 @@ public class ConnectorPipe extends PlantComponent {
 	 */
 	private final static int FAILURE_RATE = 0;
 	private final static int REPAIR_TIME = 0;
+	private final static int MAX_FAILURE_RATE = 0;
 	
 	private List<PlantComponent> inputs;
 	private Map<PlantComponent, Boolean> outputs; // Boolean is true if that path is blocked.
 	
 	public ConnectorPipe() {
-		super(FAILURE_RATE, REPAIR_TIME);
+		super(FAILURE_RATE, REPAIR_TIME, MAX_FAILURE_RATE);
 		this.inputs = new ArrayList<PlantComponent>();
 		this.outputs = new HashMap<PlantComponent, Boolean>();
 	}

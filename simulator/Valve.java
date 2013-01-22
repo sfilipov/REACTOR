@@ -3,8 +3,9 @@ package simulator;
 public class Valve extends PlantComponent {
 	private static final long serialVersionUID = -4238759395307525755L;
 	
-	private final static int VALVE_FAILURE_RATE = 0;
-	private final static int VALVE_REPAIR_RATE = 0;
+	private final static int DEFAULT_FAILURE_RATE = 0;
+	private final static int DEFAULT_REPAIR_RATE  = 0;
+	private final static int MAX_FAILURE_RATE     = 0;
 	private final static boolean DEFAULT_OPEN_STATE = true;
 	
 	private final static int MAX_STEAM_FLOW = 300; // Maximum steam flow through allowed. 
@@ -17,7 +18,7 @@ public class Valve extends PlantComponent {
 	 * two plant components.
 	 */
 	public Valve (int ID, FlowType type) {
-		super(VALVE_FAILURE_RATE, VALVE_REPAIR_RATE);
+		super(DEFAULT_FAILURE_RATE, DEFAULT_REPAIR_RATE, MAX_FAILURE_RATE);
 		this.getFlowOut().setType(type);
 		this.ID = ID;
 		this.open = DEFAULT_OPEN_STATE;
@@ -28,7 +29,7 @@ public class Valve extends PlantComponent {
 	 * @param open true if the valve is open
 	 */
 	public Valve (int ID, FlowType type, boolean open) {
-		super(VALVE_FAILURE_RATE, VALVE_REPAIR_RATE);
+		super(DEFAULT_FAILURE_RATE, DEFAULT_REPAIR_RATE, MAX_FAILURE_RATE);
 		this.getFlowOut().setType(type);
 		this.ID = ID;
 		this.open = open;

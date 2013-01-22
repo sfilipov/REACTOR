@@ -21,7 +21,7 @@ public class Pump extends PlantComponent {
 	 * @param ID the selected ID for the pump.
 	 */
 	public Pump(int ID) {
-		super(DEFAULT_FAILURE_RATE, DEFAULT_REPAIR_TIME);
+		super(DEFAULT_FAILURE_RATE, DEFAULT_REPAIR_TIME, MAX_FAILURE_RATE);
 		this.ID = ID;
 		setRpm(DEFAULT_RPM);
 		this.on = DEFAULT_ON_STATE;
@@ -98,17 +98,5 @@ public class Pump extends PlantComponent {
 	 */
 	public boolean checkFailure() {
 		return super.checkFailure();
-	}
-	
-	/**
-	 * Increases the pump's chance to fail by 0.1% per call.
-	 * 
-	 * Doesn't increase the chance to fail once MAX_FAILURE_RATE is reached.
-	 */
-	private void increaseFailureRate() {
-		int currentFailureRate = this.getFailureRate();
-		if (currentFailureRate < MAX_FAILURE_RATE) {
-			this.setFailureRate(++currentFailureRate);
-		}
 	}
 }

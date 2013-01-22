@@ -10,6 +10,7 @@ abstract class PlantComponent implements Serializable{
 	//The values of the constants below are for illustration.
 	public final static int DEFAULT_FAILURE_RATE = 10; //1%
 	public final static int DEFAULT_REPAIR_TIME = 5; 
+	public final static int MAX_FAILURE_RATE = 50; //5%
 	public final static boolean DEFAULT_OPERATIONAL = true;
 	public final static boolean DEFAULT_PRESSURISED = false;
 
@@ -28,10 +29,11 @@ abstract class PlantComponent implements Serializable{
 	 * with the default chance to fail and turns to repair.
 	 */
 	protected PlantComponent() {
-		this.failureRate = DEFAULT_FAILURE_RATE;
-		this.repairTime = DEFAULT_REPAIR_TIME;
-		this.operational = DEFAULT_OPERATIONAL;
-		this.pressurised = DEFAULT_PRESSURISED;
+		this.failureRate    = DEFAULT_FAILURE_RATE;
+		this.maxFailureRate = MAX_FAILURE_RATE;
+		this.repairTime     = DEFAULT_REPAIR_TIME;
+		this.operational    = DEFAULT_OPERATIONAL;
+		this.pressurised    = DEFAULT_PRESSURISED;
 		this.flowOut = new Flow();
 		random = new Random();
 	}
@@ -43,9 +45,10 @@ abstract class PlantComponent implements Serializable{
 	 * @param failureRate the chance of a component to fail randomly
 	 * @param repairTime the number of steps needed to repair the component
 	 */
-	protected PlantComponent(int failureRate, int repairTime) {
-		this.failureRate = failureRate;
-		this.repairTime = repairTime;
+	protected PlantComponent(int failureRate, int repairTime, int maxFailureRate) {
+		this.failureRate    = failureRate;
+		this.repairTime     = repairTime;
+		this.maxFailureRate = maxFailureRate;
 		this.operational = DEFAULT_OPERATIONAL;
 		this.pressurised = DEFAULT_PRESSURISED;
 		this.flowOut = new Flow();
@@ -205,6 +208,18 @@ abstract class PlantComponent implements Serializable{
 		}
 		else {
 			return false;
+		}
+	}
+	
+	/**
+	 * Increases the pump's chance to fail by 0.1% per call.
+	 * 
+	 * Doesn't increase the chance to fail once MAX_FAILURE_RATE is reached.
+	 */
+	public void increaseFailureRate() {
+		int currentFailureRate = this.getFailureRate();
+		if (currentFailureRate < MAX_FAILURE_RATE) {
+			this.setFailureRate(++currentFailureRate);
 		}
 	}
 }

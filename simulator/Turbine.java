@@ -17,7 +17,7 @@ public class Turbine extends PlantComponent {
 	private int maxSteamThroughput;
 	
 	Turbine(int maxSteamThroughput) {
-		super(DEFAULT_FAILURE_RATE, DEFAULT_REPAIR_TIME);
+		super(DEFAULT_FAILURE_RATE, DEFAULT_REPAIR_TIME, MAX_FAILURE_RATE);
 		this.maxSteamThroughput = maxSteamThroughput;
 		this.rpm = 0;
 	}
@@ -33,18 +33,11 @@ public class Turbine extends PlantComponent {
 		increaseFailureRate();
 	}
 	
-	/*
+	/**
 	 * Returns the RPM of the Turbine. Used only in Generator.
 	 * @return the value of rpm
 	 */
 	public int getRpm() {
 		return (this.isOperational()) ? rpm : 0;
-	}
-	
-	private void increaseFailureRate() {
-		int currentFailureRate = this.getFailureRate();
-		if (currentFailureRate < MAX_FAILURE_RATE) {
-			this.setFailureRate(++currentFailureRate);
-		}
 	}
 }
