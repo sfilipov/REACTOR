@@ -33,7 +33,7 @@ public class Turbine extends PlantComponent {
 	 * @return the value of rpm
 	 */
 	public int getRpm() {
-		return rpm;
+		return (this.isOperational()) ? rpm : 0;
 	}
 	
 	private void increaseFailureRate() {
