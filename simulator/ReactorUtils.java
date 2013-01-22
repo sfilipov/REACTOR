@@ -50,13 +50,13 @@ public class ReactorUtils
 	private void instantiateComponents() {
 		reactor = new Reactor();
 		condenser = new Condenser();
-		turbine = new Turbine(newPlant.getMaxSteamFlowRate());
-		generator = new Generator(turbine);
 		steamValve1 = new Valve(1, FlowType.Steam);
 		steamValve2 = new Valve(2, FlowType.Steam);
 		steamValve3 = new Valve(3, FlowType.Steam);
 		waterValve1 = new Valve(4, FlowType.Water);
 		waterValve2 = new Valve(5, FlowType.Water);
+		turbine = new Turbine(steamValve1.getMaxSteamFlow());
+		generator = new Generator(turbine);
 		pump1 = new Pump(1);
 		pump2 = new Pump(2);
 		pump3 = new Pump(3);
