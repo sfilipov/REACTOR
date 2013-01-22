@@ -1,5 +1,11 @@
 package simulator;
 
+/**
+ * Condenser class is a plant component that takes steam as an input and converts some
+ * of the steam inside it to water. It's health goes down when the internal 
+ * temperature and/or pressure's value is higher than the maximum one. If the health
+ * is 0 or lower, the game is over.
+ */
 class Condenser extends PlantComponent {
 	private static final long serialVersionUID = 4348915919668272154L;
 

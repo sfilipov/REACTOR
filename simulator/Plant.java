@@ -4,6 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Plant class is holder of all plant components, the score, time steps passed, the name of the
+ * player, etc.
+ */
 public class Plant implements Serializable {
 	/**
 	 * serialVersionUID: http://docs.oracle.com/javase/7/docs/api/java/io/Serializable.html
