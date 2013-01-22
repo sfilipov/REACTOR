@@ -12,8 +12,6 @@ import java.util.Map.Entry;
  * 
  * It is effectively completely invisible to the user and is used to connect
  * up multiple paths between components in the system.
- * 
- * @author WillFrew
  *
  */
 public class ConnectorPipe extends PlantComponent {
