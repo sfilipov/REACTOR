@@ -7,13 +7,8 @@ package simulator;
  * is 0 or lower, the game is over.
  */
 class Condenser extends PlantComponent {
-<<<<<<< HEAD
 	private static final long serialVersionUID = 4348915919668272156L;
-	
-=======
-	private static final long serialVersionUID = 4348915919668272154L;
 
->>>>>>> refs/remotes/origin/master
 	private final static int DEFAULT_TEMPERATURE = 50;
 	private final static int DEFAULT_PRESSURE = 0;
 	private final static int DEFAULT_WATER_VOLUME = 2000;
@@ -37,16 +32,13 @@ class Condenser extends PlantComponent {
 	private int steamIn;
 	private Pump coolantPump;
 	
-<<<<<<< HEAD
-	public Condenser(Pump coolantPump) {
-=======
+	
 	/**
 	 * Constructor for Condenser.
 	 * 
 	 * The created Condenser never fails randomly and is pressured.
 	 */
-	public Condenser() {
->>>>>>> refs/remotes/origin/master
+	public Condenser(Pump coolantPump) {
 		super(0,0,true,true); // Never randomly fails, is operational and is pressurised. 
 		this.health = MAX_HEALTH;
 		this.temperature = DEFAULT_TEMPERATURE;
@@ -138,13 +130,10 @@ class Condenser extends PlantComponent {
 	public int getHealth() {
 		return health;
 	}
-<<<<<<< HEAD
 
 	public Pump getCoolantPump() {
 		return coolantPump;
 	}
-		
-=======
 	
 	/**
 	 * Updates the state of the condenser.
@@ -152,7 +141,7 @@ class Condenser extends PlantComponent {
 	 * Updates the temperature, condense some steam to water,
 	 * updates the pressure and damage the condenser if it has to.
 	 */
->>>>>>> refs/remotes/origin/master
+
 	public void updateState() {
 		updateTemperature();
 		condenseSteam();
