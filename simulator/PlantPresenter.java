@@ -30,7 +30,7 @@ public class PlantPresenter {
 	
 	public void newGame(String operatorName) {
 		ReactorUtils utils = new ReactorUtils();
-		this.plant = utils.createNewAlternativePlant();
+		this.plant = utils.createNewPlant();
 		this.plant.setOperatorName(operatorName);
 		readHighScores();
 		uidata = new UIData(plant);
