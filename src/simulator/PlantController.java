@@ -11,6 +11,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
+import model.HighScore;
+import model.Plant;
+import model.Repair;
 import pcomponents.*;
 
 

@@ -2,6 +2,9 @@ package simulator;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import model.FlowType;
+import model.Plant;
 import pcomponents.*;
 
 

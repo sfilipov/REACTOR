@@ -3,7 +3,8 @@ package pcomponents;
 import java.util.Random;
 import java.io.Serializable;
 
-import simulator.Flow;
+import model.Flow;
+
 
 
 /**

@@ -1,4 +1,4 @@
-package simulator;
+package model;
 
 import java.io.Serializable;
 
@@ -21,7 +21,7 @@ public class HighScore implements Comparable<HighScore>, Serializable {
 	 * @param name the name of the player (operator).
 	 * @param highScore the final score (after game over).
 	 */
-	HighScore(String name, int highScore) {
+	public HighScore(String name, int highScore) {
 		this.name = name;
 		this.highScore = highScore;
 	}

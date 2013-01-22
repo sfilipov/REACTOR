@@ -2,8 +2,9 @@ package pcomponents;
 
 import java.io.Serializable;
 
-import simulator.Flow;
-import simulator.FlowType;
+import model.Flow;
+import model.FlowType;
+
 
 
 /**

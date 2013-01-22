@@ -1,4 +1,4 @@
-package simulator;
+package model;
 
 import java.io.Serializable;
 import pcomponents.*;
@@ -14,7 +14,7 @@ public class Repair implements Serializable {
 	private PlantComponent plantComponent;
 	private int timeStepsRemaining;
 	
-	Repair (PlantComponent componentToRepair) {
+	public Repair (PlantComponent componentToRepair) {
 		this.plantComponent     = componentToRepair;
 		this.timeStepsRemaining = componentToRepair.getRepairTime();
 	}
