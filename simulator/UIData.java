@@ -3,6 +3,10 @@ package simulator;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * UIData holds all data necessary for a UI (both text and graphical based). It provides methods 
+ * for updating all fields with the latest information and getting that information.
+ */
 public class UIData {
 	private Plant plant;
 	
@@ -70,6 +74,9 @@ public class UIData {
 	    this.brokenOnStep = new ArrayList<PlantComponent>();
 	}
 	
+	/**
+	 * Updates all necessary information for its internal fields from Plant.
+	 */
 	public void updateUIData() {
 		this.operatorName = plant.getOperatorName();
 		this.score        = plant.getScore();
@@ -189,14 +196,29 @@ public class UIData {
 		return turbineFunctional;
 	}
 	
+	/**
+	 * Adds a broken component to list brokenOnStep.
+	 * 
+	 * @param broken a broken component.
+	 */
 	public void addBrokenOnStep(PlantComponent broken) {
 		brokenOnStep.add(broken);
 	}
 	
+	/**
+	 * Resets the list of brokenOnStep components.
+	 */
 	public void resetBrokenOnStep() {
 		brokenOnStep = new ArrayList<PlantComponent>();
 	}
 	
+	/**
+	 * Returns a list of all broken components since last call of step command.
+	 * 
+	 * Used to print information about components that broke when step was called.
+	 * 
+	 * @return a list of all broken components since last call of step command.
+	 */
 	public List<PlantComponent> getBrokenOnStep() {
 		return brokenOnStep;
 	}

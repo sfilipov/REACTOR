@@ -22,6 +22,12 @@ public class Turbine extends PlantComponent {
 		this.rpm = 0;
 	}
 	
+	/**
+	 * Update the state of the Turbine.
+	 * 
+	 * Calculates the new value of RPM based on the steam flow in. It also 
+	 * increases the failure rate if appropriate.
+	 */
 	@Override
 	public void updateState() {
 		int steamFlowIn = this.getInput().getFlowOut().getRate();

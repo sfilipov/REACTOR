@@ -218,7 +218,7 @@ abstract class PlantComponent implements Serializable{
 	 */
 	public void increaseFailureRate() {
 		int currentFailureRate = this.getFailureRate();
-		if (currentFailureRate < MAX_FAILURE_RATE) {
+		if (currentFailureRate < maxFailureRate) {
 			this.setFailureRate(++currentFailureRate);
 		}
 	}
