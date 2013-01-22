@@ -45,28 +45,58 @@ public class Plant implements Serializable {
 		this.plantComponents = new ArrayList<PlantComponent>();
 		this.failedComponents = new ArrayList<PlantComponent>();
 	}
-
+	
+	/**
+	 * Returns the name of the operator (player).
+	 * @return the name of the operator (player).
+	 */
 	public String getOperatorName() {
 		return operatorName;
 	}
-
+	
+	/**
+	 * Sets the name of the operator (player).
+	 * @param operatorName the name of the operator (player).
+	 */
 	public void setOperatorName(String operatorName) {
 		this.operatorName = operatorName;
 	}
-
+	
+	/**
+	 * Returns the current score.
+	 * @return the current score.
+	 */
 	public int getScore() {
 		return score;
 	}
 
+	/**
+	 * Updates the score.
+	 * 
+	 * Calculates the score based on the power output of the generator
+	 * and the number of time steps passed since the start of the game.
+	 */
 	public void calcScore() {
 		int powerOutput = getGenerator().getPowerOutput();
 		this.score += powerOutput * (this.timeStepsUsed + 10);
 	}
 
+	/**
+	 * Checks if the game is paused.
+	 * 
+	 * Currently not used as the game is turn based. Makes creating a real time game easier.
+	 * @return true if the game is paused.
+ 	 */
 	public boolean isPaused() {
 		return isPaused;
 	}
 
+	/**
+	 * Sets the paused state of the game.
+	 * 
+	 * Currently not used as the game is turn based. Makes creating a real time game easier.
+	 * @param isPaused the new value for isPaused.
+	 */
 	public void setPaused(boolean isPaused) {
 		this.isPaused = isPaused;
 	}
@@ -81,6 +111,10 @@ public class Plant implements Serializable {
 		return MAX_WATER_FLOW_RATE_PER_PUMP;
 	}
 
+	/**
+	 * Returns the reactor object of the plant.
+	 * @return the reactor object of the plant.
+	 */
 	public Reactor getReactor() {
 		if (this.reactor != null) {
 			return reactor;
@@ -95,6 +129,10 @@ public class Plant implements Serializable {
 		}
 	}
 	
+	/**
+	 * Returns a list of valves in the plant.
+	 * @return a list of valves in the plant.
+	 */
 	public List<Valve> getValves() {
 		ArrayList<Valve> valvesList = new ArrayList<Valve>();
 		if (this.valves != null) {
@@ -108,6 +146,10 @@ public class Plant implements Serializable {
 		}
 	}
 
+	/**
+	 * Returns a list of all connector pipes in the plant.
+	 * @return a list of all connector pipes in the plant.
+	 */
 	public List<ConnectorPipe> getConnectorPipes()
 	{
 		ArrayList<ConnectorPipe> connectorPipes = new ArrayList<ConnectorPipe>();
@@ -122,6 +164,10 @@ public class Plant implements Serializable {
 		}
 	}
 
+	/**
+	 * Returns the condenser of the plant.
+	 * @return the condenser of the plant.
+	 */
 	public Condenser getCondenser()
 	{
 		if (this.condenser != null) {
@@ -137,6 +183,10 @@ public class Plant implements Serializable {
 		}
 	}
 	
+	/**
+	 * Returns a list of all pumps in the plant.
+	 * @return a list of all pumps in the plant.
+	 */
 	public List<Pump> getPumps() {
 		ArrayList<Pump> pumpsList = new ArrayList<Pump>();
 		if (this.pumps != null) {
@@ -149,6 +199,10 @@ public class Plant implements Serializable {
 		return pumpsList;
 	}
 	
+	/**
+	 * Returns the turbine of the plant.
+	 * @return the turbine of the plant.
+	 */
 	public Turbine getTurbine() {
 		Turbine turbine = null;
 		if (this.turbine != null) {
@@ -161,6 +215,10 @@ public class Plant implements Serializable {
 		return turbine;
 	}
 	
+	/**
+	 * Returns the generator of the plant.
+	 * @return the generator of the plant.
+	 */
 	public Generator getGenerator() {
 		Generator generator = null;
 		if (this.generator != null) {
@@ -173,6 +231,10 @@ public class Plant implements Serializable {
 		return generator;
 	}
 
+	/**
+	 * Returns a list of all highscores (maximum 20).
+	 * @return a list of all highscores (maximum 20).
+	 */
 	public List<HighScore> getHighScores() {
 		if(this.highScores.size() > 20) {
 			this.highScores = this.highScores.subList(0, 20); //Trims the high scores list to only the first 10 elements
@@ -180,30 +242,61 @@ public class Plant implements Serializable {
 		return this.highScores;
 	}
 	
+	/**
+	 * Sets the list of highscores.
+	 * 
+	 * Used when loading the highscores from a file.
+	 * 
+	 * @param highScores the list of highscores.
+	 */
 	public void setHighScores(List<HighScore> highScores) {
 		this.highScores = highScores;
 	}
 	
+	/**
+	 * Returns the number of steps passed since the start of the game.
+	 * @return the number of steps passed since the start of the game.
+	 */
 	public int getTimeStepsUsed() {
 		return timeStepsUsed;
 	}
 	
+	/**
+	 * Adds "n" steps to timeStepsUsed.
+	 * @param n the number of steps to be added.
+	 */
 	public void updateTimeStepsUsed(int n) {
 		if (n > 0) timeStepsUsed += n;
 	}
 
+	/**
+	 * Returns a list of all components that are being repaired.
+	 * @return a list of all components that are being repaired.
+	 */
 	public List<Repair> getBeingRepaired() {
 		return beingRepaired;
 	}
 
+	/**
+	 * Returns a list of all plant components.
+	 * @return a list of all plant components.
+	 */
 	public List<PlantComponent> getPlantComponents() {
 		return plantComponents;
 	}
 	
+	/**
+	 * Sets the list of all plant components.
+	 * @param plantComponents the list of all plant components.
+	 */
 	public void setPlantComponents(List<PlantComponent> plantComponents) {
 		this.plantComponents = plantComponents;
 	}
 	
+	/**
+	 * Returns all failed (non-operational) components (including those that are being repaired).
+	 * @return all failed (non-operational) components (including those that are being repaired).
+	 */
 	public List<PlantComponent> getFailedComponents() {
 		return failedComponents;
 	}
@@ -220,10 +313,17 @@ public class Plant implements Serializable {
 		}
 	}	
 	
+	/**
+	 * Sets the game over state to true.
+	 */
 	public void gameOver() {
 		this.gameOver = true;
 	}
 	
+	/**
+	 * Checks  if the game is over (if gameOver is true).
+	 * @return true if the game is over, false otherwise.
+	 */
 	public boolean isGameOver() {
 		return this.gameOver;
 	}
