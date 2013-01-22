@@ -9,8 +9,6 @@ package simulator;
  * so that it can get a new Plant if and when they're needed.
  * It also instantiates the UI and gives it a reference to
  * the controller for routing user commands. 
- * 
- * @author WillFrew
  *
  */
 public class GameInit {

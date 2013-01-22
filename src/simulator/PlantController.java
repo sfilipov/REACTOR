@@ -466,7 +466,24 @@ public class PlantController {
 		}
 	}
 	
-	//TODO Will - Javadoc comment.
+	/**
+	 * Highest level method for updating flow. This method calls all other methods
+	 * necessary for propagating flow, as well as blockages, throughout the system.
+	 * In this order, we:
+	 * 		- Set all outputs of all ConnectorPipes to not blocked.
+	 * 		- Propagate blockages from all closed valves in the system back to their
+	 * 			first preceding ConnectorPipe.
+	 * 		- Propagate all blockages throughout the entire system.
+	 * 		- Set the flow rate and temperature of all components to zero in 
+	 * 			preparation for flow calculation & propagation.
+	 * 		- Calculate and propagate the flow from the reactor forward.
+	 * 		- Calculate the flow due to the pumps in the system and totals them up at
+	 * 			the condenser output.
+	 * 		- Propagate the flow out of the condenser forwards.
+	 * 		- Propagate flow through all paths in the system.
+	 * 		- Transfer steam from the reactor into the condenser.
+	 * 		- Transfer water from the condenser into the reactor. 
+	 */
 	private void updateFlow() {
 		setAllConnectorPipesUnblocked();
 		blockFromValves();
@@ -477,12 +494,14 @@ public class PlantController {
 		propagateFlowFromPumpsToCondenser(); // Total up all pump flows at condenser
 		propagateFlowFromCondenser();	// Start propagation of water flow.
 		propagateFlowFromConnectorPipes();
-		//propagateNoFlowBackToReactor(); // Incase all paths out are blocked!
 		moveSteam();
 		moveWater(); 
 	}
 	
-	//TODO Will - Javadoc comment.
+	/**
+	 * Moves water out of the condenser and into the reactor due to the flow in and
+	 * out of the components.
+	 */
 	private void moveWater()
 	{
 		Condenser condenser = this.plant.getCondenser();
@@ -495,6 +514,7 @@ public class PlantController {
 						condenserFlowOut: 
 						waterInCondenser; // otherwise empty out the condenser!)
 		condenser.updateWaterVolume(-amountOut);
+		// This should really use reactor's input's flow out but ah well.
 		reactor.updateWaterVolume(amountOut);
 	}
 
@@ -669,7 +689,13 @@ public class PlantController {
 		}
 	}
 	
-	//TODO Will - Javadoc comment.
+	/**
+	 * Sums up the maximum flow possible through all valves that have a clear backward
+	 * path to the reactor and if this maximum flow is greater than the amount of steam 
+	 * wanting to come out of the reactor due to pressue, the rate is limited. 
+	 * 
+	 * @param reactor the reactor to limit.
+	 */
 	private void limitReactorFlowDueToValveMaxFlow(Reactor reactor)
 	{
 		int maxFlow = 0;
@@ -758,10 +784,16 @@ public class PlantController {
 		}
 	}
 	
-	//TODO Will - Javadoc comment.
+	/**
+	 * Propagates calls the appropriate methods for all unblocked outputs of 
+	 * startConnectorPipe in order to propagate flow through the system.  
+	 * 
+	 * @param startConnectorPipe The ConnectorPipe to propagate flow onward from.
+	 */
 	private void propagateFlowFromConnectorPipe(ConnectorPipe startConnectorPipe) {
 		Map<PlantComponent, Boolean> outputs = startConnectorPipe.getOutputsMap();
 		for (PlantComponent pc : outputs.keySet()) {
+			// If the output is not blocked.
 			if (!outputs.get(pc)) {
 				if (pc instanceof ConnectorPipe) {
 					propagateFlowFromConnectorPipe((ConnectorPipe) pc);
@@ -796,7 +828,10 @@ public class PlantController {
 		connector.getFlowOut().setTemperature(avgTemp);
 	}
 	
-	//TODO Will - Javadoc comment.
+	/**
+	 * Set's off the propagation from the condenser to the next ConnectorPipe from 
+	 * it's output.
+	 */
 	private void propagateFlowFromCondenser()
 	{
 		Condenser condenser = this.plant.getCondenser();
@@ -826,57 +861,14 @@ public class PlantController {
 		if (condenserFlowOut > condenserWaterVolume) condenser.getFlowOut().setRate(condenserWaterVolume);
 	}
 	
-	//TODO Will - Javadoc comment.
-	private void increaseCondenserFlowOutFromPumpOld(Pump p) {
-		int flowRate = calcFlowFromPumpRpm(p);
-		PlantComponent currentComponent = p;
-		PlantComponent precedingComponent= p.getInput();
-		boolean blockedPath = false;
-		// Until we find the condenser or our path is blocked
-		while(!(precedingComponent instanceof Condenser) && !blockedPath) {
-			if (!(precedingComponent instanceof ConnectorPipe)) {
-				// Nothing to see here... Move along (to the next component ;)
-				currentComponent = precedingComponent;
-				precedingComponent = precedingComponent.getInput();
-			} else {
-				// Check if the path we've come in from at this connector pipe is blocked
-				if (((ConnectorPipe) precedingComponent).getOutputsMap().get(currentComponent)) {
-					// YOU SHALL NOT PASS!
-					blockedPath = true;
-				} else {
-					currentComponent = precedingComponent;
-					List<PlantComponent> possiblePaths = ((ConnectorPipe) precedingComponent).getInputs();
-					if (possiblePaths.size() > 1) { 
-						/* There is more than one possible path..
-						 * Luckily we know our system will only ever have one path 
-						 * back to the condenser from a pump so we can get away with
-						 * this hard coded hackery... 
-						 * 
-						 * There could only be more than one path back to a condenser
-						 * if there were multiple condensers or there were weird loops in the
-						 * system.
-						 * 
-						 * You will need to recursively send out scouts to head down all possible
-						 * paths and find the condenser(s) splitting the flow from this pump each
-						 * time you encounter a ConnectorPipe with multiple inputs.
-						 */
-						precedingComponent = possiblePaths.get(0);
-					} else {
-						precedingComponent = possiblePaths.get(0);
-					}
-				}
-			}
-		}
-		/* If we did indeed find the condenser then add the flow increase from this pump to
-		 * the flow out of the condenser.
-		 */
-		if (precedingComponent instanceof Condenser) {
-			int condenserFlowOut = precedingComponent.getFlowOut().getRate();
-			precedingComponent.getFlowOut().setRate(condenserFlowOut + flowRate);
-		}
-	}
-	
-	//TODO Will - Javadoc comment.
+	/**
+	 * Gets the flowRate due to this pump from it's current rpm.
+	 * Then checks if there is a path from Pump p to the connector (backwards)
+	 * and if there is, we add the flow rate due to this pump to the flow rate out of
+	 * the condenser.
+	 * 
+	 * @param p Pump to increase the flow out of the condenser due to.
+	 */
 	private void increaseCondenserFlowOutFromPump(Pump p) {
 		int flowRate = calcFlowFromPumpRpm(p);
 		Condenser condenser = this.plant.getCondenser();
@@ -941,7 +933,12 @@ public class PlantController {
 		return true;
 	}
 	
-	//TODO Will - Javadoc comment.
+	/**
+	 * Calculates the flow through a pump based upon it's rpm.
+	 * The flow is linearly correlated to the rpm.
+	 * @param p The pump to calculate the rpm of.
+	 * @return The flow rate through pump, p.
+	 */
 	private int calcFlowFromPumpRpm(Pump p)
 	{
 		int maxRpm = p.getMaxRpm();

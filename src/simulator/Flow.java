@@ -2,6 +2,20 @@ package simulator;
 
 import java.io.Serializable;
 
+/**
+ * The Flow class stores information about the flow at a certain point in 
+ * the system. Every PlantComponent has one Flow variable that represents
+ * the flow OUT of that variable. i.e. towards the PlantComponent connected
+ * to it's output.
+ * 
+ * We store the following information:
+ * 		- Rate 			- int The amount of water/steam flowing through this
+ * 							point in 1 time-step.
+ * 		- Temperature 	- int The temperature of the water/steam flowing through
+ *							this point.
+ * 		- Type 			- enum FlowType = {Water, Steam}
+ *
+ */
 public class Flow implements Serializable {
 	
 	private static final long serialVersionUID = 8001114698646828534L;
