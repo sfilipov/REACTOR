@@ -18,15 +18,18 @@ public class ReactorUtils
 	private Generator generator;
 	private Valve steamValve1;
 	private Valve steamValve2;
-	private Valve steamValve3;
+	private Valve steamValve3;		// Alt
+	private Valve waterValve1;		// Alt
+	private Valve waterValve2;		// Alt
 	private Pump pump1;
 	private Pump pump2;
+	private Pump pump3;		   		// Alt
 	private ConnectorPipe connectorPipe1;
 	private ConnectorPipe connectorPipe2;
 	private ConnectorPipe connectorPipe3;
 	private ConnectorPipe connectorPipe4;
-	private ConnectorPipe connectorPipe5;
-	private ConnectorPipe connectorPipe6;
+	private ConnectorPipe connectorPipe5; // Alt
+	private ConnectorPipe connectorPipe6; // Alt
 	
 	public Plant createNewPlant() {
 		newPlant = new Plant();
@@ -52,8 +55,11 @@ public class ReactorUtils
 		steamValve1 = new Valve(1, FlowType.Steam);
 		steamValve2 = new Valve(2, FlowType.Steam);
 		steamValve3 = new Valve(3, FlowType.Steam);
+		waterValve1 = new Valve(4, FlowType.Water);
+		waterValve2 = new Valve(5, FlowType.Water);
 		pump1 = new Pump(1);
 		pump2 = new Pump(2);
+		pump3 = new Pump(3);
 		connectorPipe1 = new ConnectorPipe();
 		connectorPipe2 = new ConnectorPipe();
 		connectorPipe3 = new ConnectorPipe();
@@ -96,8 +102,13 @@ public class ReactorUtils
 		setupInputOutputReferences(condenser, connectorPipe3);
 		setupInputOutputReferences(connectorPipe3, pump1);
 		setupInputOutputReferences(connectorPipe3, pump2);
-		setupInputOutputReferences(pump1, connectorPipe4);
-		setupInputOutputReferences(pump2, connectorPipe4);
+		setupInputOutputReferences(connectorPipe3, pump3);
+		setupInputOutputReferences(pump1, waterValve1);
+		setupInputOutputReferences(pump2, waterValve2);
+		setupInputOutputReferences(pump3, connectorPipe4);
+		setupInputOutputReferences(waterValve1, connectorPipe4);
+		setupInputOutputReferences(waterValve2, connectorPipe4);
+		
 		setupInputOutputReferences(connectorPipe4, reactor);
 	}
 	
@@ -129,8 +140,11 @@ public class ReactorUtils
 		plantComponents.add(steamValve1);
 		plantComponents.add(steamValve2);
 		plantComponents.add(steamValve3);
+		plantComponents.add(waterValve1);
+		plantComponents.add(waterValve2);
 		plantComponents.add(pump1);
 		plantComponents.add(pump2);
+		plantComponents.add(pump3);
 		plantComponents.add(connectorPipe1);
 		plantComponents.add(connectorPipe2);
 		plantComponents.add(connectorPipe3);
