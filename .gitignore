@@ -1,1 +1,7 @@
 *~
+*.ser
+*.classpath
+*.project
+.settings/
+doc.zip
+*.zargo
