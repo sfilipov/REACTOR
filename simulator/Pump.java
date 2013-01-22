@@ -16,17 +16,14 @@ public class Pump extends PlantComponent {
 	private int rpm;
 	private boolean on;
 	
+	/**
+	 * Constructs a pump with the selected ID.
+	 * @param ID the selected ID for the pump.
+	 */
 	public Pump(int ID) {
 		super(DEFAULT_FAILURE_RATE, DEFAULT_REPAIR_TIME);
 		this.ID = ID;
 		setRpm(DEFAULT_RPM);
-		this.on = DEFAULT_ON_STATE;
-	}
-	
-	public Pump(int ID, int failureRate, int repairTime, int rpm) {
-		super(failureRate, repairTime);
-		this.ID = ID;
-		setRpm(rpm);
 		this.on = DEFAULT_ON_STATE;
 	}
 	
@@ -61,27 +58,52 @@ public class Pump extends PlantComponent {
 		if (rpm != 0 && !on) on = true;
 	}
 	
+	/**
+	 * Returns true if the pump is on.
+	 * @return true if the pump is on.
+	 */
 	public boolean isOn() {
 		return on;
 	}
 	
+	/**
+	 * Sets the pump (on/off).
+	 * @param on true if the pump needs to be on, false if it needs to be off.
+	 */
 	public void setOn(boolean on) {
 		this.on = on;
 	}
 	
+	/**
+	 * Returns the max RPM of the pump.
+	 * @return the max RPM of the pump.
+	 */
 	public int getMaxRpm()
 	{
 		return MAX_RPM;
 	}
-
+	
+	/**
+	 * Update the state of the pump.
+	 * 
+	 * Increases the failure rate of the pump if appropriate.
+	 */
 	public void updateState() {
 		increaseFailureRate();
 	}
 	
+	/**
+	 * Checks if the pump fails randomly.
+	 */
 	public boolean checkFailure() {
 		return super.checkFailure();
 	}
 	
+	/**
+	 * Increases the pump's chance to fail by 0.1% per call.
+	 * 
+	 * Doesn't increase the chance to fail once MAX_FAILURE_RATE is reached.
+	 */
 	private void increaseFailureRate() {
 		int currentFailureRate = this.getFailureRate();
 		if (currentFailureRate < MAX_FAILURE_RATE) {
