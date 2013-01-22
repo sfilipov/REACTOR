@@ -2,6 +2,11 @@ package simulator;
 
 import java.io.Serializable;
 
+/**
+ * Repair class keeps track of the components that are being repaired.
+ * When a component's timeStepsRemaining reach 0, the component needs to be
+ * removed from the list of beingRepaired inside Plant.
+ */
 public class Repair implements Serializable {
 	private static final long serialVersionUID = 1819944421888642516L;
 	
@@ -9,7 +14,7 @@ public class Repair implements Serializable {
 	private int timeStepsRemaining;
 	
 	Repair (PlantComponent componentToRepair) {
-		this.plantComponent = componentToRepair;
+		this.plantComponent     = componentToRepair;
 		this.timeStepsRemaining = componentToRepair.getRepairTime();
 	}
 	

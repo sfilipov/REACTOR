@@ -14,6 +14,7 @@ abstract class PlantComponent implements Serializable{
 	public final static boolean DEFAULT_PRESSURISED = false;
 
 	private int failureRate;
+	private int maxFailureRate;
 	private int repairTime;
 	private boolean operational; //Possibly unnecessary
 	private boolean pressurised;
@@ -51,23 +52,7 @@ abstract class PlantComponent implements Serializable{
 		random = new Random();
 	}
 	
-	/**
-	 * Creates a new PlantComponent with
-	 * the specified chance to fail, turns to repair and working condition.
-	 * 
-	 * @param failureRate the chance of the component to fail randomly
-	 * @param repairTime the number of steps needed to repair the component
-	 * @param operational determines whether the component is initially
-	 * 					  operational or not
-	 */
-	protected PlantComponent(int failureRate, int repairTime, boolean operational) {
-		this.failureRate = failureRate;
-		this.repairTime = repairTime;
-		this.operational = operational;
-		this.pressurised = DEFAULT_PRESSURISED;
-		this.flowOut = new Flow();
-		random = new Random();
-	}
+
 	
 	/**
 	 * Creates a new PlantComponent with
