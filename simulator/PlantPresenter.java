@@ -30,7 +30,7 @@ public class PlantPresenter {
 	
 	public void newGame(String operatorName) {
 		ReactorUtils utils = new ReactorUtils();
-		this.plant = utils.createNewPlant();
+		this.plant = utils.createNewAlternativePlant();
 		this.plant.setOperatorName(operatorName);
 		readHighScores();
 		uidata = new UIData(plant);
@@ -714,65 +714,130 @@ public class PlantPresenter {
 	private void propagateFlowFromPumpsToCondenser()
 	{
 		Condenser condenser = this.plant.getCondenser();
-		int flowRate;
-		PlantComponent currentComponent;
-		PlantComponent precedingComponent;
-		boolean blockedPath = false;
 		// Iterate through all pumps and start tracking back through the system
 		for (Pump p : this.plant.getPumps()) {
 			// If the pump is broken, move onto the next one.
 			if (this.plant.getFailedComponents().contains(p)) break;
-			flowRate = calcFlowFromPumpRpm(p);
-			blockedPath = false;
-			currentComponent = p;
-			precedingComponent = p.getInput();
-			// Until we find the condenser or our path is blocked
-			while(!(precedingComponent instanceof Condenser) && !blockedPath) {
-				if (!(precedingComponent instanceof ConnectorPipe)) {
-					// Nothing to see here... Move along (to the next component ;)
-					currentComponent = precedingComponent;
-					precedingComponent = precedingComponent.getInput();
-				} else {
-					// Check if the path we've come in from at this connector pipe is blocked
-					if (((ConnectorPipe) precedingComponent).getOutputsMap().get(currentComponent)) {
-						// YOU SHALL NOT PASS!
-						blockedPath = true;
-					} else {
-						currentComponent = precedingComponent;
-						List<PlantComponent> possiblePaths = ((ConnectorPipe) precedingComponent).getInputs();
-						if (possiblePaths.size() > 1) { 
-							/* There is more than one possible path..
-							 * Luckily we know our system will only ever have one path 
-							 * back to the condenser from a pump so we can get away with
-							 * this hard coded hackery... 
-							 * 
-							 * There could only be more than one path back to a condenser
-							 * if there were multiple condensers or there were weird loops in the
-							 * system.
-							 * 
-							 * You will need to recursively send out scouts to head down all possible
-							 * paths and find the condenser(s) splitting the flow from this pump each
-							 * time you encounter a ConnectorPipe with multiple inputs.
-							 */
-							precedingComponent = possiblePaths.get(0);
-						} else {
-							precedingComponent = possiblePaths.get(0);
-						}
-					}
-				}
-			}
-			/* If we did indeed find the condenser then add the flow increase from this pump to
-			 * the flow out of the condenser.
-			 */
-			if (precedingComponent instanceof Condenser) {
-				int condenserFlowOut = precedingComponent.getFlowOut().getRate();
-				precedingComponent.getFlowOut().setRate(condenserFlowOut + flowRate);
-			}
+			increaseCondenserFlowOutFromPump(p);
 		}
 		// Finally.. Make sure the flow out of the condenser will not take us into negative volume.
 		int condenserWaterVolume = condenser.getWaterVolume();
 		int condenserFlowOut = condenser.getFlowOut().getRate();
 		if (condenserFlowOut > condenserWaterVolume) condenser.getFlowOut().setRate(condenserWaterVolume);
+	}
+	
+	private void increaseCondenserFlowOutFromPumpOld(Pump p) {
+		int flowRate = calcFlowFromPumpRpm(p);
+		PlantComponent currentComponent = p;
+		PlantComponent precedingComponent= p.getInput();
+		boolean blockedPath = false;
+		// Until we find the condenser or our path is blocked
+		while(!(precedingComponent instanceof Condenser) && !blockedPath) {
+			if (!(precedingComponent instanceof ConnectorPipe)) {
+				// Nothing to see here... Move along (to the next component ;)
+				currentComponent = precedingComponent;
+				precedingComponent = precedingComponent.getInput();
+			} else {
+				// Check if the path we've come in from at this connector pipe is blocked
+				if (((ConnectorPipe) precedingComponent).getOutputsMap().get(currentComponent)) {
+					// YOU SHALL NOT PASS!
+					blockedPath = true;
+				} else {
+					currentComponent = precedingComponent;
+					List<PlantComponent> possiblePaths = ((ConnectorPipe) precedingComponent).getInputs();
+					if (possiblePaths.size() > 1) { 
+						/* There is more than one possible path..
+						 * Luckily we know our system will only ever have one path 
+						 * back to the condenser from a pump so we can get away with
+						 * this hard coded hackery... 
+						 * 
+						 * There could only be more than one path back to a condenser
+						 * if there were multiple condensers or there were weird loops in the
+						 * system.
+						 * 
+						 * You will need to recursively send out scouts to head down all possible
+						 * paths and find the condenser(s) splitting the flow from this pump each
+						 * time you encounter a ConnectorPipe with multiple inputs.
+						 */
+						precedingComponent = possiblePaths.get(0);
+					} else {
+						precedingComponent = possiblePaths.get(0);
+					}
+				}
+			}
+		}
+		/* If we did indeed find the condenser then add the flow increase from this pump to
+		 * the flow out of the condenser.
+		 */
+		if (precedingComponent instanceof Condenser) {
+			int condenserFlowOut = precedingComponent.getFlowOut().getRate();
+			precedingComponent.getFlowOut().setRate(condenserFlowOut + flowRate);
+		}
+	}
+	
+	private void increaseCondenserFlowOutFromPump(Pump p) {
+		int flowRate = calcFlowFromPumpRpm(p);
+		Condenser condenser = this.plant.getCondenser();
+		// If there's a clear path to the condenser from p then add the flowRate of this pump
+		// to the flowOut rate of the condenser.
+		if (isPathTo(p, condenser, false)) {
+			int condenserFlowOut = condenser.getFlowOut().getRate();
+			condenser.getFlowOut().setRate(condenserFlowOut + flowRate);
+		}
+	}
+	
+	
+	/**
+	 * Returns true if there exists a path from start to goal that is not blocked and does not 
+	 * pass through a pressurised component (Reactor/Condenser) in the direction that is specified.
+	 * 
+	 * If forwards = true then the path with be traced using outputs, otherwise inputs.
+	 * 
+	 * @param start Component to start from.
+	 * @param goal Component to attempt to reach.
+	 * @param forwards Direction of the path
+	 * @return true if there exists a path from start to goal that is not blocked and does not 
+	 * pass through a pressurised component in the direction that is specified.
+	 */
+	private boolean isPathTo(PlantComponent start, PlantComponent goal, boolean forwards) {
+		List<PlantComponent> possiblePaths;
+		ConnectorPipe cp;
+		
+		PlantComponent current = start;
+		PlantComponent next = (forwards) ? start.getOutput() : start.getInput();
+		while(!current.equals(goal)) {
+			// If we're at any other component than a ConnectorPipe, then advance to the next
+			// component in the system in the direction we want.
+			if (!(next instanceof ConnectorPipe)) {
+				current = next;
+				next = (forwards) ? current.getOutput() : current.getInput();
+			} else {
+				cp = (ConnectorPipe) next;
+				if (!forwards) {
+					// If we're travelling backwards check if this path back is blocked
+					if (cp.getOutputsMap().get(current)) return false;
+				}
+				// I say, I say, we've got ourselves a ConnectorPipe!
+				possiblePaths = (forwards) ? cp.getOutputs() : cp.getInputs();
+				for (PlantComponent possibleNext : possiblePaths) {
+					/* Check if we're moving forwards, check that the ConnectorPipe output
+					 * we're leaving from isn't blocked. If it is we don't move that way.
+					 */
+					if (forwards) {
+						if (!cp.getOutputsMap().get(possibleNext)) {
+							// return isPathTo(possibleNext1, ...) || ... || isPathTo(possibleNextN,...)
+							if (isPathTo(possibleNext, goal, forwards)) return true;
+						}
+					} else {
+						// return isPathTo(possibleNext1, ...) || ... || isPathTo(possibleNextN,...)
+						if (isPathTo(possibleNext, goal, forwards)) return true;
+					}
+				}
+				// All paths out of this connector pipe are blocked, no paths available :(
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private int calcFlowFromPumpRpm(Pump p)
