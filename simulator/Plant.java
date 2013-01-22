@@ -10,7 +10,7 @@ public class Plant implements Serializable {
 	 */
 	private static final long serialVersionUID = 4799981348038802742L;
 	
-	private final static int MAX_STEAM_FLOW_RATE = 400;
+	private final static int MAX_STEAM_FLOW_RATE = 500; // Out of the reactor.
 	private final static int MAX_WATER_FLOW_RATE_PER_PUMP = 400;
 	
 	private String operatorName;
