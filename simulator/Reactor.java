@@ -2,6 +2,16 @@ package simulator;
 
 import java.io.Serializable;
 
+/**
+ * A reactor is an object that controls the nuclear reaction
+ * inside the plant. Based on the percentage of lowering of
+ * the control rods, the water inside the reactor is heated
+ * up. When a particular temperature is reached, some amount
+ * of water is converted to steam which goes out of the reactor.
+ * 
+ * Reactor's health gets lower when the max temperature or pressure
+ * is exceeded. When a reactor's health is 0 or lower, the game is over.
+ */
 public class Reactor extends PlantComponent {
 	private static final long serialVersionUID = 2901479494890681361L;
 	
@@ -111,7 +121,13 @@ public class Reactor extends PlantComponent {
 	}
 	
 	// ---------------- System update methods ---------------
-	
+	/**
+	 * Updates the state of the reactor.
+	 * 
+	 * Updates the temperature, pressure, evaporates some water if
+	 * appropriate and check if the reactor is damaged based on
+	 * it's internal temperature and pressure.
+	 */
 	public void updateState() {
 		updateTemperature();
 		updatePressure();
@@ -119,6 +135,13 @@ public class Reactor extends PlantComponent {
 		checkIfDamaging();
 	}
 	
+	/**
+	 * Updates the temperature inside the reactor.
+	 * 
+	 * Change the temperature based on the heat produced by nuclear
+	 * reaction and the cooling based on the water pump in from
+	 * the condenser.
+	 */
 	private void updateTemperature() {
 		int changeInTemp;
 		Flow flowIn = this.getInput().getFlowOut();
@@ -128,6 +151,11 @@ public class Reactor extends PlantComponent {
 		this.temperature += changeInTemp;
 	}
 	
+	/**
+	 * Updates the pressure inside the reactor.
+	 * 
+	 * It depends on the amount of steam that is currently inside the reactor.
+	 */
 	private void updatePressure() {
 		int currentPressure;
 		currentPressure = (int) Math.round(new Double(this.steamVolume) * VOL_TO_PRESSURE_MULTIPLIER);
@@ -200,7 +228,11 @@ public class Reactor extends PlantComponent {
 		}
 	}
 	
-	//Needs improving to take into account the difference between current and max value
+	/**
+	 * Damages the reactor if temperature
+	 * and/or pressure is higher than the max
+	 * temperature and max pressure.
+	 */
 	private void checkIfDamaging() {
 		if(this.temperature > MAX_TEMPERATURE) {
 			damageReactor();					
@@ -210,10 +242,17 @@ public class Reactor extends PlantComponent {
 		}
 	}
 	
+	/**
+	 * Damages the reactor by amount of HEALT_CHANGE_WHEN_DAMAGING.
+	 */
 	private void damageReactor() {
 		health -= HEALTH_CHANGE_WHEN_DAMAGING;
 	}
 	
+	/**
+	 * Returns true if health is 0 or lower.
+	 * @return true if health is 0 or lower.
+	 */
 	@Override
 	public boolean checkFailure() {
 		if (health <= 0) {
@@ -223,7 +262,12 @@ public class Reactor extends PlantComponent {
 		}
 	}
 	
+	/**
+	 * Control rods class is internal to Reactor. It has a field
+	 * that keeps track of how lowered are the control rods.
+	 */
 	private final class ControlRod implements Serializable {
+		private static final long serialVersionUID = 9216989049507879933L;
 		private final static int DEFAULT_PERCENTAGE = 100;
 		private int percentageLowered;
 		
@@ -234,6 +278,7 @@ public class Reactor extends PlantComponent {
 		int getPercentageLowered() {
 			return percentageLowered;
 		}
+		
 		
 		void setPercentageLowered(int percentageLowered) {
 			if (percentageLowered < 0 || percentageLowered > 100) {

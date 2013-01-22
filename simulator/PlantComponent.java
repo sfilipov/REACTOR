@@ -3,6 +3,11 @@ package simulator;
 import java.util.Random;
 import java.io.Serializable;
 
+/**
+ * PlantComponent is an abstract class that has fields and methods that apply
+ * to most or all plant components. That allows for flexible changes to future
+ * implementations (i.e. valves/generator that break randomly).
+ */
 abstract class PlantComponent implements Serializable{
 
 	private static final long serialVersionUID = -4184587415447732647L;

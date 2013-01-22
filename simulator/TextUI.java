@@ -12,6 +12,14 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.List;
 
+/**
+ * This class is used in the team's implementation
+ * of a text based game. It represents the "view" of the
+ * team's MVC design of the game. It not recommended to use 
+ * this class in future implementations of the game. 
+ * Most classes are not documented as they are not to
+ * be used by other groups.
+ */
 public class TextUI extends JFrame implements KeyListener 
 {
 	private static final long serialVersionUID = -8860972241763753423L;

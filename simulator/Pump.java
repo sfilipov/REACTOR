@@ -1,5 +1,9 @@
 package simulator;
 
+/**
+ * Pump is a plant component that pumps some amount of water based on pump's "on"
+ * state and its RPM. There is a chance that a pump fails randomly. 
+ */
 public class Pump extends PlantComponent {
 
 	private static final long serialVersionUID = -446684199807618671L;
