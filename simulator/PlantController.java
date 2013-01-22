@@ -818,8 +818,6 @@ public class PlantController {
 		int condenserWaterVolume = condenser.getWaterVolume();
 		int condenserFlowOut = condenser.getFlowOut().getRate();
 		if (condenserFlowOut > condenserWaterVolume) condenser.getFlowOut().setRate(condenserWaterVolume);
-<<<<<<< HEAD
-=======
 	}
 	
 	//TODO Will - Javadoc comment.
@@ -870,7 +868,6 @@ public class PlantController {
 			int condenserFlowOut = precedingComponent.getFlowOut().getRate();
 			precedingComponent.getFlowOut().setRate(condenserFlowOut + flowRate);
 		}
->>>>>>> refs/remotes/origin/master
 	}
 	
 	//TODO Will - Javadoc comment.
