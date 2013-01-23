@@ -302,6 +302,10 @@ public class PlantController {
 		return this.uidata;
 	}
 	
+	public Plant getPlant() {
+		return this.plant;
+	}
+	
 	// ----------------		Internal helper methods ------------------
 	
 	/**
